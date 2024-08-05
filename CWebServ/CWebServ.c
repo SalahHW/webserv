@@ -1,11 +1,12 @@
-//NUMBER OF EVENTS (MAX_EVENTS) DOESNT SEEMS TO CHANGE SOMETHING DONT UNDERSTAND
-
+// NUMBER OF EVENTS (MAX_EVENTS) DOESNT SEEMS TO CHANGE SOMETHING DONT UNDERSTAND
+// Exit, perror, printf, doesnt respect C++98
+ 
 #include <stdio.h> // printf, perror
 #include <stdlib.h> // exit, malloc
 #include <string.h> // memset
-#include <unistd.h> // close, read, write
+#include <unistd.h> // close, write
 #include <fcntl.h> // fcntl
-#include <sys/epoll.h> // epoll
+#include <sys/epoll.h> // epoll, recv
 #include <netinet/in.h> // define struct and macros for network operations IP socket.
 #include <arpa/inet.h> // inet_ntoa
 
@@ -66,7 +67,7 @@ int makeSocketNonBlocking(int sfd)
         perror("fcntl");
         return -1;
     }
-    return 0; // Success
+    return 0;
 }
 
 // Function to get the buffer sizes of a socket
@@ -94,7 +95,7 @@ int getSocketBufferSize(int sfd, int *recvBufSize, int *sendBufSize)
 
 // Function to set the buffer sizes of a socket
 int setSocketBufferSize(int sfd, int recvBufSize, int sendBufSize)
-{
+{   
     // Set receive buffer size
     if (setsockopt(sfd, SOL_SOCKET, SO_RCVBUF, &recvBufSize, sizeof(recvBufSize)) == -1)
     {
@@ -108,7 +109,9 @@ int setSocketBufferSize(int sfd, int recvBufSize, int sendBufSize)
         perror("setsockopt SO_SNDBUF");
         return -1;
     }
-    return 0; // Success
+    //Check if it worked.
+    printf("Client Socket - Receive Buffer Size: %d, Send Buffer Size: %d\n", recvBufSize, sendBufSize);
+    return 0;
 }
 
 // Function to add a file descriptor to the epoll instance
@@ -152,15 +155,16 @@ void handleNewConnection(int epoll_fd, int listen_sock)
 void handleClientData(int epoll_fd, int client_sock)
 {
     char buffer[1024];
-    int count = read(client_sock, buffer, sizeof(buffer)); // Read data from the client
+    ssize_t count = recv(client_sock, buffer, sizeof(buffer), 0); // Read data from the client
     if(count == -1)
     {
-        perror("read");
+        perror("recv");
         close(client_sock);
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL); // Remove the client from the epoll instance
     }
     else if (count == 0) // Client closed the connection
     {
+        printf("Client disconnected\n");
         close(client_sock);
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL); // Remove the client from the epoll instance
     }
@@ -169,7 +173,7 @@ void handleClientData(int epoll_fd, int client_sock)
         write(client_sock, buffer, count); // Echo the data back to the client
         shutdown(client_sock, SHUT_WR); // Close the write end of the socket
     }
-}
+} 
 
 int main()
 {
@@ -183,15 +187,6 @@ int main()
         close(listen_sock);
         exit(EXIT_FAILURE);
     }
-
-    // Get and print buffer sizes for the listening socket
-    int recvBufSize, sendBufSize;
-    if (getSocketBufferSize(listen_sock, &recvBufSize, &sendBufSize) == -1)
-    {
-        close(listen_sock);
-        exit(EXIT_FAILURE);
-    }
-     printf("Listening Socket - Receive Buffer Size: %d, Send Buffer Size: %d\n", recvBufSize, sendBufSize);
 
     int epoll_fd = epoll_create1(0); // Create an epoll instance
     if(epoll_fd == -1)
