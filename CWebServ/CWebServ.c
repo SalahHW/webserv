@@ -1,3 +1,5 @@
+//NUMBER OF EVENTS (MAX_EVENTS) DOESNT SEEMS TO CHANGE SOMETHING DONT UNDERSTAND
+
 #include <stdio.h> // printf, perror
 #include <stdlib.h> // exit, malloc
 #include <string.h> // memset
@@ -7,7 +9,7 @@
 #include <netinet/in.h> // define struct and macros for network operations IP socket.
 #include <arpa/inet.h> // inet_ntoa
 
-#define MAX_EVENTS 1 // Maximum number of events that epoll can handle
+#define MAX_EVENTS 10 // Maximum number of events that epoll can handle
 #define PORT 8080 // Port number on which the server will listen
 
 // Function to create and bind a socket to the specified port
@@ -19,6 +21,15 @@ int createAndBindSocket(int port)
         perror("socket");
         return -1;
     }
+    // Set SO_REUSEADDR to reuse the port immediately after the program exits
+    int optval = 1;
+    if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
+    {
+        perror("setsockopt");
+        close(sfd);
+        return -1;
+    }
+
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr)); // Zero out the address structure
     addr.sin_family = AF_INET;
@@ -58,6 +69,48 @@ int makeSocketNonBlocking(int sfd)
     return 0; // Success
 }
 
+// Function to get the buffer sizes of a socket
+int getSocketBufferSize(int sfd, int *recvBufSize, int *sendBufSize)
+{
+    socklen_t optlen;
+
+    // Get receive buffer size
+    optlen = sizeof(*recvBufSize);
+    if (getsockopt(sfd, SOL_SOCKET, SO_RCVBUF, recvBufSize, &optlen) == -1)
+    {
+        perror("getsockopt SO_RCVBUF");
+        return -1;
+    }
+
+    // Get send buffer size
+    optlen = sizeof(*sendBufSize);
+    if (getsockopt(sfd, SOL_SOCKET, SO_SNDBUF, sendBufSize, &optlen) == -1)
+    {
+        perror("getsockopt SO_SNDBUF");
+        return -1;
+    }
+    return 0; // Success
+}
+
+// Function to set the buffer sizes of a socket
+int setSocketBufferSize(int sfd, int recvBufSize, int sendBufSize)
+{
+    // Set receive buffer size
+    if (setsockopt(sfd, SOL_SOCKET, SO_RCVBUF, &recvBufSize, sizeof(recvBufSize)) == -1)
+    {
+        perror("setsockopt SO_RCVBUF");
+        return -1;
+    }
+
+    // Set send buffer size
+    if (setsockopt(sfd, SOL_SOCKET, SO_SNDBUF, &sendBufSize, sizeof(sendBufSize)) == -1)
+    {
+        perror("setsockopt SO_SNDBUF");
+        return -1;
+    }
+    return 0; // Success
+}
+
 // Function to add a file descriptor to the epoll instance
 void addToEpoll(int epoll_fd, int fd, uint32_t events)
 {
@@ -87,13 +140,18 @@ void handleNewConnection(int epoll_fd, int listen_sock)
         close(client_sock);
         return;
     }
+    if(setSocketBufferSize(client_sock, 65536, 65536) == -1) //Set buffer sizes for the client socket to 64ko because its well balanced between perf and memory and usualy used. The sizes of the buffer should be a multiple of MTU (maximum transmission unit) to avoid packet fragmentation ask google for more informations.
+    {
+        close(client_sock);
+        return;
+    }
     addToEpoll(epoll_fd, client_sock, EPOLLIN); // Add the client socket to the epoll instance
 }
 
 // Function to handle data received from a client
 void handleClientData(int epoll_fd, int client_sock)
 {
-    char buffer[512];
+    char buffer[1024];
     int count = read(client_sock, buffer, sizeof(buffer)); // Read data from the client
     if(count == -1)
     {
@@ -126,6 +184,15 @@ int main()
         exit(EXIT_FAILURE);
     }
 
+    // Get and print buffer sizes for the listening socket
+    int recvBufSize, sendBufSize;
+    if (getSocketBufferSize(listen_sock, &recvBufSize, &sendBufSize) == -1)
+    {
+        close(listen_sock);
+        exit(EXIT_FAILURE);
+    }
+     printf("Listening Socket - Receive Buffer Size: %d, Send Buffer Size: %d\n", recvBufSize, sendBufSize);
+
     int epoll_fd = epoll_create1(0); // Create an epoll instance
     if(epoll_fd == -1)
     {
@@ -148,7 +215,6 @@ int main()
             close(epoll_fd);
             exit(EXIT_FAILURE);
         }
-        printf("n = %d", n); // Print the number of events received (DOESTNT WORK)
         for (int i = 0; i < n; i++) // Process each event
         {
             if(events[i].data.fd == listen_sock) // Check if the event is on the listening socket
@@ -159,6 +225,7 @@ int main()
             {
                 handleClientData(epoll_fd, events[i].data.fd); // Handle data from a client
             }
+            printf("n = %d\n", n); // Print the number of events received (DOESTNT WORK)
         }
     }
     close(listen_sock); // Close the listening socket
