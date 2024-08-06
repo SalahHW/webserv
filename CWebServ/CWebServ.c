@@ -141,11 +141,13 @@ void handleNewConnection(int epoll_fd, int listen_sock)
     if(makeSocketNonBlocking(client_sock) == -1) // Make the client socket non-blocking
     {
         close(client_sock);
+        perror("makeSocketNonBlocking");
         return;
     }
     if(setSocketBufferSize(client_sock, 65536, 65536) == -1) //Set buffer sizes for the client socket to 64ko because its well balanced between perf and memory and usualy used. The sizes of the buffer should be a multiple of MTU (maximum transmission unit) to avoid packet fragmentation ask google for more informations.
     {
         close(client_sock);
+        perror("setSocketBufferSize");
         return;
     }
     addToEpoll(epoll_fd, client_sock, EPOLLIN); // Add the client socket to the epoll instance
@@ -155,24 +157,66 @@ void handleNewConnection(int epoll_fd, int listen_sock)
 void handleClientData(int epoll_fd, int client_sock)
 {
     char buffer[1024];
-    ssize_t count = recv(client_sock, buffer, sizeof(buffer), 0); // Read data from the client
-    if(count == -1)
-    {
+    ssize_t count = recv(client_sock, buffer, sizeof(buffer) - 1, 0);
+    if (count == -1) {
         perror("recv");
         close(client_sock);
-        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL); // Remove the client from the epoll instance
-    }
-    else if (count == 0) // Client closed the connection
-    {
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
+        return;
+    } else if (count == 0) {
         printf("Client disconnected\n");
         close(client_sock);
-        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL); // Remove the client from the epoll instance
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
+        return;
     }
-    else
-    {
-        write(client_sock, buffer, count); // Echo the data back to the client
-        shutdown(client_sock, SHUT_WR); // Close the write end of the socket
+
+    buffer[count] = '\0';
+    printf("Request: %s\n", buffer);
+
+    // Serve 404.html
+    const char *html_file_path = "./errors/40x/404.html";
+    FILE *html_file = fopen(html_file_path, "r");
+    if (!html_file) {
+        perror("fopen");
+        close(client_sock);
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
+        return;
     }
+
+    fseek(html_file, 0, SEEK_END);
+    long html_file_size = ftell(html_file);
+    fseek(html_file, 0, SEEK_SET);
+
+    char *html_file_buffer = (char *)malloc(html_file_size + 1);
+    if (!html_file_buffer) {
+        perror("malloc");
+        fclose(html_file);
+        close(client_sock);
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
+        return;
+    }
+    fread(html_file_buffer, 1, html_file_size, html_file);
+    html_file_buffer[html_file_size] = '\0';
+
+    const char *response_headers_template = 
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: %ld\r\n"
+        "Connection: close\r\n"
+        "\r\n";
+    char response_headers[256];
+    snprintf(response_headers, sizeof(response_headers), response_headers_template, html_file_size);
+
+    write(client_sock, response_headers, strlen(response_headers));
+    write(client_sock, html_file_buffer, html_file_size);
+    free(html_file_buffer);
+    fclose(html_file);
+
+    shutdown(client_sock, SHUT_WR);
+    close(client_sock);
+    epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
+//        write(client_sock, buffer, count); // Echo the data back to the client
+//        shutdown(client_sock, SHUT_WR); // Close the write end of the socket 
 } 
 
 int main()
