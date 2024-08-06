@@ -157,64 +157,93 @@ void handleNewConnection(int epoll_fd, int listen_sock)
 void handleClientData(int epoll_fd, int client_sock)
 {
     char buffer[1024];
-    ssize_t count = recv(client_sock, buffer, sizeof(buffer) - 1, 0);
-    if (count == -1) {
+    ssize_t count = recv(client_sock, buffer, sizeof(buffer), 0); // Read data from the client
+    if (count == -1)
+    {
         perror("recv");
         close(client_sock);
-        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
-        return;
-    } else if (count == 0) {
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL); // Remove the client from the epoll instance
+    }
+    else if (count == 0) // Client closed the connection
+    {
         printf("Client disconnected\n");
         close(client_sock);
-        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
-        return;
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL); // Remove the client from the epoll instance
     }
+    else
+    {
+        buffer[count] = '\0'; // Null-terminate the request
+        printf("Request: %s\n", buffer);
 
-    buffer[count] = '\0';
-    printf("Request: %s\n", buffer);
+        // Determine the file to serve based on the request
+        const char *file_path = NULL;
+        const char *content_type = NULL;
+        if (strstr(buffer, "GET /style.css") != NULL)
+        {
+            file_path = "./errors/40x/404.css";
+            content_type = "text/css";
+        }
+        else if (strstr(buffer, "GET /") != NULL || strstr(buffer, "GET /index.html") != NULL)
+        {
+            file_path = "./errors/40x/404.html";
+            content_type = "text/html";
+        }
+        else
+        {
+            file_path = "./errors/40x/404.html";
+            content_type = "text/html";
+        }
 
-    // Serve 404.html
-    const char *html_file_path = "./errors/40x/404.html";
-    FILE *html_file = fopen(html_file_path, "r");
-    if (!html_file) {
-        perror("fopen");
+        // Read the file
+        FILE *file = fopen(file_path, "r");
+        if (!file)
+        {
+            perror("fopen");
+            close(client_sock);
+            epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL); // Remove the client from the epoll instance
+            return;
+        }
+
+        // Get the file size
+        fseek(file, 0, SEEK_END);
+        long file_size = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        // Allocate buffer to read the file
+        char *file_buffer = (char *)malloc(file_size + 1);
+        if (!file_buffer)
+        {
+            perror("malloc");
+            fclose(file);
+            close(client_sock);
+            epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL); // Remove the client from the epoll instance
+            return;
+        }
+        fread(file_buffer, 1, file_size, file);
+        file_buffer[file_size] = '\0'; // Null-terminate the buffer
+
+        // Send HTTP headers
+        const char *response_headers_template = 
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: %s\r\n"
+            "Content-Length: %ld\r\n"
+            "Connection: close\r\n"
+            "\r\n";
+        char response_headers[256];
+        snprintf(response_headers, sizeof(response_headers), response_headers_template, content_type, file_size);
+
+        write(client_sock, response_headers, strlen(response_headers));
+
+        // Send the file content to the client
+        write(client_sock, file_buffer, file_size);
+        free(file_buffer);
+        fclose(file);
+
+        // Close the connection after sending the response
+        shutdown(client_sock, SHUT_WR); // Close the write end of the socket
         close(client_sock);
-        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
-        return;
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL); // Remove the client from the epoll instance
     }
-
-    fseek(html_file, 0, SEEK_END);
-    long html_file_size = ftell(html_file);
-    fseek(html_file, 0, SEEK_SET);
-
-    char *html_file_buffer = (char *)malloc(html_file_size + 1);
-    if (!html_file_buffer) {
-        perror("malloc");
-        fclose(html_file);
-        close(client_sock);
-        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
-        return;
-    }
-    fread(html_file_buffer, 1, html_file_size, html_file);
-    html_file_buffer[html_file_size] = '\0';
-
-    const char *response_headers_template = 
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/html\r\n"
-        "Content-Length: %ld\r\n"
-        "Connection: close\r\n"
-        "\r\n";
-    char response_headers[256];
-    snprintf(response_headers, sizeof(response_headers), response_headers_template, html_file_size);
-
-    write(client_sock, response_headers, strlen(response_headers));
-    write(client_sock, html_file_buffer, html_file_size);
-    free(html_file_buffer);
-    fclose(html_file);
-
-    shutdown(client_sock, SHUT_WR);
-    close(client_sock);
-    epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_sock, NULL);
 //        write(client_sock, buffer, count); // Echo the data back to the client
 //        shutdown(client_sock, SHUT_WR); // Close the write end of the socket 
 } 
