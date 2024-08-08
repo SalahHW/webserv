@@ -1,0 +1,1 @@
+Si ce que jai fait cest plus ou moins juste le plus important a faire maintenant est de parcer les requetes recu puis de faire la CGI (la maniere dont on va fournir au client ce quil demande basiquement cest juste aller chercher via un path ce quil a demande)

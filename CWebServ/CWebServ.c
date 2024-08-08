@@ -185,7 +185,7 @@ void handleClientData(int epoll_fd, int client_sock)
         }
         else if (strstr(buffer, "GET /") != NULL || strstr(buffer, "GET /index.html") != NULL)
         {
-            file_path = "./errors/40x/404.html";
+            file_path = "./errors/50x/504.html";
             content_type = "text/html";
         }
         else
