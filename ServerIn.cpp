@@ -8,7 +8,7 @@ ServerIn::ServerIn() {
         startToListen();
     }
     catch(const SocketException& excp) {
-        std::cerr << "Socket error: " << e.what() << std::endl;
+        std::cerr << "Socket error: " << excp.what() << std::endl;
         exit(EXIT_FAILURE);
     }
 }
@@ -28,11 +28,11 @@ ServerIn&   ServerIn::operator=(const ServerIn& src) {
 void    ServerIn::createSocket() {
     this->listen_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
     int optval = 1;
-    if(sfd == -1)
+    if(this->listen_sock_fd == -1)
         throw SocketException("socket");
     if(setsockopt(this->listen_sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
         throw SocketException("setsockopt");
-    memset(this->&addr, 0, sizeof(this->addr));
+    memset(&this->addr, 0, sizeof(this->addr));
     this->addr.sin_family = AF_INET;
     this->addr.sin_port = htons(PORT);
     this->addr.sin_addr.s_addr = INADDR_ANY;
