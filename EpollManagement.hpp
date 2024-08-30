@@ -5,13 +5,15 @@
 #include <sys/epoll.h>
 #include "EpollException.hpp"
 
+#define MAX_EVENTS 10
+
 class EpollManagement {
     private:
     int epoll_fd;
-    struct epoll_event event;
+    struct epoll_event events[MAX_EVENTS];
 
     public:
-    EpollManagement();
+    EpollManagement(int listen_sock_fd);
     ~EpollManagement();
     EpollManagement(const EpollManagement& src);
     EpollManagement& operator=(const EpollManagement& src);
