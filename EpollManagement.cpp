@@ -1,7 +1,15 @@
 #include "EpollManagement.hpp"
 
 EpollManagement::EpollManagement(int listen_sock_fd) {
-    EpollInit(listen_sock_fd);
+    try {
+        EpollInit(listen_sock_fd);
+        addListenerToEpoll(listen_sock_fd);
+        startToListen(listen_sock_fd);
+    }
+    catch(const EpollException& excp) {
+        std::cerr << "Epoll error: " << excp.what() << std::endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 EpollManagement::~EpollManagement() {
@@ -24,8 +32,8 @@ int EpollManagement::getNbEvents() {
     return this->nb_events;
 }
 
-struct epoll_event EpollManagement::getEventsStruct() {
-    return this->events[MAX_EVENTS];
+struct epoll_event EpollManagement::getEventStruct() {
+    return this->event;
 }
 
 void    EpollManagement::EpollInit(int listen_sock_fd) {
@@ -36,29 +44,28 @@ void    EpollManagement::EpollInit(int listen_sock_fd) {
 }
 
 void    EpollManagement::addListenerToEpoll(int listen_sock_fd) {
-    this->events.events = EPOLLIN;
-    this->events.data.fd = listen_sock_fd;
-    if(epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, listen_sock_fd, &this->events) == -1) {
+    this->event.events = EPOLLIN;
+    this->event.data.fd = listen_sock_fd;
+    if(epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, listen_sock_fd, &this->event) == -1) {
         throw EpollException("epoll_ctl"); 
     }
 }
 
 
 void    EpollManagement::startToListen(int listen_sock_fd) {
+    struct epoll_event events[MAX_EVENTS];
     while(1) {
-        this->nb_events = epoll_wait(this->epoll_fd, this->events, MAX_EVENTS, -1);
+        this->nb_events = epoll_wait(this->epoll_fd, events, MAX_EVENTS, -1);
         if(this->nb_events == -1) {
             throw EpollException("epoll_wait");
         }
         for (int i = 0; i < this->nb_events; i++) {
-            if (this->events[i].data.fd == listen_sock_fd) {
-                handleNewConnection(listen_sock_fd);
+            if (events[i].data.fd == listen_sock_fd) {
+                ClientIn client(listen_sock_fd, this);
             }
-            else {
-                handleClientData();
-            }
+            //else {
+            //    handleClientData();
+           // }
         }
     }   
 }
-
-void    EpollManagement::handleNewConnection(int listen_sock_fd) {}
