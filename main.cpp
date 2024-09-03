@@ -4,5 +4,5 @@
 
 int main() {
     ServerIn Server;
-    EpollManagement Epoll(Server.listen_sock_fd);
+    EpollManagement Epoll(Server.getListenSockFd());
 }

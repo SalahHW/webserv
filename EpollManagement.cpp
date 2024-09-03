@@ -2,7 +2,7 @@
 
 EpollManagement::EpollManagement(int listen_sock_fd) {
     try {
-        EpollInit(listen_sock_fd);
+        EpollInit();
         addListenerToEpoll(listen_sock_fd);
         startToListen(listen_sock_fd);
     }
@@ -16,12 +16,12 @@ EpollManagement::~EpollManagement() {
     close(this->epoll_fd);
 }
 
-EpollManagement::EpollManagement(const EpollManagement& src) {
-
+EpollManagement::EpollManagement(const EpollManagement& src) : epoll_fd(src.epoll_fd), event(src.event), nb_events(src.nb_events) {
 } 
 
 EpollManagement& EpollManagement::operator=(const EpollManagement& src) {
-
+    this->epoll_fd = src.epoll_fd;
+    return *this;
 }
 
 int EpollManagement::getEpollFd() {
@@ -36,7 +36,7 @@ struct epoll_event EpollManagement::getEventStruct() {
     return this->event;
 }
 
-void    EpollManagement::EpollInit(int listen_sock_fd) {
+void    EpollManagement::EpollInit() {
     this->epoll_fd = epoll_create1(0);
     if(this->epoll_fd == -1) {
         throw EpollException("epoll_create1");
@@ -51,6 +51,13 @@ void    EpollManagement::addListenerToEpoll(int listen_sock_fd) {
     }
 }
 
+void    EpollManagement::addClientToEpoll(int client_sock_fd) {
+    this->event.events = EPOLLIN;
+    this->event.data.fd = client_sock_fd;
+    if(epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, client_sock_fd, &this->event) == -1) {
+        throw EpollException("epoll_ctl"); 
+    }
+}
 
 void    EpollManagement::startToListen(int listen_sock_fd) {
     struct epoll_event events[MAX_EVENTS];
@@ -61,7 +68,8 @@ void    EpollManagement::startToListen(int listen_sock_fd) {
         }
         for (int i = 0; i < this->nb_events; i++) {
             if (events[i].data.fd == listen_sock_fd) {
-                ClientIn client(listen_sock_fd, this);
+                ClientIn client(listen_sock_fd, *this);
+                std::cout << "Connected" << std::endl;
             }
             //else {
             //    handleClientData();

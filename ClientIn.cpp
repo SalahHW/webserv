@@ -9,7 +9,6 @@ ClientIn::ClientIn(int listen_sock_fd, EpollManagement epoll) {
     }
     catch(const ClientException& excp) {
         std::cerr << "Client error: " << excp.what() << std::endl;
-        exit(EXIT_FAILURE);
     }
 }
 
@@ -17,12 +16,12 @@ ClientIn::~ClientIn() {
     close(this->client_fd);
 }
 
-ClientIn::ClientIn(const ClientIn& src) {
-
+ClientIn::ClientIn(const ClientIn& src) : client_fd(src.client_fd), client_addr(src.client_addr), client_len(src.client_len), flags(src.flags) {
 }
 
 ClientIn& ClientIn::operator=(const ClientIn& src) {
-
+    this->client_fd = src.client_fd;
+    return *this;
 }
 
 int ClientIn::getClientFd() {

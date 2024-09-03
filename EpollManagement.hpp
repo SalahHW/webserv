@@ -9,6 +9,8 @@
 
 #define MAX_EVENTS 10
 
+class ClientIn;
+
 class EpollManagement {
     private:
     int epoll_fd;
@@ -25,7 +27,7 @@ class EpollManagement {
     int     getEpollFd();
     int     getNbEvents();
     struct epoll_event  getEventStruct();
-    void    EpollInit(int listen_sock_fd);
+    void    EpollInit();
     void    startToListen(int listen_sock_fd);
 };
 
