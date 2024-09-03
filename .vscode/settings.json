@@ -1,3 +1,29 @@
 {
-	"C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
+	"C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
+	"makefile.launchConfigurations": [
+		{
+			"cwd": "/home/salah/Projects/webserv",
+			"binaryPath": "/home/salah/Projects/webserv/webserv",
+			"binaryArgs": ["config/www.conf"]
+		}
+	],
+	"files.associations": {
+		"atomic": "cpp",
+		"*.tcc": "cpp",
+		"deque": "cpp",
+		"string": "cpp",
+		"unordered_map": "cpp",
+		"vector": "cpp",
+		"iterator": "cpp",
+		"memory_resource": "cpp",
+		"string_view": "cpp",
+		"functional": "cpp",
+		"istream": "cpp",
+		"new": "cpp",
+		"ostream": "cpp",
+		"stdexcept": "cpp",
+		"streambuf": "cpp",
+		"system_error": "cpp",
+		"tuple": "cpp"
+	}
 }
