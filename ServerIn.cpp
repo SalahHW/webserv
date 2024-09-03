@@ -5,7 +5,7 @@ ServerIn::ServerIn() {
         createSocket();
         bindSocket();
         makeSocketNonBlocking();
-        startToListen();
+        setToListen();
     }
     catch(const SocketException& excp) {
         std::cerr << "Socket error: " << excp.what() << std::endl;
@@ -14,7 +14,7 @@ ServerIn::ServerIn() {
 }
 
 ServerIn::~ServerIn() {
-
+    close(this->listen_sock_fd);
 }
 
 ServerIn::ServerIn(const ServerIn& src) {
@@ -23,6 +23,14 @@ ServerIn::ServerIn(const ServerIn& src) {
 
 ServerIn&   ServerIn::operator=(const ServerIn& src) {
 
+}
+
+int ServerIn::getListenSockFd() {
+    return this->listen_sock_fd;
+}
+
+struct sockaddr_in ServerIn::getAddr() {
+    return this->addr;
 }
 
 void    ServerIn::createSocket() {
@@ -43,7 +51,7 @@ void    ServerIn::bindSocket() {
         throw SocketException("bind");
 }
 
-void    ServerIn::startToListen() {
+void    ServerIn::setToListen() {
     if(listen(this->listen_sock_fd, SOMAXCONN) == -1)
         throw SocketException("listen");
 }

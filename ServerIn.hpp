@@ -23,7 +23,9 @@ class   ServerIn {
     void    createSocket();
     void    bindSocket();
     void    makeSocketNonBlocking();
-    void    startToListen();
+    void    setToListen();
+    int     getListenSockFd();
+    struct sockaddr_in  getAddr();
 };
 
 #endif

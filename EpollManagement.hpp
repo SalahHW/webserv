@@ -11,6 +11,7 @@ class EpollManagement {
     private:
     int epoll_fd;
     struct epoll_event events[MAX_EVENTS];
+    int nb_events;
 
     public:
     EpollManagement(int listen_sock_fd);
@@ -18,6 +19,9 @@ class EpollManagement {
     EpollManagement(const EpollManagement& src);
     EpollManagement& operator=(const EpollManagement& src);
     void    addListenerToEpoll(int listen_sock_fd);
+    int     getEpollFd();
+    int     getNbEvents();
+    struct epoll_event  getEventsStruct();
 };
 
 #endif
