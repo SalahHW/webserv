@@ -22,6 +22,8 @@ class EpollManagement {
     int     getEpollFd();
     int     getNbEvents();
     struct epoll_event  getEventsStruct();
+    void    EpollInit(int listen_sock_fd); 
+    void    startToListen(int listen_sock_fd);
 };
 
 #endif
