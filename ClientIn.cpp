@@ -1,7 +1,16 @@
 #include "ClientIn.hpp"
 
-ClientIn::ClientIn(int listen_sock_fd) {
-
+ClientIn::ClientIn(int listen_sock_fd, EpollManagement epoll) {
+    try {
+        CreateClientSock(listen_sock_fd);
+        makeSocketNonBlocking();
+        setSocketBufferSize(65536, 65536);
+        epoll.addClientToEpoll(this->client_fd);
+    }
+    catch(const ClientException& excp) {
+        std::cerr << "Client error: " << excp.what() << std::endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 ClientIn::~ClientIn() {
