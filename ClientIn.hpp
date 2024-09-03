@@ -10,6 +10,8 @@
 #include <netinet/in.h>
 #include "EpollManagement.hpp"
 
+class EpollManagement;
+
 class   ClientIn {
     private:
     int client_fd;

@@ -17,12 +17,12 @@ ServerIn::~ServerIn() {
     close(this->listen_sock_fd);
 }
 
-ServerIn::ServerIn(const ServerIn& src) {
-
+ServerIn::ServerIn(const ServerIn& src) : listen_sock_fd(src.listen_sock_fd), addr(src.addr) {
 }
 
 ServerIn&   ServerIn::operator=(const ServerIn& src) {
-
+    this->listen_sock_fd = src.listen_sock_fd;
+    return *this;
 }
 
 int ServerIn::getListenSockFd() {
