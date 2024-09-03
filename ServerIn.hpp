@@ -7,6 +7,7 @@
 #include <netinet/in.h> //sockaddr_in
 #include <stdlib.h> //exit
 #include <iostream> //cerr
+#include <unistd.h>
 
 #define PORT 8080
 
