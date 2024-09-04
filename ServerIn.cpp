@@ -14,7 +14,7 @@ ServerIn::ServerIn() {
 }
 
 ServerIn::~ServerIn() {
-    close(this->listen_sock_fd);
+    //close(this->listen_sock_fd);
 }
 
 ServerIn::ServerIn(const ServerIn& src) : listen_sock_fd(src.listen_sock_fd), addr(src.addr) {
