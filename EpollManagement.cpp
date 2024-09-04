@@ -13,7 +13,7 @@ EpollManagement::EpollManagement(int listen_sock_fd) {
 }
 
 EpollManagement::~EpollManagement() {
-    close(this->epoll_fd);
+    //close(this->epoll_fd);
 }
 
 EpollManagement::EpollManagement(const EpollManagement& src) : epoll_fd(src.epoll_fd), nb_events(src.nb_events) {

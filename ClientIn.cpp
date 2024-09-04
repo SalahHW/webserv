@@ -13,7 +13,7 @@ ClientIn::ClientIn(int listen_sock_fd, EpollManagement epoll) {
 }
 
 ClientIn::~ClientIn() {
-    close(this->client_fd);
+   // close(this->client_fd);
 }
 
 ClientIn::ClientIn(const ClientIn& src) : client_fd(src.client_fd), client_addr(src.client_addr), client_len(src.client_len), flags(src.flags) {
