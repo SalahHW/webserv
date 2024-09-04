@@ -8,6 +8,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "EpollManagement.hpp"
+
+class EpollManagement;
 
 class   ClientIn {
     private:
@@ -17,7 +20,7 @@ class   ClientIn {
     int flags;
     
     public:
-    ClientIn(int listen_sock_fd);
+    ClientIn(int listen_sock_fd, EpollManagement epoll);
     ~ClientIn();
     ClientIn(const ClientIn& src);
     ClientIn& operator=(const ClientIn& src);
