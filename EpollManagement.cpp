@@ -67,13 +67,31 @@ void    EpollManagement::startToListen(int listen_sock_fd) {
             throw EpollException("epoll_wait");
         }
         for (int i = 0; i < this->nb_events; i++) {
+            ClientIn client(listen_sock_fd);
             if (events[i].data.fd == listen_sock_fd) {
-                ClientIn client(listen_sock_fd, *this);
+                addClientToEpoll(client.getClientFd());
                 std::cout << "Connected" << std::endl;
             }
-            //else {
-            //    handleClientData();
-           // }
+            else {
+                handleClientData(this->epoll_fd, client.getClientFd());
+            }
         }
     }   
+}
+
+void    EpollManagement::handleClientData(int epoll_fd, int client_fd) {
+    char buffer[1024];
+    ssize_t count = recv(client_fd, buffer, sizeof(buffer), 0);
+    if (count == -1) {
+        epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
+        throw EpollException("recv");
+    }
+    else if (count == 0) {
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
+        throw EpollException("Client disconnected");
+    }
+    else {
+        buffer[count] = '\0';
+        std::cout << "Request: " << buffer << std::endl;
+    }
 }
