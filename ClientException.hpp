@@ -1,17 +1,16 @@
 #ifndef CLIENTEXCEPTION_HPP
 #define CLIENTEXCEPTION_HPP
 
-#include    <stdexcept>
-#include    <cstdlib>
-#include    <cerrno>
-#include    <cstring>
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
+#include <stdexcept>
 
-class   ClientException : public std::runtime_error {
-    public:
-    explicit    ClientException(const std::string& excp)
-        : std::runtime_error(excp) {
-            //exit(EXIT_FAILURE);
-        }  
+class ClientException : public std::runtime_error {
+public:
+  explicit ClientException(const std::string &excp) : std::runtime_error(excp) {
+    // exit(EXIT_FAILURE);
+  }
 };
 
 #endif
