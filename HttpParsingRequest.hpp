@@ -5,9 +5,16 @@
 #include <iostream>
 #include <map>
 #include <sstream>
-#include <string>
 #include <unistd.h>
 #include <vector>
+
+
+enum HttpStatusCode {
+    OK = 200,
+    BAD_REQUEST = 400,
+    LENGTH_REQUIRED = 411,
+    INTERNAL_SERVER_ERROR = 500
+};
 
 struct HttpRequest {
     std::string method;
