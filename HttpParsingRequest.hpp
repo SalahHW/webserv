@@ -10,26 +10,28 @@
 #include <vector>
 
 struct HttpRequest {
-  std::string method;
-  std::string uri;
-  std::string version;
-  std::map<std::string, std::string> headers;
-  std::string body;
+    std::string method;
+    std::string uri;
+    std::string version;
+    std::map<std::string, std::string> headers;
+    std::string body;
 };
 
 class HttpParsing {
 private:
-  std::string request;
+    std::string request;
+    struct HttpRequest requestParsed;
 
 public:
-  HttpParsing(std::string requestToParse);
-  ~HttpParsing();
-  HttpParsing(const HttpParsing &src);
-  HttpParsing &operator=(const HttpParsing &src);
-  void parseRequestLine(const std::string &requestLine,
-                        HttpRequest &httpRequest);
-  void parseHeaders(const std::string &headerLines, HttpRequest &httpRequest);
-  HttpRequest parseHttpRequest(const std::string &rawRequest);
+    HttpParsing(std::string requestToParse);
+    ~HttpParsing();
+    HttpParsing(const HttpParsing& src);
+    HttpParsing& operator=(const HttpParsing& src);
+    void parseRequestLine(const std::string& requestLine,
+        HttpRequest& httpRequest);
+    void parseHeaders(const std::string& headerLines, HttpRequest& httpRequest);
+    void parseHttpRequest(const std::string& rawRequest);
+    void showHttpRequest();
 };
 
 #endif
