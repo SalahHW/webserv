@@ -85,6 +85,6 @@ void EpollManagement::handleClientData(int epoll_fd, int client_fd)
     } else {
         buffer[count] = '\0';
         // std::cout << "Request: " << buffer << std::endl;
-        HttpParsing HttpParsing((std::string)buffer);
+        HttpParsing HttpParsing((std::string)buffer, client_fd);
     }
 }
