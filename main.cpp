@@ -1,8 +1,9 @@
-#include "ServerIn.hpp"
-#include "EpollManagement.hpp"
 #include "ClientIn.hpp"
+#include "EpollManagement.hpp"
+#include "ServerIn.hpp"
 
-int main() {
+int main()
+{
     ServerIn Server;
     EpollManagement Epoll(Server.getListenSockFd());
 }
