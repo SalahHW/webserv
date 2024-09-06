@@ -40,11 +40,12 @@ public:
     ~HttpParsing();
     HttpParsing(const HttpParsing& src);
     HttpParsing& operator=(const HttpParsing& src);
+    const HttpRequest& getHttpRequest() const;
     bool parseRequestLine(std::string requestLine);
     bool parseHeaders(const std::string& headerLines);
     void parseHttpRequest();
     void showHttpRequest();
-    void sendHttpError(HttpStatusCode statuscode);
+    void sendHttpError(HttpStatusCode statuscode) const;
 };
 
 #endif

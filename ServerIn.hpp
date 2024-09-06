@@ -22,11 +22,11 @@ public:
     ServerIn(const ServerIn& src);
     ServerIn& operator=(const ServerIn& src);
     void createSocket();
-    void bindSocket();
-    void makeSocketNonBlocking();
-    void setToListen();
-    int getListenSockFd();
-    struct sockaddr_in getAddr();
+    void bindSocket() const;
+    void makeSocketNonBlocking() const;
+    void setToListen() const;
+    const int& getListenSockFd() const;
+    const struct sockaddr_in& getAddr() const;
 };
 
 #endif

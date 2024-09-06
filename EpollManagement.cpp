@@ -30,9 +30,9 @@ EpollManagement& EpollManagement::operator=(const EpollManagement& src)
     return *this;
 }
 
-int EpollManagement::getEpollFd() { return this->epoll_fd; }
+const int& EpollManagement::getEpollFd() const { return this->epoll_fd; }
 
-int EpollManagement::getNbEvents() { return this->nb_events; }
+const int& EpollManagement::getNbEvents() const { return this->nb_events; }
 
 void EpollManagement::EpollInit()
 {
@@ -42,7 +42,7 @@ void EpollManagement::EpollInit()
     }
 }
 
-void EpollManagement::addToEpoll(int sock_fd)
+void EpollManagement::addToEpoll(int sock_fd) const
 {
     struct epoll_event event;
     event.events = EPOLLIN;
@@ -66,13 +66,13 @@ void EpollManagement::startToListen(int listen_sock_fd)
             if (events[i].data.fd == listen_sock_fd) {
                 ClientIn client(listen_sock_fd, *this);
             } else {
-                handleClientData(this->epoll_fd, events[i].data.fd);
+                handleClientData(events[i].data.fd);
             }
         }
     }
 }
 
-void EpollManagement::handleClientData(int epoll_fd, int client_fd)
+void EpollManagement::handleClientData(int client_fd) const
 {
     char buffer[1024];
     ssize_t count = recv(client_fd, buffer, sizeof(buffer), 0);
@@ -80,8 +80,7 @@ void EpollManagement::handleClientData(int epoll_fd, int client_fd)
         epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
         throw EpollException("recv");
     } else if (count == 0) {
-        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
-        throw EpollException("Client disconnected");
+        epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
     } else {
         buffer[count] = '\0';
         // std::cout << "Request: " << buffer << std::endl;

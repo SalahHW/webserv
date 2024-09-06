@@ -22,12 +22,12 @@ public:
     ~EpollManagement();
     EpollManagement(const EpollManagement& src);
     EpollManagement& operator=(const EpollManagement& src);
-    void addToEpoll(int listen_sock_fd);
-    int getEpollFd();
-    int getNbEvents();
+    void addToEpoll(int listen_sock_fd) const;
+    const int& getEpollFd() const;
+    const int& getNbEvents() const;
     void EpollInit();
     void startToListen(int listen_sock_fd);
-    void handleClientData(int epoll_fd, int client_fd);
+    void handleClientData(int client_fd) const;
 };
 
 #endif

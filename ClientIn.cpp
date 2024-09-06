@@ -31,16 +31,16 @@ ClientIn& ClientIn::operator=(const ClientIn& src)
     return *this;
 }
 
-int ClientIn::getClientFd() { return this->client_fd; }
+const int& ClientIn::getClientFd() const { return this->client_fd; }
 
-struct sockaddr_in ClientIn::getClientAddr()
+const struct sockaddr_in& ClientIn::getClientAddr() const
 {
     return this->client_addr;
 }
 
-socklen_t ClientIn::getClientLen() { return this->client_len; }
+const socklen_t& ClientIn::getClientLen() const { return this->client_len; }
 
-int ClientIn::getFlags() { return this->flags; }
+const int& ClientIn::getFlags() const { return this->flags; }
 
 void ClientIn::CreateClientSock(int listen_sock_fd)
 {
@@ -61,7 +61,7 @@ void ClientIn::makeSocketNonBlocking()
         throw ClientException("fcntl");
 }
 
-void ClientIn::setSocketBufferSize(int recvBufSize, int sendBufSize)
+void ClientIn::setSocketBufferSize(int recvBufSize, int sendBufSize) const
 {
     if (setsockopt(this->client_fd, SOL_SOCKET, SO_RCVBUF, &recvBufSize,
             sizeof(recvBufSize))
