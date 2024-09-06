@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   HttpParsingException.hpp                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/06 16:03:10 by joakoeni          #+#    #+#             */
+/*   Updated: 2024/09/06 16:03:12 by joakoeni         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HTTPPARSINGEXCEPTION_HPP
 #define HTTPPARSINGEXCEPTION_HPP
 
