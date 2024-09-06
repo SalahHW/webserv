@@ -30,9 +30,9 @@ ServerIn& ServerIn::operator=(const ServerIn& src)
     return *this;
 }
 
-int ServerIn::getListenSockFd() { return this->listen_sock_fd; }
+const int& ServerIn::getListenSockFd() const { return this->listen_sock_fd; }
 
-struct sockaddr_in ServerIn::getAddr()
+const struct sockaddr_in& ServerIn::getAddr() const
 {
     return this->addr;
 }
@@ -53,19 +53,19 @@ void ServerIn::createSocket()
     this->addr.sin_addr.s_addr = INADDR_ANY;
 }
 
-void ServerIn::bindSocket()
+void ServerIn::bindSocket() const
 {
     if (bind(this->listen_sock_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
         throw SocketException("bind");
 }
 
-void ServerIn::setToListen()
+void ServerIn::setToListen() const
 {
     if (listen(this->listen_sock_fd, SOMAXCONN) == -1)
         throw SocketException("listen");
 }
 
-void ServerIn::makeSocketNonBlocking()
+void ServerIn::makeSocketNonBlocking() const
 {
     int flags = fcntl(this->listen_sock_fd, F_GETFL, 0);
     if (flags == -1)

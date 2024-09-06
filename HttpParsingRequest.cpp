@@ -24,10 +24,18 @@ HttpParsing& HttpParsing::operator=(const HttpParsing& src)
     return *this;
 }
 
-void HttpParsing::sendHttpError(HttpStatusCode statusCode)
+const HttpRequest& HttpParsing::getHttpRequest() const
+{
+    return this->requestParsed;
+}
+
+void HttpParsing::sendHttpError(HttpStatusCode statusCode) const
 {
     std::string message;
     switch (statusCode) {
+    case OK:
+        message = "HTTP/1.1 200 OK\r\n\r\n";
+        break;
     case BAD_REQUEST:
         message = "HTTP/1.1 400 Bad Request\r\n\r\n";
         break;

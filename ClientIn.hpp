@@ -24,13 +24,13 @@ public:
     ~ClientIn();
     ClientIn(const ClientIn& src);
     ClientIn& operator=(const ClientIn& src);
-    int getClientFd();
-    struct sockaddr_in getClientAddr();
-    socklen_t getClientLen();
-    int getFlags();
+    const int& getClientFd() const;
+    const struct sockaddr_in& getClientAddr() const;
+    const socklen_t& getClientLen() const;
+    const int& getFlags() const;
     void CreateClientSock(int listen_sock_fd);
     void makeSocketNonBlocking();
-    void setSocketBufferSize(int recvBufSize, int sendBufSize);
+    void setSocketBufferSize(int recvBufSize, int sendBufSize) const;
 };
 
 #endif
