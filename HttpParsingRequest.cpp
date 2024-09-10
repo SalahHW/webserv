@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 16:03:15 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/09/06 16:03:16 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/09/10 15:41:58 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void HttpParsing::sendHttpError(HttpStatusCode statusCode) const
     std::string message;
     switch (statusCode) {
     case OK:
-        message = "HTTP/1.1 200 OK\r\n\r\n";
+        message = "HTTP/1.1 200 OK";
         break;
     case BAD_REQUEST:
         message = "HTTP/1.1 400 Bad Request\r\n\r\n";
@@ -70,7 +70,13 @@ void HttpParsing::sendHttpError(HttpStatusCode statusCode) const
         message = "HTTP/1.1 500 Internal Server Error\r\n\r\n";
         break;
     }
-    write(this->client_fd, message.c_str(), message.size());
+
+    ssize_t bytesWritten = write(this->client_fd, message.c_str(), message.size());
+    if (bytesWritten == -1) {
+        std::cerr << "Error sending HTTP response: " << strerror(errno) << std::endl;
+        // implemente un truc pour supp le client et tout ...
+    }
+    // shutdown(this->client_fd, SHUT_WR);
 }
 
 bool HttpParsing::parseRequestLine(std::string requestLine)
@@ -87,6 +93,15 @@ bool HttpParsing::parseRequestLine(std::string requestLine)
     return true;
 }
 
+std::string HttpParsing::trim(const std::string& str)
+{
+    const std::string::size_type start = str.find_first_not_of(" \t\r\n");
+    if (start == std::string::npos)
+        return "";
+    const std::string::size_type end = str.find_last_not_of(" \t\r\n");
+    return str.substr(start, end - start + 1);
+}
+
 bool HttpParsing::parseHeaders(const std::string& headerLines)
 {
     std::istringstream stream(headerLines);
@@ -97,8 +112,8 @@ bool HttpParsing::parseHeaders(const std::string& headerLines)
             this->requestParsed.status = BAD_REQUEST;
             return false;
         }
-        std::string headerName = line.substr(0, pos);
-        std::string headerValue = line.substr(pos + 2);
+        std::string headerName = trim(line.substr(0, pos));
+        std::string headerValue = trim(line.substr(pos + 2));
         if (!headerValue.empty() && headerValue[headerValue.size() - 1] == '\r') {
             headerValue.erase(headerValue.size() - 1);
         }
@@ -112,13 +127,13 @@ void HttpParsing::parseHttpRequest()
     this->requestParsed.status = OK;
     std::string::size_type pos = this->request.find("\r\n");
     if (pos == std::string::npos) {
-        throw HttpParsingException("Bad Request.");
+        throw HttpParsingException("Bad Request: No request line.");
     }
     if (!parseRequestLine(this->request.substr(0, pos))) {
-        throw HttpParsingException("Bad Request.");
+        throw HttpParsingException("Bad Request: Invalid request line.");
     }
     if (!parseHeaders(this->request.substr(pos + 2, this->request.find("\r\n\r\n") - pos - 2))) {
-        throw HttpParsingException("Bad Request.");
+        throw HttpParsingException("Bad Request: Invalid headers.");
     }
     if (this->requestParsed.headers.find("Content-Length") == this->requestParsed.headers.end() && this->requestParsed.method == "POST") {
         this->requestParsed.status = BAD_REQUEST;
@@ -140,4 +155,5 @@ void HttpParsing::showHttpRequest()
         std::cout << it->first << ": " << it->second << std::endl;
     }
     std::cout << "Body: " << requestParsed.body << std::endl;
+    sendHttpError(this->requestParsed.status);
 }

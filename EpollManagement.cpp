@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 16:02:45 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/09/06 16:02:49 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/09/10 15:19:53 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ void EpollManagement::startToListen(int listen_sock_fd)
     struct epoll_event events[MAX_EVENTS];
     std::cout << "----------STARTING TO LISTENING----------" << std::endl;
     while (1) {
-        std::cout << "epoll fd = " << this->epoll_fd << std::endl;
         this->nb_events = epoll_wait(this->epoll_fd, events, MAX_EVENTS, -1);
         if (this->nb_events == -1) {
             throw EpollException("epoll_wait " + std::string(strerror(errno)));

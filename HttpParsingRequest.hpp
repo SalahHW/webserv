@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 16:03:29 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/09/06 16:03:33 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/09/10 15:41:08 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 #define HTTPPARSINGREQUEST_HPP
 
 #include "HttpParsingException.hpp"
+#include <cerrno>
 #include <cstring>
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <sys/socket.h>
 #include <unistd.h>
 #include <vector>
 
@@ -44,7 +46,7 @@ class HttpParsing {
 private:
     std::string request;
     struct HttpRequest requestParsed;
-    enum HttpStatusCode statusCode;
+    // enum HttpStatusCode statusCode;
     int client_fd;
 
 public:
@@ -58,6 +60,7 @@ public:
     void parseHttpRequest();
     void showHttpRequest();
     void sendHttpError(HttpStatusCode statuscode) const;
+    std::string trim(const std::string& str);
 };
 
 #endif
