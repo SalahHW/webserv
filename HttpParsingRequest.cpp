@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 16:03:15 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/09/10 15:41:58 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/09/10 16:08:36 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,12 @@ const HttpRequest& HttpParsing::getHttpRequest() const
     return this->requestParsed;
 }
 
-void HttpParsing::sendHttpError(HttpStatusCode statusCode) const
+void HttpParsing::sendHttpError(HttpStatusCode statusCode) const // remplaer par des fonctions
 {
     std::string message;
     switch (statusCode) {
     case OK:
-        message = "HTTP/1.1 200 OK";
+        message = "HTTP/1.1 200 OK\r\nContent-Length: 11\r\n\r\nmarche bien";
         break;
     case BAD_REQUEST:
         message = "HTTP/1.1 400 Bad Request\r\n\r\n";
@@ -76,7 +76,6 @@ void HttpParsing::sendHttpError(HttpStatusCode statusCode) const
         std::cerr << "Error sending HTTP response: " << strerror(errno) << std::endl;
         // implemente un truc pour supp le client et tout ...
     }
-    // shutdown(this->client_fd, SHUT_WR);
 }
 
 bool HttpParsing::parseRequestLine(std::string requestLine)
