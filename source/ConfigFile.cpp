@@ -5,20 +5,23 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/04 02:14:59 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/04 02:14:59 by sbouheni         ###   ########.fr       */
+/*   Created: 2024/09/11 04:06:19 by sbouheni          #+#    #+#             */
+/*   Updated: 2024/09/11 04:06:19 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ConfigFile.hpp"
 
-ConfigFile::~ConfigFile()
-{
-}
+ConfigFile::~ConfigFile() { }
 
 ConfigFile::ConfigFile(string const& configFilePath)
+    : rootBlock("root")
 {
     readConfigFile(configFilePath);
+
+    // Debug print
+    cout << endl << "Printing config file structure:" << endl;
+    rootBlock.print();
 }
 
 void ConfigFile::readConfigFile(const string& fileName)
@@ -27,61 +30,72 @@ void ConfigFile::readConfigFile(const string& fileName)
     utils::openFile(fileName, file);
     string line;
 
+    stack<Block*> blockStack;
+    blockStack.push(&rootBlock);
+
     while (getline(file, line)) {
         string cleanedLine = cleanLine(line);
-        if (!cleanedLine.empty())
-            handleLine(cleanedLine, file, "global");
+        if (!cleanedLine.empty()) {
+            handleLine(cleanedLine, file, blockStack);
+        }
     }
     file.close();
 }
 
 // Function to parse the contents of a block recursively
-void ConfigFile::parseBlock(ifstream& file, const string& blockName)
+void ConfigFile::parseBlock(ifstream& file, stack<Block*>& blockStack)
 {
     string line;
-    cout << "Entering block: " << blockName << endl;
+    Block* currentBlock = blockStack.top();
 
     while (getline(file, line)) {
         string cleanedLine = cleanLine(line);
-        if (cleanedLine.empty())
-            continue; // Skip empty lines
+        if (cleanedLine.empty()) {
+            continue;
+        }
+
         if (cleanedLine == "}") {
-            cout << "Exiting block: " << blockName << endl;
+            cout << "Exiting block: " << currentBlock->getName() << endl;
+            blockStack.pop();
             break;
         }
-        handleLine(cleanedLine, file, blockName);
+
+        handleLine(cleanedLine, file, blockStack);
     }
 }
 
-void ConfigFile::handleLine(const string& cleanedLine, ifstream& file, const string& blockName)
+void ConfigFile::handleLine(const string& cleanedLine, ifstream& file, stack<Block*>& blockStack)
 {
+    Block* currentBlock = blockStack.top();
+
     if (isDirective(cleanedLine)) {
-        processLine(cleanedLine, blockName); // Process directive
+        processLine(cleanedLine, currentBlock);
     } else {
-        // Check if block name contains '{'
         size_t openBracePos = cleanedLine.find('{');
         string blockToParse = openBracePos == string::npos ? cleanedLine : cleanLine(cleanedLine.substr(0, openBracePos));
 
-        // If blockToParse is empty, it means there is an anonymous block, which is invalid
         if (blockToParse.empty()) {
             throw runtime_error("Unnamed block encountered.");
         }
 
-        // If no '{', look for it
+        Block* newBlock = new Block(blockToParse, currentBlock);
+
+        blockStack.push(newBlock);
+
         if (openBracePos == string::npos && !findOpeningBrace(file)) {
             throw runtime_error("Expected '{' after block name: " + blockToParse);
         } else {
-            parseBlock(file, blockToParse);
+            parseBlock(file, blockStack);
         }
     }
 }
 
-void ConfigFile::processLine(const string& cleanedLine, const string& blockName)
+void ConfigFile::processLine(const string& cleanedLine, Block* currentBlock)
 {
     if (isDirective(cleanedLine)) {
-        cout << "Directive in " << blockName << ": " << cleanedLine << endl;
+        currentBlock->addDirective(cleanedLine);
     } else {
-        throw runtime_error("Unexpected content in block '" + blockName + "': " + cleanedLine);
+        throw runtime_error("Unexpected content in block '" + currentBlock->getName() + "': " + cleanedLine);
     }
 }
 
@@ -93,7 +107,7 @@ bool ConfigFile::findOpeningBrace(ifstream& file)
         string cleanedLine = cleanLine(line);
         if (!cleanedLine.empty()) {
             if (cleanedLine == "{") {
-                return true; // Found the brace
+                return true;
             } else {
                 throw runtime_error("Expected '{' but found: " + cleanedLine);
             }
@@ -102,7 +116,8 @@ bool ConfigFile::findOpeningBrace(ifstream& file)
     throw runtime_error("End of file reached without finding '{'");
 }
 
-string ConfigFile::cleanLine(const string& originalLine) const
+string
+ConfigFile::cleanLine(const string& originalLine) const
 {
     string cleanedLine;
 
