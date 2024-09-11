@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/11 03:24:48 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/11 03:30:08 by sbouheni         ###   ########.fr       */
+/*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
+/*   Updated: 2024/09/11 18:04:23 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 Block::~Block()
 {
+    for (size_t i = 0; i < subBlocks.size(); ++i) {
+        delete subBlocks[i];
+    }
 }
 
 Block::Block(const string& name)
@@ -22,18 +25,41 @@ Block::Block(const string& name)
     cout << name << " block created" << endl;
 }
 
-void Block::addSubBlock(Block& block)
+Block::Block(const string& name, Block* parent)
+    : name(name)
 {
-    subBlocks[block.name] = &block;
+    cout << name << " block created and added to " << parent->name << endl;
+    parent->addSubBlock(this);
 }
 
-void Block::print(int indent = 0) const
+void Block::print(int indent) const
 {
     for (int i = 0; i < indent; ++i)
-        cout << "  ";
-    cout << "Block: " << name << endl;
+        std::cout << "  ";
+    std::cout << "Block: " << name << std::endl;
 
-    for (const auto& subBlockPair : subBlocks) {
-        subBlockPair.second->print(indent + 1);
+    for (size_t i = 0; i < directives.size(); ++i) {
+        for (int j = 0; j < indent + 1; ++j)
+            std::cout << "  ";
+        std::cout << "Directive: " << directives[i] << std::endl;
     }
+
+    for (size_t i = 0; i < subBlocks.size(); ++i) {
+        subBlocks[i]->print(indent + 1);
+    }
+}
+
+string const& Block::getName() const
+{
+    return name;
+}
+
+void Block::addSubBlock(Block* block)
+{
+    subBlocks.push_back(block);
+}
+
+void Block::addDirective(const string& directive)
+{
+    directives.push_back(directive);
 }
