@@ -4,7 +4,7 @@
 		{
 			"cwd": "/home/salah/Projects/webserv",
 			"binaryPath": "/home/salah/Projects/webserv/webserv",
-			"binaryArgs": ["config/www.conf"]
+			"binaryArgs": ["config/webserv.conf"]
 		}
 	],
 	"files.associations": {
@@ -24,6 +24,36 @@
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
 		"system_error": "cpp",
-		"tuple": "cpp"
+		"tuple": "cpp",
+		"array": "cpp",
+		"bit": "cpp",
+		"cctype": "cpp",
+		"clocale": "cpp",
+		"cmath": "cpp",
+		"compare": "cpp",
+		"concepts": "cpp",
+		"cstdarg": "cpp",
+		"cstddef": "cpp",
+		"cstdint": "cpp",
+		"cstdio": "cpp",
+		"cstdlib": "cpp",
+		"cwchar": "cpp",
+		"cwctype": "cpp",
+		"map": "cpp",
+		"exception": "cpp",
+		"algorithm": "cpp",
+		"memory": "cpp",
+		"numeric": "cpp",
+		"random": "cpp",
+		"type_traits": "cpp",
+		"utility": "cpp",
+		"fstream": "cpp",
+		"initializer_list": "cpp",
+		"iosfwd": "cpp",
+		"iostream": "cpp",
+		"limits": "cpp",
+		"numbers": "cpp",
+		"typeinfo": "cpp",
+		"sstream": "cpp"
 	}
 }
