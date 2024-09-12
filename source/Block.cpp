@@ -6,11 +6,13 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/11 18:04:23 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/12 01:55:53 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Block.hpp"
+
+using namespace std;
 
 Block::~Block()
 {

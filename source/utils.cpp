@@ -6,13 +6,15 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:22:18 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/10 16:28:31 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/12 01:53:42 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
 
-void utils::openFile(const std::string& fileName, std::ifstream& file)
+using namespace std;
+
+void utils::openFile(const string& fileName, ifstream& file)
 {
     file.open(fileName.c_str());
     if (!file.is_open()) {
