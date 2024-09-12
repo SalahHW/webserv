@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 00:40:40 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/12 01:54:28 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/12 14:04:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ class ConfigFile {
 public:
     ~ConfigFile();
     ConfigFile(std::string const& configFilePath);
+
+    const Block& getRootBlock() const;
 
 private:
     ConfigFile();
