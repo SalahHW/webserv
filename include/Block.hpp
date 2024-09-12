@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/11 18:02:40 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/12 01:55:42 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,23 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 class Block {
 public:
     ~Block();
-    Block(const string& name);
-    Block(const string& name, Block* parent);
+    Block(const std::string& name);
+    Block(const std::string& name, Block* parent);
 
     void print(int indent = 0) const;
-    string const& getName() const;
+    std::string const& getName() const;
     void addSubBlock(Block* block);
-    void addDirective(const string& directive);
+    void addDirective(const std::string& directive);
 
 private:
     Block();
     Block(Block const& other);
     Block& operator=(Block const& other);
 
-    string name;
-    vector<Block*> subBlocks;
-    vector<string> directives;
+    std::string name;
+    std::vector<Block*> subBlocks;
+    std::vector<std::string> directives;
 };

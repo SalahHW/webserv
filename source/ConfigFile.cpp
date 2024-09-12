@@ -12,6 +12,8 @@
 
 #include "ConfigFile.hpp"
 
+using namespace std;
+
 ConfigFile::~ConfigFile() { }
 
 ConfigFile::ConfigFile(string const& configFilePath)
@@ -20,7 +22,8 @@ ConfigFile::ConfigFile(string const& configFilePath)
     readConfigFile(configFilePath);
 
     // Debug print
-    cout << endl << "Printing config file structure:" << endl;
+    cout << endl
+         << "Printing config file structure:" << endl;
     rootBlock.print();
 }
 
@@ -69,7 +72,7 @@ void ConfigFile::handleLine(const string& cleanedLine, ifstream& file, stack<Blo
     Block* currentBlock = blockStack.top();
 
     if (isDirective(cleanedLine)) {
-        processLine(cleanedLine, currentBlock);
+        processDirective(cleanedLine, currentBlock);
     } else {
         size_t openBracePos = cleanedLine.find('{');
         string blockToParse = openBracePos == string::npos ? cleanedLine : cleanLine(cleanedLine.substr(0, openBracePos));
@@ -90,7 +93,8 @@ void ConfigFile::handleLine(const string& cleanedLine, ifstream& file, stack<Blo
     }
 }
 
-void ConfigFile::processLine(const string& cleanedLine, Block* currentBlock)
+// Function to process a directive
+void ConfigFile::processDirective(const string& cleanedLine, Block* currentBlock)
 {
     if (isDirective(cleanedLine)) {
         currentBlock->addDirective(cleanedLine);
@@ -116,8 +120,8 @@ bool ConfigFile::findOpeningBrace(ifstream& file)
     throw runtime_error("End of file reached without finding '{'");
 }
 
-string
-ConfigFile::cleanLine(const string& originalLine) const
+// Function to clean a line of comments and whitespace
+string ConfigFile::cleanLine(const string& originalLine) const
 {
     string cleanedLine;
 
