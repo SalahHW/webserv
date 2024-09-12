@@ -27,6 +27,11 @@ ConfigFile::ConfigFile(string const& configFilePath)
     rootBlock.print();
 }
 
+const Block& ConfigFile::getRootBlock() const
+{
+    return (this->rootBlock);
+}
+
 void ConfigFile::readConfigFile(const string& fileName)
 {
     ifstream file;
