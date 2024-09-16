@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/12 01:55:53 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/16 07:55:42 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,15 @@ Block::~Block()
 Block::Block(const string& name)
     : name(name)
 {
-    cout << name << " block created" << endl;
+    tokenizeName();
+    cout << tokenizedName[0] << " block created" << endl;
 }
 
 Block::Block(const string& name, Block* parent)
     : name(name)
 {
-    cout << name << " block created and added to " << parent->name << endl;
+    tokenizeName();
+    cout << tokenizedName[0] << " block created and added to " << parent->name << endl;
     parent->addSubBlock(this);
 }
 
@@ -64,4 +66,16 @@ void Block::addSubBlock(Block* block)
 void Block::addDirective(const string& directive)
 {
     directives.push_back(directive);
+}
+
+void Block::tokenizeName()
+{
+    vector<string> tokens;
+    stringstream ss(name);
+    string token;
+
+    while (ss >> token) {
+        tokens.push_back(token);
+    }
+    tokenizedName = tokens;
 }
