@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/17 13:05:45 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/17 13:13:43 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void Block::printBlock(int indent) const
     for (size_t i = 0; i < directives.size(); ++i) {
         for (int j = 0; j < indent + 1; ++j)
             std::cout << "  ";
-        std::cout << "Directive: " << directives[i].getName() << std::endl;
+        std::cout << "Directive: " << directives[i].getFullDirectiveLine() << std::endl;
     }
 
     for (size_t i = 0; i < subBlocks.size(); ++i) {
