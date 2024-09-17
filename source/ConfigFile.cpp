@@ -25,6 +25,7 @@ ConfigFile::ConfigFile(string const& configFilePath)
     cout << endl
          << "Printing config file structure:" << endl;
     rootBlock.print();
+
 }
 
 const Block& ConfigFile::getRootBlock() const
