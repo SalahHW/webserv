@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/17 05:47:54 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/17 13:04:58 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ public:
     Block(const std::string& name);
     Block(const std::string& name, Block* parent);
 
-    void print(int indent = 0) const;
+    void printBlock(int indent = 0) const;
     std::string const& getName() const;
     std::vector<std::string> const& getTokenizedName() const;
     void addSubBlock(Block* block);
