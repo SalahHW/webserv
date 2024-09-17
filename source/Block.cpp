@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/17 05:49:19 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/17 13:05:45 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ Block::Block(const string& name, Block* parent)
     parent->addSubBlock(this);
 }
 
-void Block::print(int indent) const
+void Block::printBlock(int indent) const
 {
     for (int i = 0; i < indent; ++i)
         std::cout << "  ";
@@ -49,7 +49,7 @@ void Block::print(int indent) const
     }
 
     for (size_t i = 0; i < subBlocks.size(); ++i) {
-        subBlocks[i]->print(indent + 1);
+        subBlocks[i]->printBlock(indent + 1);
     }
 }
 
