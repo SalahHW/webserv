@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Webserv",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/webserv",  // Chemin vers ton exécutable
+            "args": ["config/webserv.conf"],  // Les arguments à passer à ton exécutable
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",  // Dossier de travail
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",  // Utilisation de GDB
+            "miDebuggerPath": "/usr/bin/gdb",  // Chemin vers GDB
+            "setupCommands": [
+                {
+                    "description": "Enable pretty printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "build",  // Cette ligne peut être omise si tu ne veux pas déclencher un build avant le débogage
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}
