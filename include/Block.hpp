@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/17 13:04:58 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/18 15:18:41 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,23 +22,26 @@
 class Block {
 public:
     ~Block();
-    Block(const std::string& name);
+    Block();
     Block(const std::string& name, Block* parent);
 
     void printBlock(int indent = 0) const;
     std::string const& getName() const;
     std::vector<std::string> const& getTokenizedName() const;
+    std::vector<Block*> const& getSubBlocks() const;
+    std::vector<Directive> const& getDirectives() const;
+    bool isRootBlock() const;
     void addSubBlock(Block* block);
     void addDirective(const Directive& directive);
 
 private:
-    Block();
     Block(Block const& other);
     Block& operator=(Block const& other);
     
     void tokenizeName();
 
     std::string name;
+    bool isRoot;
     std::vector<std::string> tokenizedName;
     std::vector<Block*> subBlocks;
     std::vector<Directive> directives;

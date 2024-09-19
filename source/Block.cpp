@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/17 13:13:43 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/19 14:16:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,19 @@ Block::~Block()
     }
 }
 
-Block::Block(const string& name)
-    : name(name)
+Block::Block()
 {
-    tokenizeName();
-    cout << tokenizedName[0] << " block created" << endl;
+    isRoot = true;
+    cout << "Root block created" << endl;
 }
 
 Block::Block(const string& name, Block* parent)
     : name(name)
+    , isRoot(false)
 {
     tokenizeName();
-    cout << tokenizedName[0] << " block created and added to " << parent->name << endl;
+    this->name = tokenizedName[0];
+    cout << this->name << " block created and added to " << parent->name << endl;
     parent->addSubBlock(this);
 }
 
@@ -55,7 +56,27 @@ void Block::printBlock(int indent) const
 
 string const& Block::getName() const
 {
-    return name;
+    return (this->name);
+}
+
+vector<string> const& Block::getTokenizedName() const
+{
+    return (this->tokenizedName);
+}
+
+vector<Block*> const& Block::getSubBlocks() const
+{
+    return (this->subBlocks);
+}
+
+vector<Directive> const& Block::getDirectives() const
+{
+    return (this->directives);
+}
+
+bool Block::isRootBlock() const
+{
+    return (this->isRoot);
 }
 
 void Block::addSubBlock(Block* block)
