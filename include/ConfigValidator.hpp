@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 02:56:08 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/12 14:33:51 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/18 14:44:03 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include "ConfigFile.hpp"
 #include <algorithm>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -22,15 +23,22 @@ public:
     ~ConfigValidator();
     ConfigValidator(const ConfigFile& config);
 
-    void validateConfig();
-
 private:
     ConfigValidator(const ConfigValidator& other);
     ConfigValidator& operator=(const ConfigValidator& other);
 
+    void initValidBlocks();
+    void initServerBlock();
+    void initLocationBlock();
+    void initLimitExceptBlock();
+    void validateConfig();
     void validateBlock(const Block& block);
+    void validateDirective(const Directive& directive, const std::string& blockName);
     bool isValidBlockName(const std::string& blockName) const;
+    bool isValidDirectiveName(const std::string& directiveName, const std::string& blockName) const;
 
     const ConfigFile& config;
     bool isValid;
+    std::map<std::string, std::vector<std::string> > validDirectivesForBlock;
+    std::vector<std::string> validBlockNames;
 };

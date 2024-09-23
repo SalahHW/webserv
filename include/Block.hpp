@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/18 15:18:41 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:56:28 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,5 @@ private:
     std::vector<std::string> tokenizedName;
     std::vector<Block*> subBlocks;
     std::vector<Directive> directives;
+    std::vector<std::string> validBlockNames;
 };
