@@ -6,7 +6,7 @@
 #    By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/09/23 11:07:56 by sbouheni         ###   ########.fr        #
+#    Updated: 2024/09/23 11:12:30 by sbouheni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,9 +21,9 @@ OBJ_DIR					=	obj
 SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
 							parser/ConfigValidator.cpp							\
-							Block.cpp											\
-							Directive.cpp										\
-							utils.cpp
+							parser/Block.cpp									\
+							parser/Directive.cpp								\
+							utils/utils.cpp
 
 OBJS					=	$(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 
