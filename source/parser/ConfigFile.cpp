@@ -17,7 +17,7 @@ using namespace std;
 ConfigFile::~ConfigFile() { }
 
 ConfigFile::ConfigFile(string const& configFilePath)
-    : rootBlock("root")
+    : rootBlock()
 {
     readConfigFile(configFilePath);
 
