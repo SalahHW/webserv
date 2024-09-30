@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 02:56:08 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/18 14:44:03 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/09/30 11:52:10 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ public:
     ConfigValidator(const ConfigFile& config);
 
 private:
+    ConfigValidator();
     ConfigValidator(const ConfigValidator& other);
     ConfigValidator& operator=(const ConfigValidator& other);
 
