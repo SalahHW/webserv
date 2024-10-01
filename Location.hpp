@@ -1,6 +1,8 @@
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
+#include <string>
+
 class Location {
 private:
     std::string path;
