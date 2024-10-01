@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 05:40:12 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/30 11:18:08 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/01 09:54:49 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,11 @@ Directive::~Directive()
 {
 }
 
-Directive::Directive(const string& fullDirectiveLine)
-    : fullDirectiveLine(fullDirectiveLine)
+Directive::Directive(const string& directiveLine)
 {
+    if (!directiveLine.empty() && directiveLine[directiveLine.size() - 1] == ';') {
+        this->fullDirectiveLine = directiveLine.substr(0, directiveLine.size() - 1);
+    }
     tokenizeName();
 }
 
@@ -69,11 +71,8 @@ void Directive::tokenizeName()
     ss >> token;
     name = token;
     cout << "Name: " << name << endl;
-    
+
     while (ss >> token) {
-        if (!token.empty() && token[token.size() - 1] == ';') {
-            token = token.substr(0, token.size() - 1);
-        }
         arguments.push_back(token);
         cout << "Argument: " << token << endl;
     }
