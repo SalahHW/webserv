@@ -23,7 +23,6 @@ public:
     void setCLientMaxBodySize(int size);
     void setName(const std::string& name);
     void setErrorPages(std::vector<std::string> error);
-
     int getListenFd() const;
     int getPort() const;
     int getCLientMaxBodySize() const;

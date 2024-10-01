@@ -8,7 +8,7 @@ ServerHandler::~ServerHandler()
 {
 }
 
-void ServerHandler::addServer(const Server& src)
+void ServerHandler::addServer(int serverFd, const Server& src)
 {
-    this->serverList.push_back(src);
+    this->serverList.insert(std::make_pair(serverFd, src));
 }
