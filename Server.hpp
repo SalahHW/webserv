@@ -1,12 +1,34 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <string>
+#include <vector>
+
 class Server {
 private:
-    int listen_fd;
+    int listenFd;
     int port;
     std::string name;
     int clientMaxBodySize;
-    std::vestor<std::string> ErrorPages;
-    std::vector<Locationobj> routes;
-}
+    std::vector<std::string> ErrorPages;
+    std::vector<Locationrouteobj> routes;
+    Server& operator=(const Server& src);
+    Server(const Server& src);
+
+public:
+    Server();
+    ~Server();
+    void setListenFd(int fd);
+    void setPort(int port);
+    void setCLientMaxBodySize(int size);
+    void setName(const std::string& name);
+    void setErrorPages(std::vector<std::string> error);
+
+    int getListenFd() const;
+    int getPort() const;
+    int getCLientMaxBodySize() const;
+    const std::string& getName() const;
+    const std::vector<std::string>& getErrorPages() const;
+};
+
+#endif
