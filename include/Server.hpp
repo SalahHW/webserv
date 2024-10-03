@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/03 13:24:18 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/03 13:32:05 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ private:
     std::string name;
     int clientMaxBodySize;
     std::vector<std::string> ErrorPages;
-    std::vector<Locationrouteobj> routes;
+    // std::vector<Locationrouteobj> routes;
     Server& operator=(const Server& src);
     Server(const Server& src);
 
