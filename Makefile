@@ -6,7 +6,7 @@
 #    By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/09/30 14:18:56 by sbouheni         ###   ########.fr        #
+#    Updated: 2024/10/02 10:45:34 by sbouheni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,8 @@ OBJ_DIR					=	obj
 
 SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
-							parser/validator/ConfigValidator.cpp				\
+							parser/ConfigValidator.cpp							\
+							parser/DirectiveValidator.cpp						\
 							parser/Block.cpp									\
 							parser/Directive.cpp								\
 							utils/utils.cpp

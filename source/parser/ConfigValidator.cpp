@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 02:59:50 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/21 15:13:44 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/02 10:48:15 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ ConfigValidator::ConfigValidator(const ConfigFile& config)
     , isValid(true)
 {
     initValidBlocks();
+    DirectiveValidator directiveValidator;
+    this->directiveValidator = directiveValidator;
     validateConfig();
 
     if (!isValid) {
@@ -92,6 +94,9 @@ void ConfigValidator::validateDirective(const Directive& directive, const std::s
 {
     if (!isValidDirectiveName(directive.getName(), blockName)) {
         std::cerr << "Error: Invalid directive '" << directive.getName() << "' in block '" << blockName << "'" << std::endl;
+        isValid = false;
+    }
+    if (!this->directiveValidator.validate(directive)) {
         isValid = false;
     }
 }
