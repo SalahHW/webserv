@@ -1,23 +1,45 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   EpollManagement.hpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/06 16:02:57 by joakoeni          #+#    #+#             */
+/*   Updated: 2024/09/06 16:03:07 by joakoeni         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef EPOLL_MANAGEMENT_HPP
 #define EPOLL_MANAGEMENT_HPP
 
-#include <unistd.h>
-#include <sys/epoll.h>
+#include "ClientIn.hpp"
 #include "EpollException.hpp"
+#include <iostream>
+#include <sys/epoll.h>
+#include <unistd.h>
 
 #define MAX_EVENTS 10
 
-class EpollManagement {
-    private:
-    int epoll_fd;
-    struct epoll_event events[MAX_EVENTS];
+class ClientIn;
+class HttpParsing;
 
-    public:
+class EpollManagement {
+private:
+    int epoll_fd;
+    int nb_events;
+
+public:
     EpollManagement(int listen_sock_fd);
     ~EpollManagement();
     EpollManagement(const EpollManagement& src);
     EpollManagement& operator=(const EpollManagement& src);
-    void    addListenerToEpoll(int listen_sock_fd);
+    void addToEpoll(int listen_sock_fd) const;
+    const int& getEpollFd() const;
+    const int& getNbEvents() const;
+    void EpollInit();
+    void startToListen(int listen_sock_fd);
+    void handleClientData(int client_fd) const;
 };
 
 #endif

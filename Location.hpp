@@ -1,28 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   SocketException.hpp                                :+:      :+:    :+:   */
+/*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 16:03:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/09/06 16:03:50 by joakoeni         ###   ########.fr       */
+/*   Created: 2024/10/03 13:20:35 by joakoeni          #+#    #+#             */
+/*   Updated: 2024/10/03 13:20:35 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVEREXCEPTION_HPP
-#define SERVEREXCEPTION_HPP
+#ifndef LOCATION_HPP
+#define LOCATION_HPP
 
-#include <cstdlib>
-#include <stdexcept>
+#include <string>
 
-class SocketException : public std::runtime_error {
-public:
-    explicit SocketException(const std::string& excp)
-        : std::runtime_error(excp)
-    {
-        // exit(EXIT_FAILURE);
-    }
+class Location {
+private:
+    std::string path;
+    std::string rootDirectory;
+    std::string indexFile;
+    std::string redirectionPath;
+    bool autoIndex;
+    bool getAccepted;
+    bool postAccepted;
+    bool deleteAccepted;
+    int clientMaxBodySize;
 };
 
 #endif
