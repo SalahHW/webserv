@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/03 13:24:14 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/03 13:33:21 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 Server::Server() { }
 
-Server::Server(const Server& src) { }
+Server::Server(const Server& src) {
+    (void)src;
+ }
 
 Server::~Server() { }
-
-Server& Server::operator=(const Server& src) { }
 
 void Server::setListenFd(int fd)
 {

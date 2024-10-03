@@ -6,7 +6,7 @@
 #    By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/10/03 13:23:13 by sbouheni         ###   ########.fr        #
+#    Updated: 2024/10/03 13:34:05 by sbouheni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,13 @@ SRCS					=	main.cpp											\
 							parser/DirectiveValidator.cpp						\
 							parser/Block.cpp									\
 							parser/Directive.cpp								\
-							utils/utils.cpp
+							ClientIn.cpp										\
+							ServerIn.cpp										\
+							EpollManagement.cpp									\
+							HttpParsingRequest.cpp								\
+							Server.cpp											\
+							utils/utils.cpp										\
+							# ServerHandler.cpp									\
 
 OBJS					=	$(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 
