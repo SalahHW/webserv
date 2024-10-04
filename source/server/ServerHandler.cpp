@@ -3,24 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/03 13:24:21 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/04 18:19:52 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerHandler.hpp"
 
-ServerHandler::ServerHandler()
-{
-}
-
 ServerHandler::~ServerHandler()
 {
 }
 
-void ServerHandler::addServer(int serverFd, const Server& src)
+ServerHandler::ServerHandler(const ConfigFile& configFile)
 {
-    this->serverList.insert(std::make_pair(serverFd, src));
+    extractConfig(configFile);
+}
+
+void ServerHandler::extractConfig(const ConfigFile& configFile)
+{
+    //TODO: Extract the config file and create the servers
 }

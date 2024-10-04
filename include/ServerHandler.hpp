@@ -3,33 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:21:07 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/03 13:24:25 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/04 18:19:09 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVERHANDLER_HPP
-#define SERVERHANDLER_HPP
+#pragma once
 
+#include "ConfigFile.hpp"
 #include "Server.hpp"
-#include <iostream>
-#include <map>
-#include <string>
+#include <vector>
 
 class Server;
 
 class ServerHandler {
+public:
+    ~ServerHandler();
+    ServerHandler(const ConfigFile& configFile);
+
 private:
-    std::map<int, Server> serverList;
+    ServerHandler();
     ServerHandler(const ServerHandler& src);
     ServerHandler& operator=(const ServerHandler& src);
 
-public:
-    ServerHandler();
-    ~ServerHandler();
-    void addServer(int serverFd, const Server& src);
+    void extractConfig(const ConfigFile& configFile);
+    
+    std::vector<Server> serversList;
 };
-
-#endif
