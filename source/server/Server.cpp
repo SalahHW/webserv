@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/03 13:33:21 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/04 10:27:22 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,12 @@ void Server::setName(const std::string& name)
 
 void Server::setErrorPages(std::vector<std::string> error)
 {
-    this->ErrorPages = error;
+    this->errorPages = error;
+}
+
+void Server::addLocation(const Location& location)
+{
+    this->locations.push_back(location);
 }
 
 int Server::getListenFd() const
