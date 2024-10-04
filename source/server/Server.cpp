@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/04 10:27:22 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/04 10:31:36 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,5 @@ const std::string& Server::getName() const
 
 const std::vector<std::string>& Server::getErrorPages() const
 {
-    return this->ErrorPages;
+    return this->errorPages;
 }
