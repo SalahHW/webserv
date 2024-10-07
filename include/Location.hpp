@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:35 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/07 10:09:07 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/07 12:12:12 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define LOCATION_HPP
 
 #include <string>
+#include <iostream>
 
 class Location {
 public:
@@ -46,7 +47,7 @@ public:
     bool getDeleteAccepted() const;
     int getClientMaxBodySize() const;
 
-    void addLocation(const Location& location);
+    void displayLocationInfo() const;
 
 private:
     std::string path;

@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 10:20:11 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/07 10:07:05 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/07 12:11:16 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,3 +127,16 @@ int Location::getClientMaxBodySize() const
 	return this->clientMaxBodySize;
 }
 
+void Location::displayLocationInfo() const
+{
+    std::cout << "Location Information:" << std::endl;
+    std::cout << "- Path: " << path << std::endl;
+    std::cout << "- Root Directory: " << rootDirectory << std::endl;
+    std::cout << "- Index File: " << indexFile << std::endl;
+    std::cout << "- Redirection Path: " << redirectionPath << std::endl;
+    std::cout << "- Auto Index: " << (autoIndex ? "Enabled" : "Disabled") << std::endl;
+    std::cout << "- GET Accepted: " << (getAccepted ? "Yes" : "No") << std::endl;
+    std::cout << "- POST Accepted: " << (postAccepted ? "Yes" : "No") << std::endl;
+    std::cout << "- DELETE Accepted: " << (deleteAccepted ? "Yes" : "No") << std::endl;
+    std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes" << std::endl;
+}
