@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 02:59:50 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/02 10:48:15 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/04 18:46:05 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ ConfigValidator::ConfigValidator(const ConfigFile& config)
     validateConfig();
 
     if (!isValid) {
-        throw std::runtime_error("Invalid configuration");
+        // throw std::runtime_error("Invalid configuration");
     }
 }
 

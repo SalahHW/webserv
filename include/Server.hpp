@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/04 10:30:12 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/07 12:10:15 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,20 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
-// #include "Location.hpp"
-
-class Location; // TODO: remove after Location.hpp is created
+#include "Location.hpp"
 
 class Server {
 public:
     ~Server();
     Server();
+    Server(const Server& src);
+    Server& operator=(const Server& src);
 
     void setListenFd(int fd);
     void setPort(int port);
-    void setCLientMaxBodySize(int size);
+    void setClientMaxBodySize(int size);
     void setName(const std::string& name);
     void setErrorPages(std::vector<std::string> error);
 
@@ -35,13 +36,13 @@ public:
 
     int getListenFd() const;
     int getPort() const;
-    int getCLientMaxBodySize() const;
+    int getClientMaxBodySize() const;
     const std::string& getName() const;
     const std::vector<std::string>& getErrorPages() const;
 
+    void displayServerInfo() const;
+
 private:
-    Server(const Server& src);
-    Server& operator=(const Server& src);
     
     int listenFd;
     int port;
