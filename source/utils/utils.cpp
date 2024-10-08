@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:22:18 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/02 09:43:23 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/08 10:25:41 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,19 @@ string utils::removeComments(const string& line)
 
 bool utils::isIntCompatible(const string& str)
 {
-    if (str.empty())
+    if (str.empty()) {
         return false;
+    }
+    size_t start = (str[0] == '-') ? 1 : 0;
+    if (str.find_first_not_of("0123456789", start) != std::string::npos) {
+        return false;
+    }
     errno = 0;
-    char *endptr;
+    char* endptr;
     long value = std::strtol(str.c_str(), &endptr, 10);
-    if (errno == ERANGE || *endptr != '\0' || value > INT_MAX || value < INT_MIN)
+
+    if (errno == ERANGE || *endptr != '\0' || value > INT_MAX || value < INT_MIN) {
         return false;
+    }
     return true;
 }
