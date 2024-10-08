@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/09/19 14:16:48 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/08 17:44:58 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@ Block::~Block()
 {
     for (size_t i = 0; i < subBlocks.size(); ++i) {
         delete subBlocks[i];
+    }
+    for (size_t i = 0; i < directives.size(); ++i) {
+        delete directives[i];
     }
 }
 
@@ -46,7 +49,7 @@ void Block::printBlock(int indent) const
     for (size_t i = 0; i < directives.size(); ++i) {
         for (int j = 0; j < indent + 1; ++j)
             std::cout << "  ";
-        std::cout << "Directive: " << directives[i].getFullDirectiveLine() << std::endl;
+        std::cout << "Directive: " << directives[i]->getFullDirectiveLine() << std::endl;
     }
 
     for (size_t i = 0; i < subBlocks.size(); ++i) {
@@ -69,7 +72,7 @@ vector<Block*> const& Block::getSubBlocks() const
     return (this->subBlocks);
 }
 
-vector<Directive> const& Block::getDirectives() const
+vector<BaseDirective*> const& Block::getDirectives() const
 {
     return (this->directives);
 }
@@ -84,7 +87,7 @@ void Block::addSubBlock(Block* block)
     subBlocks.push_back(block);
 }
 
-void Block::addDirective(const Directive& directive)
+void Block::addDirective(BaseDirective* directive)
 {
     directives.push_back(directive);
 }

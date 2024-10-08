@@ -102,11 +102,18 @@ void ConfigFile::handleLine(const string& cleanedLine, ifstream& file, stack<Blo
 // Function to process a directive
 void ConfigFile::processDirective(const string& cleanedLine, Block* currentBlock)
 {
-    if (isDirective(cleanedLine)) {
-        currentBlock->addDirective(cleanedLine);
-    } else {
+    if (cleanedLine.empty() || !isDirective(cleanedLine)) {
         throw runtime_error("Unexpected content in block '" + currentBlock->getName() + "': " + cleanedLine);
     }
+
+    string directiveLine = cleanedLine.substr(0, cleanedLine.size() - 1);
+    string directiveName = extractDirectiveName(directiveLine);
+    BaseDirective* directive = directiveFactory.create(directiveName, currentBlock->getName());
+    if (!directive) {
+        throw runtime_error("Unknown directive: " + directiveName);
+    }
+    directive->setFullDirectiveLine(cleanedLine);
+    currentBlock->addDirective(directive);
 }
 
 // Function to search for the opening brace '{'
@@ -140,4 +147,14 @@ string ConfigFile::cleanLine(const string& originalLine) const
 bool ConfigFile::isDirective(const string& line)
 {
     return line.find(';') != string::npos;
+}
+
+// Function to extract the directive name from a line
+string ConfigFile::extractDirectiveName(const string& line) const
+{
+    std::stringstream ss(line);
+    std::string directiveName;
+    ss >> directiveName;
+
+    return directiveName;
 }

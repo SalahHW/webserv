@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:56 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 11:23:13 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/08 18:03:19 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@ BaseDirective::~BaseDirective() { }
 BaseDirective::BaseDirective(const std::string& currentContext)
     : currentContext(currentContext)
 {
+    tokenizeName();
 }
 
 BaseDirective::BaseDirective(const BaseDirective& other)
-    : name(other.name)
+    : fullDirectiveLine(other.fullDirectiveLine)
+    , name(other.name)
     , currentContext(other.currentContext)
     , arguments(other.arguments)
     , minArgs(other.minArgs)
@@ -32,6 +34,7 @@ BaseDirective::BaseDirective(const BaseDirective& other)
 BaseDirective& BaseDirective::operator=(const BaseDirective& other)
 {
     if (this != &other) {
+        fullDirectiveLine = other.fullDirectiveLine;
         name = other.name;
         currentContext = other.currentContext;
         arguments = other.arguments;
@@ -58,11 +61,18 @@ bool BaseDirective::validateContext() const
 
 bool BaseDirective::validateArgsSize() const
 {
-    if (arguments.size() < minArgs || arguments.size() > maxArgs) {
+    int argsSize = static_cast<int>(arguments.size());
+    
+    if (argsSize < minArgs || argsSize > maxArgs) {
         std::cerr << "Error: Directive '" << name << "' has an invalid number of arguments." << std::endl;
         return false;
     }
     return true;
+}
+
+void BaseDirective::setFullDirectiveLine(const std::string& line)
+{
+    this->fullDirectiveLine = line;
 }
 
 void BaseDirective::setName(const std::string& name)
@@ -95,6 +105,11 @@ void BaseDirective::setMaxArgs(int max)
     this->maxArgs = max;
 }
 
+std::string BaseDirective::getFullDirectiveLine() const
+{
+    return fullDirectiveLine;
+}
+
 std::string BaseDirective::getName() const
 {
     return name;
@@ -123,4 +138,17 @@ int BaseDirective::getMinArgs() const
 int BaseDirective::getMaxArgs() const
 {
     return maxArgs;
+}
+
+void BaseDirective::tokenizeName()
+{
+    std::stringstream ss(fullDirectiveLine);
+    std::string token;
+
+    ss >> token;
+    name = token;
+    
+    while (ss >> token) {
+        arguments.push_back(token);
+    }
 }

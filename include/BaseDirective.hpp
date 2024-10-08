@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:51 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 11:23:06 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/08 17:54:49 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 
 class BaseDirective {
 public:
@@ -30,6 +31,7 @@ public:
     
     virtual bool validateSpecific() = 0;
 
+    void setFullDirectiveLine(const std::string& line);
     void setName(const std::string& name);
     void setCurrentContext(const std::string& context);
     void addArgument(const std::string& argument);
@@ -37,6 +39,7 @@ public:
     void setMinArgs(int min);
     void setMaxArgs(int max);
 
+    std::string getFullDirectiveLine() const;
     std::string getName() const;
     std::string getCurrentContext() const;
     std::vector<std::string> getArguments() const;
@@ -46,7 +49,10 @@ public:
 
 private:
     BaseDirective();
+
+    void tokenizeName();
     
+    std::string fullDirectiveLine;
     std::string name;
     std::string currentContext;
     std::vector<std::string> arguments;
