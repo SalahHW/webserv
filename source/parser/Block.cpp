@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 17:44:58 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/08 19:07:37 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ Block::~Block()
 Block::Block()
 {
     isRoot = true;
-    cout << "Root block created" << endl;
 }
 
 Block::Block(const string& name, Block* parent)
@@ -36,7 +35,6 @@ Block::Block(const string& name, Block* parent)
 {
     tokenizeName();
     this->name = tokenizedName[0];
-    cout << this->name << " block created and added to " << parent->name << endl;
     parent->addSubBlock(this);
 }
 
