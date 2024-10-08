@@ -1,2 +1,3 @@
 webserv
 *.o
+source/directive/directivetest.cpp
