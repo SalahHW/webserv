@@ -55,7 +55,6 @@ void ConfigFile::readConfigFile(const string& fileName)
 void ConfigFile::parseBlock(ifstream& file, stack<Block*>& blockStack)
 {
     string line;
-    Block* currentBlock = blockStack.top();
 
     while (getline(file, line)) {
         string cleanedLine = cleanLine(line);
@@ -64,7 +63,6 @@ void ConfigFile::parseBlock(ifstream& file, stack<Block*>& blockStack)
         }
 
         if (cleanedLine == "}") {
-            cout << "Exiting block: " << currentBlock->getName() << endl;
             blockStack.pop();
             break;
         }
