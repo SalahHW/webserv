@@ -6,13 +6,13 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:05:45 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:07:44 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:59:44 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "BaseDirective.hpp"
+#include "Directive.hpp"
 
-class ServerNameDirective : public BaseDirective {
+class ServerNameDirective : public Directive {
 public:
     ~ServerNameDirective();
     ServerNameDirective(const std::string& currentContext);

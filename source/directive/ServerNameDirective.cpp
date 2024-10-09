@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:08:07 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:11:55 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 ServerNameDirective::~ServerNameDirective() { }
 
 ServerNameDirective::ServerNameDirective(const std::string& currentContext)
-    : BaseDirective(currentContext)
+    : Directive(currentContext)
     , serverName("default")
 {
     setName("server_name");
@@ -25,7 +25,7 @@ ServerNameDirective::ServerNameDirective(const std::string& currentContext)
 }
 
 ServerNameDirective::ServerNameDirective(const ServerNameDirective& other)
-    : BaseDirective(other)
+    : Directive(other)
     , serverName(other.serverName)
 {
 }
@@ -33,7 +33,7 @@ ServerNameDirective::ServerNameDirective(const ServerNameDirective& other)
 ServerNameDirective& ServerNameDirective::operator=(const ServerNameDirective& other)
 {
     if (this != &other) {
-        BaseDirective::operator=(other);
+        Directive::operator=(other);
         serverName = other.serverName;
     }
     return *this;

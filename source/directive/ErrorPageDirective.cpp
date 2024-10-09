@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:21:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:27:33 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 ErrorPageDirective::~ErrorPageDirective() { }
 
 ErrorPageDirective::ErrorPageDirective(const std::string& currentContext)
-	: BaseDirective(currentContext)
+	: Directive(currentContext)
 {
 	setName("error_page");
 	setMinArgs(2);
@@ -26,7 +26,7 @@ ErrorPageDirective::ErrorPageDirective(const std::string& currentContext)
 }
 
 ErrorPageDirective::ErrorPageDirective(const ErrorPageDirective& other)
-	: BaseDirective(other)
+	: Directive(other)
 	, errorPages(other.errorPages)
 {
 }
@@ -34,7 +34,7 @@ ErrorPageDirective::ErrorPageDirective(const ErrorPageDirective& other)
 ErrorPageDirective& ErrorPageDirective::operator=(const ErrorPageDirective& other)
 {
 	if (this != &other) {
-		BaseDirective::operator=(other);
+		Directive::operator=(other);
 		errorPages = other.errorPages;
 	}
 	return *this;

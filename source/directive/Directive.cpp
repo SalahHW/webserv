@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   BaseDirective.cpp                                  :+:      :+:    :+:   */
+/*   Directive.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:56 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:03:19 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:18 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "BaseDirective.hpp"
+#include "Directive.hpp"
 
-BaseDirective::~BaseDirective() { }
+Directive::~Directive() { }
 
-BaseDirective::BaseDirective(const std::string& currentContext)
+Directive::Directive(const std::string& currentContext)
     : currentContext(currentContext)
 {
     tokenizeName();
 }
 
-BaseDirective::BaseDirective(const BaseDirective& other)
+Directive::Directive(const Directive& other)
     : fullDirectiveLine(other.fullDirectiveLine)
     , name(other.name)
     , currentContext(other.currentContext)
@@ -31,7 +31,7 @@ BaseDirective::BaseDirective(const BaseDirective& other)
 {
 }
 
-BaseDirective& BaseDirective::operator=(const BaseDirective& other)
+Directive& Directive::operator=(const Directive& other)
 {
     if (this != &other) {
         fullDirectiveLine = other.fullDirectiveLine;
@@ -45,12 +45,12 @@ BaseDirective& BaseDirective::operator=(const BaseDirective& other)
     return *this;
 }
 
-bool BaseDirective::validate()
+bool Directive::validate()
 {
     return validateContext() && validateArgsSize() && validateSpecific();
 }
 
-bool BaseDirective::validateContext() const
+bool Directive::validateContext() const
 {
     if (std::find(contexts.begin(), contexts.end(), currentContext) == contexts.end()) {
         std::cerr << "Error: Directive '" << name << "' cannot be used in " << currentContext << std::endl;
@@ -59,7 +59,7 @@ bool BaseDirective::validateContext() const
     return true;
 }
 
-bool BaseDirective::validateArgsSize() const
+bool Directive::validateArgsSize() const
 {
     int argsSize = static_cast<int>(arguments.size());
     
@@ -70,77 +70,77 @@ bool BaseDirective::validateArgsSize() const
     return true;
 }
 
-void BaseDirective::setFullDirectiveLine(const std::string& line)
+void Directive::setFullDirectiveLine(const std::string& line)
 {
     this->fullDirectiveLine = line;
 }
 
-void BaseDirective::setName(const std::string& name)
+void Directive::setName(const std::string& name)
 {
     this->name = name;
 }
 
-void BaseDirective::setCurrentContext(const std::string& context)
+void Directive::setCurrentContext(const std::string& context)
 {
     this->currentContext = context;
 }
 
-void BaseDirective::addArgument(const std::string& argument)
+void Directive::addArgument(const std::string& argument)
 {
     this->arguments.push_back(argument);
 }
 
-void BaseDirective::addContext(const std::string& context)
+void Directive::addContext(const std::string& context)
 {
     this->contexts.push_back(context);
 }
 
-void BaseDirective::setMinArgs(int min)
+void Directive::setMinArgs(int min)
 {
     this->minArgs = min;
 }
 
-void BaseDirective::setMaxArgs(int max)
+void Directive::setMaxArgs(int max)
 {
     this->maxArgs = max;
 }
 
-std::string BaseDirective::getFullDirectiveLine() const
+std::string Directive::getFullDirectiveLine() const
 {
     return fullDirectiveLine;
 }
 
-std::string BaseDirective::getName() const
+std::string Directive::getName() const
 {
     return name;
 }
 
-std::string BaseDirective::getCurrentContext() const
+std::string Directive::getCurrentContext() const
 {
     return currentContext;
 }
 
-std::vector<std::string> BaseDirective::getArguments() const
+std::vector<std::string> Directive::getArguments() const
 {
     return arguments;
 }
 
-std::vector<std::string> BaseDirective::getContexts() const
+std::vector<std::string> Directive::getContexts() const
 {
     return contexts;
 }
 
-int BaseDirective::getMinArgs() const
+int Directive::getMinArgs() const
 {
     return minArgs;
 }
 
-int BaseDirective::getMaxArgs() const
+int Directive::getMaxArgs() const
 {
     return maxArgs;
 }
 
-void BaseDirective::tokenizeName()
+void Directive::tokenizeName()
 {
     std::stringstream ss(fullDirectiveLine);
     std::string token;

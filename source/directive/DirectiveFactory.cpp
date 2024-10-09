@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 13:49:37 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:58:59 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ DirectiveFactory::DirectiveFactory()
 	registerDirective<ReturnDirective>("return");
 }
 
-BaseDirective* DirectiveFactory::create(const std::string& name, const std::string& context) const
+Directive* DirectiveFactory::create(const std::string& name, const std::string& context) const
 {
-    std::map<std::string, BaseDirective* (*)(const std::string&)>::const_iterator it = factoryMap.find(name);
+    std::map<std::string, Directive* (*)(const std::string&)>::const_iterator it = factoryMap.find(name);
     if (it != factoryMap.end()) {
         return it->second(context);
     }

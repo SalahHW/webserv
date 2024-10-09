@@ -6,15 +6,15 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:53:38 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:58:31 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:59:44 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "BaseDirective.hpp"
+#include "Directive.hpp"
 
-class ReturnDirective : public BaseDirective {
+class ReturnDirective : public Directive {
 public:
     ~ReturnDirective();
     ReturnDirective(const std::string& currentContext);
