@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:16:08 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 11:23:36 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 ListenDirective::~ListenDirective() { }
 
 ListenDirective::ListenDirective(const std::string& currentContext)
-    : BaseDirective(currentContext)
+    : Directive(currentContext)
     , port(0)
 {
     setName("listen");
@@ -25,7 +25,7 @@ ListenDirective::ListenDirective(const std::string& currentContext)
 }
 
 ListenDirective::ListenDirective(const ListenDirective& other)
-    : BaseDirective(other)
+    : Directive(other)
     , port(other.port)
 {
 }
@@ -33,7 +33,7 @@ ListenDirective::ListenDirective(const ListenDirective& other)
 ListenDirective& ListenDirective::operator=(const ListenDirective& other)
 {
     if (this != &other) {
-        BaseDirective::operator=(other);
+        Directive::operator=(other);
         port = other.port;
     }
     return *this;

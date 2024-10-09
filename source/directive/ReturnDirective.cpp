@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:55:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:58:39 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 ReturnDirective::~ReturnDirective() { }
 
 ReturnDirective::ReturnDirective(const std::string& currentContext)
-	: BaseDirective(currentContext)
+	: Directive(currentContext)
 {
 	setName("return");
 	//TODO: Check min and max number of arguments for return directive
@@ -25,7 +25,7 @@ ReturnDirective::ReturnDirective(const std::string& currentContext)
 }
 
 ReturnDirective::ReturnDirective(const ReturnDirective& other)
-	: BaseDirective(other)
+	: Directive(other)
 	, returnCode(other.returnCode)
 	, returnPath(other.returnPath)
 {
@@ -34,7 +34,7 @@ ReturnDirective::ReturnDirective(const ReturnDirective& other)
 ReturnDirective& ReturnDirective::operator=(const ReturnDirective& other)
 {
 	if (this != &other) {
-		BaseDirective::operator=(other);
+		Directive::operator=(other);
 		returnCode = other.returnCode;
 		returnPath = other.returnPath;
 	}

@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 19:07:37 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:56:49 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ vector<Block*> const& Block::getSubBlocks() const
     return (this->subBlocks);
 }
 
-vector<BaseDirective*> const& Block::getDirectives() const
+vector<Directive*> const& Block::getDirectives() const
 {
     return (this->directives);
 }
@@ -85,7 +85,7 @@ void Block::addSubBlock(Block* block)
     subBlocks.push_back(block);
 }
 
-void Block::addDirective(BaseDirective* directive)
+void Block::addDirective(Directive* directive)
 {
     directives.push_back(directive);
 }

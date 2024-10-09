@@ -105,7 +105,7 @@ void ConfigFile::processDirective(const string& cleanedLine, Block* currentBlock
 
     string directiveLine = cleanedLine.substr(0, cleanedLine.size() - 1);
     string directiveName = extractDirectiveName(directiveLine);
-    BaseDirective* directive = directiveFactory.create(directiveName, currentBlock->getName());
+    Directive* directive = directiveFactory.create(directiveName, currentBlock->getName());
     if (!directive) {
         throw runtime_error("Unknown directive: " + directiveName);
     }

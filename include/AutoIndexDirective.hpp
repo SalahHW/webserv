@@ -6,15 +6,15 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:38:52 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:41:15 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:59:44 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "BaseDirective.hpp"
+#include "Directive.hpp"
 
-class AutoIndexDirective : public BaseDirective {
+class AutoIndexDirective : public Directive {
 public:
 	~AutoIndexDirective();
 	AutoIndexDirective(const std::string& currentContext);

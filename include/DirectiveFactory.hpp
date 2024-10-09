@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 13:49:08 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:58:51 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:59:44 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <map>
 #include <string>
 
-#include "BaseDirective.hpp"
+#include "Directive.hpp"
 #include "ClientMaxBodySizeDirective.hpp"
 #include "ErrorPageDirective.hpp"
 #include "ListenDirective.hpp"
@@ -31,7 +31,7 @@ public:
     ~DirectiveFactory();
     DirectiveFactory();
 
-    BaseDirective* create(const std::string& name, const std::string& context) const;
+    Directive* create(const std::string& name, const std::string& context) const;
 
     template <typename T>
     void registerDirective(const std::string& name)
@@ -44,10 +44,10 @@ private:
     DirectiveFactory& operator=(const DirectiveFactory& other);
 
     template <typename T>
-    static BaseDirective* createInstance(const std::string& context)
+    static Directive* createInstance(const std::string& context)
     {
         return new T(context);
     }
 
-    std::map<std::string, BaseDirective* (*)(const std::string&)> factoryMap;
+    std::map<std::string, Directive* (*)(const std::string&)> factoryMap;
 };

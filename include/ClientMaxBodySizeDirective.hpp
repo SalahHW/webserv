@@ -6,16 +6,16 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:16:05 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:17:54 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:59:44 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "BaseDirective.hpp"
+#include "Directive.hpp"
 #include "utils.hpp"
 
-class ClientMaxBodySizeDirective : public BaseDirective {
+class ClientMaxBodySizeDirective : public Directive {
 public:
     ~ClientMaxBodySizeDirective();
     ClientMaxBodySizeDirective(const std::string& currentContext);

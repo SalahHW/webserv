@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:51:10 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:52:39 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 DenyDirective::~DenyDirective() { }
 
 DenyDirective::DenyDirective(const std::string& currentContext)
-	: BaseDirective(currentContext)
+	: Directive(currentContext)
 {
 	setName("deny");
 	setMinArgs(1);
@@ -24,14 +24,14 @@ DenyDirective::DenyDirective(const std::string& currentContext)
 }
 
 DenyDirective::DenyDirective(const DenyDirective& other)
-	: BaseDirective(other)
+	: Directive(other)
 {
 }
 
 DenyDirective& DenyDirective::operator=(const DenyDirective& other)
 {
 	if (this != &other) {
-		BaseDirective::operator=(other);
+		Directive::operator=(other);
 	}
 	return *this;
 }

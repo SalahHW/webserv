@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:39:12 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:41:25 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 AutoIndexDirective::~AutoIndexDirective() { }
 
 AutoIndexDirective::AutoIndexDirective(const std::string& currentContext)
-	: BaseDirective(currentContext)
+	: Directive(currentContext)
 {
 	setName("autoindex");
 	setMinArgs(1);
@@ -24,7 +24,7 @@ AutoIndexDirective::AutoIndexDirective(const std::string& currentContext)
 }
 
 AutoIndexDirective::AutoIndexDirective(const AutoIndexDirective& other)
-	: BaseDirective(other)
+	: Directive(other)
 	, autoIndex(other.autoIndex)
 {
 }
@@ -32,7 +32,7 @@ AutoIndexDirective::AutoIndexDirective(const AutoIndexDirective& other)
 AutoIndexDirective& AutoIndexDirective::operator=(const AutoIndexDirective& other)
 {
 	if (this != &other) {
-		BaseDirective::operator=(other);
+		Directive::operator=(other);
 		autoIndex = other.autoIndex;
 	}
 	return *this;

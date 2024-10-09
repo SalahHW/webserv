@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/07 12:13:51 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:56:49 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,25 +40,26 @@ void ServerHandler::extractServerConfig(const Block& block)
 {
     Server server;
 
-    const std::vector<Directive>& directives = block.getDirectives();
+    const std::vector<Directive*> directives = block.getDirectives();
     for (size_t i = 0; i < directives.size(); ++i) {
-        const Directive& directive = directives[i];
+        const Directive* directive = directives[i];
+        (void)directive;
 
-        if (directive.getName() == "listen") {
-            server.setPort(atoi(directive.getArguments()[0].c_str()));
-        } else if (directive.getName() == "server_name") {
-            server.setName(directive.getArguments()[0]);
-        } else if (directive.getName() == "client_max_body_size") {
-            server.setClientMaxBodySize(atoi(directive.getArguments()[0].c_str()));
-            // TODO: Handle error pages
-        }
+        // if (directive->getName() == "listen") {
+        //     server.setPort(directive.getPort());
+        // } else if (directive->getName() == "server_name") {
+        //     server.setName(directive->getArguments()[0]);
+        // } else if (directive->getName() == "client_max_body_size") {
+        //     server.setClientMaxBodySize(atoi(directive->getArguments()[0].c_str()));
+        //     // TODO: Handle error pages
+        // }
     }
 
     const std::vector<Block*>& subBlocks = block.getSubBlocks();
     for (size_t j = 0; j < subBlocks.size(); ++j) {
         const Block& subBlock = *subBlocks[j];
         if (subBlock.getName() == "location") {
-            extractLocationConfig(server, subBlock);
+            // extractLocationConfig(server, subBlock);
         }
     }
 
@@ -69,21 +70,21 @@ void ServerHandler::extractLocationConfig(Server& server, const Block& block)
 {
     Location location;
 
-    const std::vector<Directive>& directives = block.getDirectives();
+    const std::vector<Directive*> directives = block.getDirectives();
     for (size_t i = 0; i < directives.size(); ++i) {
-        const Directive& directive = directives[i];
-        if (directive.getName() == "root") {
-            location.setRootDirectory(directive.getArguments()[0]);
-        } else if (directive.getName() == "index") {
-            location.setIndexFile(directive.getArguments()[0]);
-        } else if (directive.getName() == "autoindex") {
+        const Directive* directive = directives[i];
+        if (directive->getName() == "root") {
+            location.setRootDirectory(directive->getArguments()[0]);
+        } else if (directive->getName() == "index") {
+            location.setIndexFile(directive->getArguments()[0]);
+        } else if (directive->getName() == "autoindex") {
             location.setAutoIndex(true);
-        } else if (directive.getName() == "client_max_body_size") {
-            location.setClientMaxBodySize(atoi(directive.getArguments()[0].c_str()));
-        } else if (directive.getName() == "redirection") {
-            location.setRedirectionPath(directive.getArguments()[0]);
+        } else if (directive->getName() == "client_max_body_size") {
+            location.setClientMaxBodySize(atoi(directive->getArguments()[0].c_str()));
+        } else if (directive->getName() == "redirection") {
+            location.setRedirectionPath(directive->getArguments()[0]);
         }
-        //TODO: Handle accepted methods (GET, POST, DELETE)
+        // TODO: Handle accepted methods (GET, POST, DELETE)
     }
     server.addLocation(location);
 }

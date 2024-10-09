@@ -6,13 +6,12 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 10:05:51 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:59:58 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "BaseDirective.hpp"
 #include "Directive.hpp"
 #include <iostream>
 #include <sstream>
@@ -30,10 +29,10 @@ public:
     std::string const& getName() const;
     std::vector<std::string> const& getTokenizedName() const;
     std::vector<Block*> const& getSubBlocks() const;
-    std::vector<BaseDirective*> const& getDirectives() const;
+    std::vector<Directive*> const& getDirectives() const;
     bool isRootBlock() const;
     void addSubBlock(Block* block);
-    void addDirective(BaseDirective* directive);
+    void addDirective(Directive* directive);
 
 private:
     Block(Block const& other);
@@ -45,6 +44,6 @@ private:
     bool isRoot;
     std::vector<std::string> tokenizedName;
     std::vector<Block*> subBlocks;
-    std::vector<BaseDirective*> directives;
+    std::vector<Directive*> directives;
     std::vector<std::string> validBlockNames;
 };

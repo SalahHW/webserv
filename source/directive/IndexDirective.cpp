@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:35:32 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:37:05 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 IndexDirective::~IndexDirective() { }
 
 IndexDirective::IndexDirective(const std::string& currentContext)
-	: BaseDirective(currentContext)
+	: Directive(currentContext)
 {
 	setName("index");
 	setMinArgs(1);
@@ -24,7 +24,7 @@ IndexDirective::IndexDirective(const std::string& currentContext)
 }
 
 IndexDirective::IndexDirective(const IndexDirective& other)
-	: BaseDirective(other)
+	: Directive(other)
 	, indexPath(other.indexPath)
 {
 }
@@ -32,7 +32,7 @@ IndexDirective::IndexDirective(const IndexDirective& other)
 IndexDirective& IndexDirective::operator=(const IndexDirective& other)
 {
 	if (this != &other) {
-		BaseDirective::operator=(other);
+		Directive::operator=(other);
 		indexPath = other.indexPath;
 	}
 	return *this;

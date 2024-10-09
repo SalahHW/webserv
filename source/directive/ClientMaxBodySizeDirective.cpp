@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:17:39 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:19:13 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 ClientMaxBodySizeDirective::~ClientMaxBodySizeDirective() { }
 
 ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const std::string& currentContext)
-	: BaseDirective(currentContext)
+	: Directive(currentContext)
 	, maxBodySize(0)
 {
 	setName("client_max_body_size");
@@ -26,7 +26,7 @@ ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const std::string& curren
 }
 
 ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const ClientMaxBodySizeDirective& other)
-	: BaseDirective(other)
+	: Directive(other)
 	, maxBodySize(other.maxBodySize)
 {
 }
@@ -34,7 +34,7 @@ ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const ClientMaxBodySizeDi
 ClientMaxBodySizeDirective& ClientMaxBodySizeDirective::operator=(const ClientMaxBodySizeDirective& other)
 {
 	if (this != &other) {
-		BaseDirective::operator=(other);
+		Directive::operator=(other);
 		maxBodySize = other.maxBodySize;
 	}
 	return *this;

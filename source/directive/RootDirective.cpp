@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:28:45 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:32:42 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 RootDirective::~RootDirective() { }
 
 RootDirective::RootDirective(const std::string& currentContext)
-	: BaseDirective(currentContext)
+	: Directive(currentContext)
 {
 	setName("root");
 	setMinArgs(1);
@@ -24,7 +24,7 @@ RootDirective::RootDirective(const std::string& currentContext)
 }
 
 RootDirective::RootDirective(const RootDirective& other)
-	: BaseDirective(other)
+	: Directive(other)
 	, rootPath(other.rootPath)
 {
 }
@@ -32,7 +32,7 @@ RootDirective::RootDirective(const RootDirective& other)
 RootDirective& RootDirective::operator=(const RootDirective& other)
 {
 	if (this != &other) {
-		BaseDirective::operator=(other);
+		Directive::operator=(other);
 		rootPath = other.rootPath;
 	}
 	return *this;

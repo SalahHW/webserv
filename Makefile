@@ -6,7 +6,7 @@
 #    By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/10/09 10:02:42 by sbouheni         ###   ########.fr        #
+#    Updated: 2024/10/09 11:54:41 by sbouheni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,9 +20,7 @@ OBJ_DIR					=	obj
 
 SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
-							parser/DirectiveValidator.cpp						\
 							parser/Block.cpp									\
-							parser/Directive.cpp								\
 							server/ClientIn.cpp									\
 							server/ServerIn.cpp									\
 							server/EpollManagement.cpp							\
@@ -32,7 +30,7 @@ SRCS					=	main.cpp											\
 							server/Location.cpp									\
 							utils/utils.cpp										\
 							directive/DirectiveFactory.cpp						\
-							directive/BaseDirective.cpp							\
+							directive/Directive.cpp								\
 							directive/ListenDirective.cpp						\
 							directive/ServerNameDirective.cpp					\
 							directive/ClientMaxBodySizeDirective.cpp			\

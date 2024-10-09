@@ -6,17 +6,17 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:21:19 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:23:13 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:59:44 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "BaseDirective.hpp"
+#include "Directive.hpp"
 #include "utils.hpp"
 #include <map>
 
-class ErrorPageDirective : public BaseDirective {
+class ErrorPageDirective : public Directive {
 public:
     ~ErrorPageDirective();
     ErrorPageDirective(const std::string& currentContext);

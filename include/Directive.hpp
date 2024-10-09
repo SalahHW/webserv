@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   BaseDirective.hpp                                  :+:      :+:    :+:   */
+/*   Directive.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:51 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 17:54:49 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:56:49 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@
 #include <vector>
 #include <sstream>
 
-class BaseDirective {
+class Directive {
 public:
-    virtual ~BaseDirective();
-    BaseDirective(const std::string& currentContext);
-    BaseDirective(const BaseDirective& other);
-    BaseDirective& operator=(const BaseDirective& other);
+    virtual ~Directive();
+    Directive(const std::string& currentContext);
+    Directive(const Directive& other);
+    Directive& operator=(const Directive& other);
 
     bool validate();
     bool validateContext() const;
@@ -48,7 +48,7 @@ public:
     int getMaxArgs() const;
 
 private:
-    BaseDirective();
+    Directive();
 
     void tokenizeName();
     
