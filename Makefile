@@ -6,7 +6,7 @@
 #    By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/10/08 18:59:20 by sbouheni         ###   ########.fr        #
+#    Updated: 2024/10/09 10:02:42 by sbouheni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ SRCS					=	main.cpp											\
 							server/EpollManagement.cpp							\
 							server/HttpParsingRequest.cpp						\
 							server/Server.cpp									\
+							server/ServerHandler.cpp							\
 							server/Location.cpp									\
 							utils/utils.cpp										\
 							directive/DirectiveFactory.cpp						\
