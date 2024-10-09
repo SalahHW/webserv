@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 17:41:55 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/09 10:05:51 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 #include "BaseDirective.hpp"
 #include "Directive.hpp"
 #include <iostream>
+#include <sstream>
 #include <stack>
 #include <string>
 #include <vector>
-#include <sstream>
 
 class Block {
 public:
@@ -30,7 +30,7 @@ public:
     std::string const& getName() const;
     std::vector<std::string> const& getTokenizedName() const;
     std::vector<Block*> const& getSubBlocks() const;
-    std::vector<BaseDirective *> const& getDirectives() const;
+    std::vector<BaseDirective*> const& getDirectives() const;
     bool isRootBlock() const;
     void addSubBlock(Block* block);
     void addDirective(BaseDirective* directive);
@@ -38,7 +38,7 @@ public:
 private:
     Block(Block const& other);
     Block& operator=(Block const& other);
-    
+
     void tokenizeName();
 
     std::string name;
