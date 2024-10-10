@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:28:59 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 09:01:01 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:16:06 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ public:
 	RootDirective& operator=(const RootDirective& other);
 
 	virtual bool validateSpecific();
+	virtual void displayInfo() const;
 	virtual void apply(Location& location);
 
 	void setRootPath(const std::string& rootPath);
