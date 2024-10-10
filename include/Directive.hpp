@@ -6,13 +6,14 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:51 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:34:43 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:40:26 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Server.hpp"
+#include "Location.hpp"
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -31,7 +32,8 @@ public:
     bool validateArgsSize() const;
 
     virtual bool validateSpecific() = 0;
-    virtual void apply(Server& server) = 0;
+    virtual void apply(Server& server);
+    virtual void apply(Location& location);
 
     void setFullDirectiveLine(const std::string& line);
     void setName(const std::string& name);
