@@ -6,18 +6,17 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/07 12:10:15 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:49:53 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-#define SERVER_HPP
-
-#include <string>
-#include <vector>
-#include <iostream>
+#pragma once
 
 #include "Location.hpp"
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
 
 class Server {
 public:
@@ -30,7 +29,7 @@ public:
     void setPort(int port);
     void setClientMaxBodySize(int size);
     void setName(const std::string& name);
-    void setErrorPages(std::vector<std::string> error);
+    void setErrorPages(std::map<int, std::string> errorPages);
 
     void addLocation(const Location& location);
 
@@ -38,18 +37,15 @@ public:
     int getPort() const;
     int getClientMaxBodySize() const;
     const std::string& getName() const;
-    const std::vector<std::string>& getErrorPages() const;
+    const std::map<int, std::string>& getErrorPages() const;
 
     void displayServerInfo() const;
 
 private:
-    
     int listenFd;
     int port;
     std::string name;
     int clientMaxBodySize;
-    std::vector<std::string> errorPages; // TODO: Use map instead to store error codes and their corresponding pages
+    std::map<int, std::string> errorPages; // TODO: Use map instead to store error codes and their corresponding pages
     std::vector<Location> locations;
 };
-
-#endif
