@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:53:38 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:59:14 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:15:22 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ public:
     ReturnDirective& operator=(const ReturnDirective& other);
 
     virtual bool validateSpecific();
+    virtual void displayInfo() const;
     virtual void apply(Location& location);
 
     void setReturnCode(int returnCode);

@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:05:45 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 09:01:50 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:16:27 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ public:
     ServerNameDirective& operator=(const ServerNameDirective& other);
 
     virtual bool validateSpecific();
+    virtual void displayInfo() const;
     virtual void apply(Server& server);
 
     void setServerName(const std::string& serverName);
