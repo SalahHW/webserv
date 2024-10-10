@@ -6,17 +6,18 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:51 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 11:56:49 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:34:43 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "Server.hpp"
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
 
 class Directive {
 public:
@@ -28,8 +29,9 @@ public:
     bool validate();
     bool validateContext() const;
     bool validateArgsSize() const;
-    
+
     virtual bool validateSpecific() = 0;
+    virtual void apply(Server& server) = 0;
 
     void setFullDirectiveLine(const std::string& line);
     void setName(const std::string& name);
@@ -51,7 +53,7 @@ private:
     Directive();
 
     void tokenizeName();
-    
+
     std::string fullDirectiveLine;
     std::string name;
     std::string currentContext;
