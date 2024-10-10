@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:17:39 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:44:32 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:12:02 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,11 @@ bool ClientMaxBodySizeDirective::validateSpecific()
 {
 	//TODO: Implement validation
 	return true;
+}
+
+void ClientMaxBodySizeDirective::displayInfo() const
+{
+	std::cout << "Name : " << this->getName() << " max body size : " << maxBodySize << std::endl;
 }
 
 void ClientMaxBodySizeDirective::apply(Server& server)

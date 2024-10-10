@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:39:12 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:42:35 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:11:20 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,11 @@ bool AutoIndexDirective::validateSpecific()
 		return false;
 	}
 	return true;
+}
+
+void AutoIndexDirective::displayInfo() const
+{
+	std::cout << "Name : " << this->getName() << " autoindex : " << autoIndex << std::endl;
 }
 
 void AutoIndexDirective::apply(Location& location)
