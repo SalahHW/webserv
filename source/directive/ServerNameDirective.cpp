@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:08:07 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 09:02:02 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,11 @@ bool ServerNameDirective::validateSpecific()
 		return false;
 	}
 	return true;
+}
+
+void ServerNameDirective::apply(Server& server)
+{
+    server.setName(serverName);
 }
 
 void ServerNameDirective::setServerName(const std::string& serverName)

@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:15:00 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 11:59:44 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:55:41 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ public:
     ListenDirective& operator=(const ListenDirective& other);
 
     virtual bool validateSpecific();
+    virtual void apply(Server& server);
 
     void setPort(int port);
 
