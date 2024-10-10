@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 10:20:11 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/07 12:11:16 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:58:44 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,11 @@ void Location::setClientMaxBodySize(int size)
 	this->clientMaxBodySize = size;
 }
 
+void Location::setReturnCode(int returnCode)
+{
+	this->returnCode = returnCode;
+}
+
 const std::string& Location::getPath() const
 {
 	return this->path;
@@ -125,6 +130,11 @@ bool Location::getDeleteAccepted() const
 int Location::getClientMaxBodySize() const
 {
 	return this->clientMaxBodySize;
+}
+
+int Location::getReturnCode() const
+{
+	return this->returnCode;
 }
 
 void Location::displayLocationInfo() const
