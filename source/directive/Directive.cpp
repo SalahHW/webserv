@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:56 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 12:01:18 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:41:39 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,16 @@ bool Directive::validateArgsSize() const
         return false;
     }
     return true;
+}
+
+void Directive::apply(Server& server)
+{
+    (void)server;
+}
+
+void Directive::apply(Location& location)
+{
+    (void)location;
 }
 
 void Directive::setFullDirectiveLine(const std::string& line)
