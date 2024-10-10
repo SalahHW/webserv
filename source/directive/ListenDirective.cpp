@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:16:08 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:55:49 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:10:11 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,11 @@ bool ListenDirective::validateSpecific()
         return false;
     }
     return true;
+}
+
+void ListenDirective::displayInfo() const
+{
+    std::cout << "Name : " << this->getName() << " port : " << port << std::endl;
 }
 
 void ListenDirective::apply(Server& server)

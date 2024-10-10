@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:51:10 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:13:08 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,9 @@ bool DenyDirective::validateSpecific()
 {
 	//TODO: Implement validation
 	return true;
+}
+
+void DenyDirective::displayInfo() const
+{
+	std::cout << "Name : " << this->getName() << std::endl;
 }

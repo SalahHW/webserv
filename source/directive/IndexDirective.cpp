@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:35:32 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:54:48 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:15:02 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,11 @@ bool IndexDirective::validateSpecific()
 	indexPath = getArguments()[0];
 	//TODO: Implement validation
 	return true;
+}
+
+void IndexDirective::displayInfo() const
+{
+	std::cout << "Name : " << this->getName() << " index path : " << indexPath << std::endl;
 }
 
 void IndexDirective::apply(Location& location)
