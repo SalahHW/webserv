@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/07 12:09:50 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:50:50 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,9 @@ void Server::setName(const std::string& name)
     this->name = name;
 }
 
-void Server::setErrorPages(std::vector<std::string> error)
+void Server::setErrorPages(std::map<int, std::string> errorPages)
 {
-    this->errorPages = error;
+    this->errorPages = errorPages;
 }
 
 void Server::addLocation(const Location& location)
@@ -84,7 +84,7 @@ const std::string& Server::getName() const
     return this->name;
 }
 
-const std::vector<std::string>& Server::getErrorPages() const
+const std::map<int, std::string>& Server::getErrorPages() const
 {
     return this->errorPages;
 }
@@ -97,10 +97,10 @@ void Server::displayServerInfo() const
     std::cout << "- Name: " << name << std::endl;
     std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes" << std::endl;
     
-    std::cout << "- Error Pages: " << std::endl;
-    for (size_t i = 0; i < errorPages.size(); ++i) {
-        std::cout << "  * " << errorPages[i] << std::endl;
-    }
+    // std::cout << "- Error Pages: " << std::endl;
+    // for (size_t i = 0; i < errorPages.size(); ++i) {
+    //      std::cout << "  * " << errorPages[i] << std::endl;
+    // }
     
     std::cout << "- Locations: " << std::endl;
     for (size_t i = 0; i < locations.size(); ++i) {
