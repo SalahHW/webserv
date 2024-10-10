@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 10:20:11 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:58:44 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:30:06 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ int Location::getReturnCode() const
 
 void Location::displayLocationInfo() const
 {
-    std::cout << "Location Information:" << std::endl;
+    std::cout << "Location " << path << " info" << std::endl;
     std::cout << "- Path: " << path << std::endl;
     std::cout << "- Root Directory: " << rootDirectory << std::endl;
     std::cout << "- Index File: " << indexFile << std::endl;
