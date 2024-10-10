@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:28:45 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 09:01:14 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,11 @@ bool RootDirective::validateSpecific()
 	rootPath = getArguments()[0];
 	//TODO: Implement validation
 	return true;
+}
+
+void RootDirective::apply(Location& location)
+{
+	location.setRootDirectory(rootPath);
 }
 
 void RootDirective::setRootPath(const std::string& rootPath)

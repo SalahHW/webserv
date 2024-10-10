@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:38:52 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 11:59:44 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:42:47 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ public:
 	AutoIndexDirective& operator=(const AutoIndexDirective& other);
 
 	virtual bool validateSpecific();
+	virtual void apply(Location& location);
 
 	void setAutoIndex(bool autoIndex);
 

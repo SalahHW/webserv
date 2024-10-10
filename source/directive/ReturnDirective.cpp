@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:55:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:59:31 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,12 @@ bool ReturnDirective::validateSpecific()
 {
 	//TODO: Implement validation for return directive
 	return true;
+}
+
+void ReturnDirective::apply(Location& location)
+{
+	location.setReturnCode(returnCode);
+	location.setRedirectionPath(returnPath);
 }
 
 void ReturnDirective::setReturnCode(int returnCode)

@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:35 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/07 12:12:12 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:57:52 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ public:
     void setPostAccepted(bool postAccepted);
     void setDeleteAccepted(bool deleteAccepted);
     void setClientMaxBodySize(int size);
+    void setReturnCode(int returnCode);
 
 
     // Getters
@@ -46,6 +47,7 @@ public:
     bool getPostAccepted() const;
     bool getDeleteAccepted() const;
     int getClientMaxBodySize() const;
+    int getReturnCode() const;
 
     void displayLocationInfo() const;
 
@@ -59,6 +61,7 @@ private:
     bool postAccepted;
     bool deleteAccepted;
     int clientMaxBodySize;
+    int returnCode;
 };
 
 #endif

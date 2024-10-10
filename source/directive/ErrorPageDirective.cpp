@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:21:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 12:01:48 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:46:46 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,11 @@ bool ErrorPageDirective::validateSpecific()
 {
 	//TODO: Implement validation
 	return true;
+}
+
+void ErrorPageDirective::apply(Server& server)
+{
+	server.setErrorPages(errorPages);
 }
 
 void ErrorPageDirective::setErrorPage(const std::string& errorPage)
