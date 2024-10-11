@@ -6,7 +6,7 @@
 #    By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/10/09 11:54:41 by sbouheni         ###   ########.fr        #
+#    Updated: 2024/10/10 10:26:41 by sbouheni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ OBJ_DIR					=	obj
 
 SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
+							parser/ConfigExtractor.cpp							\
 							parser/Block.cpp									\
 							server/ClientIn.cpp									\
 							server/ServerIn.cpp									\

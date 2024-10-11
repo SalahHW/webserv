@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 00:40:40 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 18:00:12 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:04:58 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,5 @@ private:
 
     DirectiveFactory directiveFactory;
     Block rootBlock;
+    bool isValid;
 };

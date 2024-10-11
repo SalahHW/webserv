@@ -17,14 +17,12 @@ using namespace std;
 ConfigFile::~ConfigFile() { }
 
 ConfigFile::ConfigFile(string const& configFilePath)
-    : rootBlock()
 {
+    isValid = true;
     readConfigFile(configFilePath);
-
-    // Debug print
-    cout << "Printing config file structure:" << endl;
-    rootBlock.printBlock();
-
+    if (!isValid) {
+        throw runtime_error("Error: Invalid configuration file.");
+    }
 }
 
 const Block& ConfigFile::getRootBlock() const
@@ -100,16 +98,22 @@ void ConfigFile::handleLine(const string& cleanedLine, ifstream& file, stack<Blo
 void ConfigFile::processDirective(const string& cleanedLine, Block* currentBlock)
 {
     if (cleanedLine.empty() || !isDirective(cleanedLine)) {
-        throw runtime_error("Unexpected content in block '" + currentBlock->getName() + "': " + cleanedLine);
+        std::cerr << "Unexpected content in block '" + currentBlock->getName() + "': " + cleanedLine << std::endl;
+        isValid = false;
+        return;
     }
-
     string directiveLine = cleanedLine.substr(0, cleanedLine.size() - 1);
     string directiveName = extractDirectiveName(directiveLine);
-    Directive* directive = directiveFactory.create(directiveName, currentBlock->getName());
+    Directive* directive = directiveFactory.create(directiveName, currentBlock->getName(), directiveLine);
     if (!directive) {
-        throw runtime_error("Unknown directive: " + directiveName);
+        std::cerr << "Error: Directive \"" << directiveName << "\" in block \"" << currentBlock->getName() << "\" is not supported." << std::endl;
+        isValid = false;
+        return;
     }
-    directive->setFullDirectiveLine(cleanedLine);
+    if (!directive->getIsValid()) {
+        isValid = false;
+        return;
+    }
     currentBlock->addDirective(directive);
 }
 
