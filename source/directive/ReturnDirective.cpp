@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:55:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/11 06:50:14 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/11 06:53:38 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,6 @@ bool ReturnDirective::validateSpecific()
 {
 	//TODO: Implement validation for return directive
 	returnCode = atoi(getArguments()[0].c_str());
-	std::cout << "return code : " << returnCode << std::endl;
-	std::cout << "return path : " << getArguments()[1] << std::endl;
 	returnPath = getArguments()[1];
 	return true;
 }
