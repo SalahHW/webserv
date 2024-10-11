@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:21:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:13:53 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:23:39 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 ErrorPageDirective::~ErrorPageDirective() { }
 
-ErrorPageDirective::ErrorPageDirective(const std::string& currentContext)
-	: Directive(currentContext)
+ErrorPageDirective::ErrorPageDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("error_page");
 	setMinArgs(2);
@@ -23,6 +23,7 @@ ErrorPageDirective::ErrorPageDirective(const std::string& currentContext)
 	setMaxArgs(100);
 	//TODO: Look for valid contexts for error_page
 	addContext("server");
+	validate();
 }
 
 ErrorPageDirective::ErrorPageDirective(const ErrorPageDirective& other)

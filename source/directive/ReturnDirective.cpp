@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:55:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:15:27 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:27:00 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,15 @@
 
 ReturnDirective::~ReturnDirective() { }
 
-ReturnDirective::ReturnDirective(const std::string& currentContext)
-	: Directive(currentContext)
+ReturnDirective::ReturnDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("return");
 	//TODO: Check min and max number of arguments for return directive
 	setMinArgs(2);
 	setMaxArgs(2);
 	addContext("location");
+	validate();
 }
 
 ReturnDirective::ReturnDirective(const ReturnDirective& other)
@@ -49,7 +50,7 @@ bool ReturnDirective::validateSpecific()
 
 void ReturnDirective::displayInfo() const
 {
-	std::cout << "Name : " << this->getName() << " return code : " << returnCode << " return path : " << returnPath << std::endl;
+	std::cout << "Name : " << this->getName() << std::endl << "- return code : " << returnCode << std::endl << "- return path : " << returnPath << std::endl;
 }
 
 void ReturnDirective::apply(Location& location)

@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:56 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:41:39 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/11 06:03:01 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,17 @@
 
 Directive::~Directive() { }
 
-Directive::Directive(const std::string& currentContext)
+Directive::Directive(const std::string& currentContext, const std::string& fullDirectiveLine)
     : currentContext(currentContext)
+    , fullDirectiveLine(fullDirectiveLine)
 {
     tokenizeName();
 }
 
 Directive::Directive(const Directive& other)
-    : fullDirectiveLine(other.fullDirectiveLine)
+    : currentContext(other.currentContext)
+    , fullDirectiveLine(other.fullDirectiveLine)
     , name(other.name)
-    , currentContext(other.currentContext)
     , arguments(other.arguments)
     , minArgs(other.minArgs)
     , maxArgs(other.maxArgs)
@@ -45,15 +46,15 @@ Directive& Directive::operator=(const Directive& other)
     return *this;
 }
 
-bool Directive::validate()
+void Directive::validate()
 {
-    return validateContext() && validateArgsSize() && validateSpecific();
+    isValid = validateContext() && validateArgsSize() && validateSpecific();
 }
 
 bool Directive::validateContext() const
 {
     if (std::find(contexts.begin(), contexts.end(), currentContext) == contexts.end()) {
-        std::cerr << "Error: Directive '" << name << "' cannot be used in " << currentContext << std::endl;
+        std::cerr << "Error: Directive \"" << name << "\" cannot be used in \"" << currentContext << "\"" << std::endl;
         return false;
     }
     return true;
@@ -62,9 +63,9 @@ bool Directive::validateContext() const
 bool Directive::validateArgsSize() const
 {
     int argsSize = static_cast<int>(arguments.size());
-    
+
     if (argsSize < minArgs || argsSize > maxArgs) {
-        std::cerr << "Error: Directive '" << name << "' has an invalid number of arguments." << std::endl;
+        std::cerr << "Error: Directive \"" << name << "\" has an invalid number of arguments." << std::endl;
         return false;
     }
     return true;
@@ -150,6 +151,11 @@ int Directive::getMaxArgs() const
     return maxArgs;
 }
 
+bool Directive::getIsValid() const
+{
+    return isValid;
+}
+
 void Directive::tokenizeName()
 {
     std::stringstream ss(fullDirectiveLine);
@@ -157,7 +163,7 @@ void Directive::tokenizeName()
 
     ss >> token;
     name = token;
-    
+
     while (ss >> token) {
         arguments.push_back(token);
     }

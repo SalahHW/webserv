@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:28:45 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:16:12 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:27:07 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,14 @@
 
 RootDirective::~RootDirective() { }
 
-RootDirective::RootDirective(const std::string& currentContext)
-	: Directive(currentContext)
+RootDirective::RootDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("root");
 	setMinArgs(1);
 	setMaxArgs(1);
 	addContext("location");
+	validate();
 }
 
 RootDirective::RootDirective(const RootDirective& other)
@@ -47,7 +48,7 @@ bool RootDirective::validateSpecific()
 
 void RootDirective::displayInfo() const
 {
-	std::cout << "Name : " << this->getName() << " root path : " << rootPath << std::endl;
+	std::cout << "Name : " << this->getName() << std::endl << "- root path : " << rootPath << std::endl;
 }
 
 void RootDirective::apply(Location& location)

@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:08:07 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:16:33 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:25:20 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,15 @@
 
 ServerNameDirective::~ServerNameDirective() { }
 
-ServerNameDirective::ServerNameDirective(const std::string& currentContext)
-    : Directive(currentContext)
+ServerNameDirective::ServerNameDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+    : Directive(currentContext, fullDirectiveLine)
     , serverName("default")
 {
     setName("server_name");
     setMinArgs(1);
     setMaxArgs(1);
     addContext("server");
+	validate();
 }
 
 ServerNameDirective::ServerNameDirective(const ServerNameDirective& other)
@@ -51,7 +52,7 @@ bool ServerNameDirective::validateSpecific()
 
 void ServerNameDirective::displayInfo() const
 {
-    std::cout << "Name : " << this->getName() << " server name : " << serverName << std::endl;
+    std::cout << "Name : " << this->getName() << std::endl << "- server name : " << serverName << std::endl;
 }
 
 void ServerNameDirective::apply(Server& server)

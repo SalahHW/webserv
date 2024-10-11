@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:39:12 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:11:20 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:25:45 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,14 @@
 
 AutoIndexDirective::~AutoIndexDirective() { }
 
-AutoIndexDirective::AutoIndexDirective(const std::string& currentContext)
-	: Directive(currentContext)
+AutoIndexDirective::AutoIndexDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("autoindex");
 	setMinArgs(1);
 	setMaxArgs(1);
 	addContext("location");
+	validate();
 }
 
 AutoIndexDirective::AutoIndexDirective(const AutoIndexDirective& other)
@@ -53,7 +54,7 @@ bool AutoIndexDirective::validateSpecific()
 
 void AutoIndexDirective::displayInfo() const
 {
-	std::cout << "Name : " << this->getName() << " autoindex : " << autoIndex << std::endl;
+	std::cout << "Name : " << this->getName() << std::endl << "- autoindex : " << autoIndex << std::endl;
 }
 
 void AutoIndexDirective::apply(Location& location)

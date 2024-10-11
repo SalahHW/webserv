@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:16:08 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:10:11 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:26:46 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,15 @@
 
 ListenDirective::~ListenDirective() { }
 
-ListenDirective::ListenDirective(const std::string& currentContext)
-    : Directive(currentContext)
+ListenDirective::ListenDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+    : Directive(currentContext, fullDirectiveLine)
     , port(0)
 {
     setName("listen");
     setMinArgs(1);
     setMaxArgs(1);
     addContext("server");
+    validate();
 }
 
 ListenDirective::ListenDirective(const ListenDirective& other)
@@ -42,12 +43,12 @@ ListenDirective& ListenDirective::operator=(const ListenDirective& other)
 bool ListenDirective::validateSpecific()
 {
     if (!utils::isIntCompatible(getArguments()[0])) {
-        std::cerr << "Error: Directive 'listen' in " << getCurrentContext() << " has an invalid port number." << std::endl;
+        std::cerr << "Error: Directive 'listen' in \"" << getCurrentContext() << "\" has an invalid port number." << std::endl;
         return false;
     }
     this->port = atoi(getArguments()[0].c_str());
     if (port < 0 || port > 65535) {
-        std::cerr << "Error: Directive 'listen' in " << getCurrentContext() << " has a port number out of range. (0 - 65535)" << std::endl;
+        std::cerr << "Error: Directive 'listen' in \"" << getCurrentContext() << "\" has a port number out of range. (0 - 65535)" << std::endl;
         return false;
     }
     return true;
@@ -55,7 +56,7 @@ bool ListenDirective::validateSpecific()
 
 void ListenDirective::displayInfo() const
 {
-    std::cout << "Name : " << this->getName() << " port : " << port << std::endl;
+    std::cout << "Name : " << this->getName() << std::endl << "- port : " << port << std::endl;
 }
 
 void ListenDirective::apply(Server& server)

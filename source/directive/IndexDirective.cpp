@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:35:32 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:15:02 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:26:36 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,14 @@
 
 IndexDirective::~IndexDirective() { }
 
-IndexDirective::IndexDirective(const std::string& currentContext)
-	: Directive(currentContext)
+IndexDirective::IndexDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("index");
 	setMinArgs(1);
 	setMaxArgs(1);
 	addContext("location");
+	validate();
 }
 
 IndexDirective::IndexDirective(const IndexDirective& other)
@@ -47,7 +48,7 @@ bool IndexDirective::validateSpecific()
 
 void IndexDirective::displayInfo() const
 {
-	std::cout << "Name : " << this->getName() << " index path : " << indexPath << std::endl;
+	std::cout << "Name : " << this->getName() << std::endl << "- index path : " << indexPath << std::endl;
 }
 
 void IndexDirective::apply(Location& location)
