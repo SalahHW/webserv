@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:17:39 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:12:02 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:26:18 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 ClientMaxBodySizeDirective::~ClientMaxBodySizeDirective() { }
 
-ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const std::string& currentContext)
-	: Directive(currentContext)
+ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+	: Directive(currentContext, fullDirectiveLine)
 	, maxBodySize(0)
 {
 	setName("client_max_body_size");
@@ -23,6 +23,8 @@ ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const std::string& curren
 	setMaxArgs(1);
 	addContext("server");
 	addContext("location");
+	validate();
+
 }
 
 ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const ClientMaxBodySizeDirective& other)
@@ -48,7 +50,7 @@ bool ClientMaxBodySizeDirective::validateSpecific()
 
 void ClientMaxBodySizeDirective::displayInfo() const
 {
-	std::cout << "Name : " << this->getName() << " max body size : " << maxBodySize << std::endl;
+	std::cout << "Name : " << this->getName() << std::endl << "- max body size : " << maxBodySize << std::endl;
 }
 
 void ClientMaxBodySizeDirective::apply(Server& server)
