@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:15:00 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:10:44 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 16:52:06 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 class ListenDirective : public Directive {
 public:
     ~ListenDirective();
-    ListenDirective(const std::string& currentContext);
+    ListenDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
     ListenDirective(const ListenDirective& other);
     ListenDirective& operator=(const ListenDirective& other);
 

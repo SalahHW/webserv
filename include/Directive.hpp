@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:51 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:07:33 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/11 06:03:08 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@
 class Directive {
 public:
     virtual ~Directive();
-    Directive(const std::string& currentContext);
+    Directive(const std::string& currentContext, const std::string& fullDirectiveLine);
     Directive(const Directive& other);
     Directive& operator=(const Directive& other);
 
-    bool validate();
+    void validate();
     bool validateContext() const;
     bool validateArgsSize() const;
 
@@ -51,15 +51,17 @@ public:
     std::vector<std::string> getContexts() const;
     int getMinArgs() const;
     int getMaxArgs() const;
+    bool getIsValid() const;
 
 private:
     Directive();
 
     void tokenizeName();
 
+    bool isValid;
+    std::string currentContext;
     std::string fullDirectiveLine;
     std::string name;
-    std::string currentContext;
     std::vector<std::string> arguments;
     int minArgs;
     int maxArgs;

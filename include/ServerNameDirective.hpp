@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:05:45 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:16:27 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/10 16:52:59 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 class ServerNameDirective : public Directive {
 public:
     ~ServerNameDirective();
-    ServerNameDirective(const std::string& currentContext);
+    ServerNameDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
     ServerNameDirective(const ServerNameDirective& other);
     ServerNameDirective& operator=(const ServerNameDirective& other);
 
