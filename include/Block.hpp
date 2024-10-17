@@ -6,13 +6,14 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/09 11:59:58 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/17 16:33:34 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Directive.hpp"
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <stack>
@@ -21,29 +22,41 @@
 
 class Block {
 public:
-    ~Block();
-    Block();
-    Block(const std::string& name, Block* parent);
+    virtual ~Block();
+    Block(const std::string& fullBlockLine, Block* contextBlock);
+    Block(const Block& other);
+    Block& operator=(const Block& other);
 
-    void printBlock(int indent = 0) const;
-    std::string const& getName() const;
-    std::vector<std::string> const& getTokenizedName() const;
-    std::vector<Block*> const& getSubBlocks() const;
-    std::vector<Directive*> const& getDirectives() const;
-    bool isRootBlock() const;
+    virtual void validate() = 0;
+    bool validateContext() const;
+
+    bool getIsMain() const;
+    std::string getName() const;
+    Block* getContextBlock() const;
+    std::string getFullBlockLine() const;
+    std::vector<Block*> getSubBlocks() const;
+    std::vector<Directive*> getDirectives() const;
+    bool good() const;
+
     void addSubBlock(Block* block);
     void addDirective(Directive* directive);
+    void addValidContext(const std::string& context);
 
-private:
-    Block(Block const& other);
-    Block& operator=(Block const& other);
+    void printBlock(int indent = 0) const;
 
-    void tokenizeName();
-
+protected:
+    std::stringstream ss;
+    bool isValid;
+    const bool isMain;
+    std::string fullLine;
+    Block* contextBlock;
     std::string name;
-    bool isRoot;
-    std::vector<std::string> tokenizedName;
     std::vector<Block*> subBlocks;
     std::vector<Directive*> directives;
-    std::vector<std::string> validBlockNames;
+    std::vector<std::string> validContexts;
+
+    void extractName();
+
+private:
+    Block();
 };
