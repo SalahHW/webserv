@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:56 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/11 06:03:01 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/12 08:14:05 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void Directive::validate()
 bool Directive::validateContext() const
 {
     if (std::find(contexts.begin(), contexts.end(), currentContext) == contexts.end()) {
-        std::cerr << "Error: Directive \"" << name << "\" cannot be used in \"" << currentContext << "\"" << std::endl;
+        std::cerr << "Error: Directive \"" << name << "\" cannot be used in \"" << currentContext << "\" block" << std::endl;
         return false;
     }
     return true;
