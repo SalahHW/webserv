@@ -6,15 +6,17 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 00:40:40 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 17:04:58 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/17 16:54:47 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "DirectiveFactory.hpp"
 #include "Block.hpp"
+#include "BlockFactory.hpp"
+#include "DirectiveFactory.hpp"
 #include "utils.hpp"
+
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -25,26 +27,40 @@
 
 class ConfigFile {
 public:
+    // Constructor and destructor
+    ConfigFile(const std::string& configFilePath);
     ~ConfigFile();
-    ConfigFile(std::string const& configFilePath);
 
-    const Block& getRootBlock() const;
+    // Accessors
+    const Block& getMainBlock() const;
+    bool good() const;
 
 private:
+    // Disable default constructor, copy constructor, and assignment operator
     ConfigFile();
-    ConfigFile(ConfigFile const& other);
-    ConfigFile& operator=(ConfigFile const& other);
+    ConfigFile(const ConfigFile& other);
+    ConfigFile& operator=(const ConfigFile& other);
 
+    // Parsing methods
     void readConfigFile(const std::string& fileName);
-    void parseBlock(std::ifstream& file, std::stack<Block*>& blockStack);
+    void parseFile(std::ifstream& file, std::stack<Block*>& blockStack);
+    bool lineEndsProperly(const std::string& line) const;
     void handleLine(const std::string& cleanedLine, std::ifstream& file, std::stack<Block*>& blockStack);
+    void processBlockDeclaration(const std::string& line, std::ifstream& file, std::stack<Block*>& blockStack, Block* currentBlock);
+    void parseBlock(std::ifstream& file, std::stack<Block*>& blockStack);
     void processDirective(const std::string& cleanedLine, Block* currentBlock);
-    bool findOpeningBrace(std::ifstream& file);
+
+    // Utility methods
+    bool isOpeningBracePresent(std::size_t openBracePos, std::size_t semiColonPos) const;
+    bool findOpeningBrace(std::ifstream& file, Block* currentBlock);
     std::string cleanLine(const std::string& originalLine) const;
-    bool isDirective(const std::string& line);
+    bool isDirective(const std::string& line) const;
+    std::string extractBlockName(const std::string& line) const;
     std::string extractDirectiveName(const std::string& line) const;
 
+    // Member variables
     DirectiveFactory directiveFactory;
-    Block rootBlock;
+    BlockFactory blockFactory;
+    Block* mainBlock;
     bool isValid;
 };
