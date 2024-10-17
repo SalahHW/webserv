@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:20:42 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/02 10:44:45 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/16 09:10:41 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void openFile(const std::string& fileName, std::ifstream& file);
 // String utils
 std::string trimWhitespace(const std::string& str);
 std::string removeComments(const std::string& line);
+std::string removeBraces(const std::string& line);
 
 // Numbers utils
 bool isIntCompatible(const std::string& str);
