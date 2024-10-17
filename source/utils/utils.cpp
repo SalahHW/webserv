@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:22:18 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/08 10:25:41 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/16 09:16:52 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,14 @@ string utils::removeComments(const string& line)
     size_t commentPos = line.find('#');
     if (commentPos != string::npos)
         return (line.substr(0, commentPos));
+    return (line);
+}
+
+string utils::removeBraces(const string& line)
+{
+    size_t openBracePos = line.find('{');
+    if (openBracePos != string::npos)
+        return (line.substr(0, openBracePos));
     return (line);
 }
 
