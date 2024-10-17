@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 02:13:05 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/11 06:32:29 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/17 17:03:14 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,11 @@ string loadConfiguration(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    try {
-        string configFilePath = loadConfiguration(argc, argv);
-        ConfigFile server_configuration(configFilePath);
-        ServerHandler serverHandler(server_configuration);
-        serverHandler.displayServerHandlerInfo();
-    } catch (runtime_error& error) {
-        cerr << error.what() << endl;
-    }
+    string configFilePath = loadConfiguration(argc, argv);
+    ConfigFile server_configuration(configFilePath);
+    if (!server_configuration.good())
+        return (1);
+    ServerHandler serverHandler(server_configuration);
+    serverHandler.displayServerHandlerInfo();
     return (0);
 }
