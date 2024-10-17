@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 08:10:24 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 11:24:02 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/17 16:27:10 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 std::vector<Server> ConfigExtractor::extractServers(const ConfigFile& configFile)
 {
 	std::vector<Server> servers;
-	const Block& rootBlock = configFile.getRootBlock();
-	const std::vector<Block*> subBlocks = rootBlock.getSubBlocks();
+	const Block& mainBlock = configFile.getMainBlock();
+	const std::vector<Block*> subBlocks = mainBlock.getSubBlocks();
 
 	for (size_t i = 0; i < subBlocks.size(); i++) {
 		const Block& block = *subBlocks[i];
