@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/16 08:37:41 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/17 17:09:06 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ Block::~Block()
 
 Block::Block(const std::string& fullBlockLine, Block* contextBlock)
     : isValid(true)
-    , isMain(contextBlock == NULL)
     , fullLine(fullBlockLine)
     , contextBlock(contextBlock)
 {
@@ -33,7 +32,6 @@ Block::Block(const std::string& fullBlockLine, Block* contextBlock)
 
 Block::Block(const Block& other)
     : isValid(other.isValid)
-    , isMain(other.isMain)
     , fullLine(other.fullLine)
     , contextBlock(other.contextBlock)
     , name(other.name)
@@ -62,11 +60,6 @@ bool Block::validateContext() const
         return false;
     }
     return true;
-}
-
-bool Block::getIsMain() const
-{
-    return isMain;
 }
 
 std::string Block::getName() const

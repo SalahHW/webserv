@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/17 16:33:34 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/17 17:08:49 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ public:
     virtual void validate() = 0;
     bool validateContext() const;
 
-    bool getIsMain() const;
     std::string getName() const;
     Block* getContextBlock() const;
     std::string getFullBlockLine() const;
@@ -47,7 +46,6 @@ public:
 protected:
     std::stringstream ss;
     bool isValid;
-    const bool isMain;
     std::string fullLine;
     Block* contextBlock;
     std::string name;
