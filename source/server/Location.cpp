@@ -4,7 +4,6 @@
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 10:20:11 by sbouheni          #+#    #+#             */
 /*   Updated: 2024/10/10 10:30:06 by sbouheni         ###   ########.fr       */
 /*                                                                            */
@@ -33,6 +32,8 @@ Location& Location::operator=(const Location& src)
 		this->postAccepted = src.postAccepted;
 		this->deleteAccepted = src.deleteAccepted;
 		this->clientMaxBodySize = src.clientMaxBodySize;
+		this->returnCode = src.returnCode;
+		this->paths = src.paths;
 	}
 	return *this;
 }
@@ -87,6 +88,11 @@ void Location::setReturnCode(int returnCode)
 	this->returnCode = returnCode;
 }
 
+void Location::addPath(const std::string& path)
+{
+	this->paths.push_back(path);
+}
+
 const std::string& Location::getPath() const
 {
 	return this->path;
@@ -135,6 +141,11 @@ int Location::getClientMaxBodySize() const
 int Location::getReturnCode() const
 {
 	return this->returnCode;
+}
+
+const std::vector<std::string>& Location::getPaths() const
+{
+	return this->paths;
 }
 
 void Location::displayLocationInfo() const

@@ -50,6 +50,10 @@ void ConfigExtractor::extractLocationBlocks(const Block& block, Server& server)
 		const Block& subBlock = *subBlocks[i];
 		if (subBlock.getName() == "location") {
 			Location location;
+			const std::vector<std::string>& paths = subBlock.getPaths();
+			for (size_t j = 0; j < paths.size(); ++j) {
+				location.addPath(paths[j]);
+			}
 			extractLocationDirectives(subBlock, location);
 			server.addLocation(location);
 		}
