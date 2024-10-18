@@ -15,6 +15,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 class Location {
 public:
@@ -22,7 +23,6 @@ public:
     Location();
     Location(const Location& src);
     Location& operator=(const Location& src);
-
 
     // Setters
     void setPath(const std::string& path);
@@ -35,7 +35,7 @@ public:
     void setDeleteAccepted(bool deleteAccepted);
     void setClientMaxBodySize(int size);
     void setReturnCode(int returnCode);
-
+    void addPath(const std::string& path);
 
     // Getters
     const std::string& getPath() const;
@@ -48,6 +48,7 @@ public:
     bool getDeleteAccepted() const;
     int getClientMaxBodySize() const;
     int getReturnCode() const;
+    const std::vector<std::string>& getPaths() const;
 
     void displayLocationInfo() const;
 
@@ -62,6 +63,7 @@ private:
     bool deleteAccepted;
     int clientMaxBodySize;
     int returnCode;
+    std::vector<std::string> paths;
 };
 
 #endif

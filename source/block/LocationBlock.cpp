@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "LocationBlock.hpp"
+#include "utils.hpp"
 
 LocationBlock::~LocationBlock() { }
 
@@ -39,7 +40,17 @@ LocationBlock& LocationBlock::operator=(const LocationBlock& other)
 void LocationBlock::validate()
 {
 	isValid = validateContext();
-	// TODO: Path validation
+	std::set<std::string> uniquePaths(paths.begin(), paths.end());
+	if (uniquePaths.size() != paths.size()) {
+		isValid = false;
+		std::cerr << "Error: Duplicate paths found in location block." << std::endl;
+	}
+	for (size_t i = 0; i < paths.size(); ++i) {
+		if (!utils::isValidPathFormat(paths[i])) {
+			isValid = false;
+			std::cerr << "Error: Invalid path format: " << paths[i] << std::endl;
+		}
+	}
 }
 
 void LocationBlock::tokenizeName()
@@ -48,11 +59,13 @@ void LocationBlock::tokenizeName()
     std::string token;
 
     ss >> token;
-	ss >> token;
-	path = token;
 
-	if (ss >> token) {
-		std::cerr << "Error: Unexpected token \"" << token << "\" in location block. in \"" << contextBlock->getName() << "\" block" << std::endl;
-		isValid = false;
+	while (ss >> token) {
+		paths.push_back(token);
 	}
+}
+
+const std::vector<std::string>& LocationBlock::getPaths() const
+{
+	return paths;
 }
