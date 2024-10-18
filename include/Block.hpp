@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/17 17:08:49 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 15:34:07 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,10 @@ public:
     Block(const Block& other);
     Block& operator=(const Block& other);
 
-    virtual void validate() = 0;
+    void validate();
     bool validateContext() const;
+    bool validateArgsSize() const;
+    virtual bool validateSpecific() = 0;
 
     std::string getName() const;
     Block* getContextBlock() const;
@@ -43,7 +45,7 @@ public:
 
     void printBlock(int indent = 0) const;
 
-    virtual void apply(Location& location) = 0;
+    virtual void apply(Location& location) const;
 
 protected:
     std::stringstream ss;
@@ -51,12 +53,15 @@ protected:
     std::string fullLine;
     Block* contextBlock;
     std::string name;
+    std::vector<std::string> arguments;
     std::vector<Block*> subBlocks;
     std::vector<Directive*> directives;
     std::vector<std::string> validContexts;
-
-    void extractName();
+    int minArgs;
+    int maxArgs;
 
 private:
     Block();
-}
+    
+    void tokenizeName();
+};

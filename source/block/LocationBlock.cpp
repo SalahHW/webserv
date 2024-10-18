@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 08:56:54 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/16 08:45:23 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 12:02:04 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ LocationBlock::LocationBlock(const std::string& fullBlockLine, Block* contextBlo
 {
     addValidContext("server");
 	addValidContext("location");
+	minArgs = 1;
+	maxArgs = 2;
 	validate();
 	tokenizeName();
 }
@@ -39,18 +41,17 @@ LocationBlock& LocationBlock::operator=(const LocationBlock& other)
 
 void LocationBlock::validate()
 {
-	isValid = validateContext();
+	isValid = validateContext() && validateArgsSize() && validateSpecific();
+}
+
+bool LocationBlock::validateSpecific()
+{
 	std::set<std::string> uniquePaths(paths.begin(), paths.end());
 	if (uniquePaths.size() != paths.size()) {
-		isValid = false;
 		std::cerr << "Error: Duplicate paths found in location block." << std::endl;
+		return false;
 	}
-	for (size_t i = 0; i < paths.size(); ++i) {
-		if (!utils::isValidPathFormat(paths[i])) {
-			isValid = false;
-			std::cerr << "Error: Invalid path format: " << paths[i] << std::endl;
-		}
-	}
+	return true;
 }
 
 void LocationBlock::tokenizeName()
@@ -61,7 +62,7 @@ void LocationBlock::tokenizeName()
     ss >> token;
 
 	while (ss >> token) {
-		paths.push_back(token);
+			paths.push_back(token);
 	}
 }
 
@@ -70,7 +71,7 @@ const std::vector<std::string>& LocationBlock::getPaths() const
 	return paths;
 }
 
-void LocationBlock::apply(Location& location)
+void LocationBlock::apply(Location& location) const
 {
     for (size_t i = 0; i < paths.size(); ++i) {
         location.addPath(paths[i]);
