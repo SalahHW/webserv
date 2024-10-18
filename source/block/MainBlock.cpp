@@ -17,7 +17,9 @@ MainBlock::~MainBlock() { }
 MainBlock::MainBlock()
     : Block("main", NULL)
 {
-    
+    minArgs = 0;
+    maxArgs = 0;
+    validate();
 }
 
 MainBlock::MainBlock(const MainBlock& other)
@@ -33,7 +35,7 @@ MainBlock& MainBlock::operator=(const MainBlock& other)
     return *this;
 }
 
-void MainBlock::validate()
+bool MainBlock::validateSpecific()
 {
-    return;
+    return true;
 }
