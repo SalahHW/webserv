@@ -69,3 +69,10 @@ const std::vector<std::string>& LocationBlock::getPaths() const
 {
 	return paths;
 }
+
+void LocationBlock::apply(Location& location)
+{
+    for (size_t i = 0; i < paths.size(); ++i) {
+        location.addPath(paths[i]);
+    }
+}

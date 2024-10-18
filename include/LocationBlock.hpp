@@ -13,6 +13,7 @@
 #pragma once
 
 #include "Block.hpp"
+#include "Location.hpp"
 #include <sstream>
 #include <vector>
 
@@ -25,6 +26,7 @@ public:
 
     void validate();
     const std::vector<std::string>& getPaths() const;
+    void apply(Location& location);
 
 private:
 	void tokenizeName();
