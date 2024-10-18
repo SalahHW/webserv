@@ -14,6 +14,7 @@
 
 #include "Block.hpp"
 #include <sstream>
+#include <vector>
 
 class LocationBlock : public Block {
 public:
@@ -23,9 +24,10 @@ public:
     LocationBlock& operator=(const LocationBlock& src);
 
     void validate();
+    const std::vector<std::string>& getPaths() const;
 
 private:
 	void tokenizeName();
 
-	std::string path;
-};
+	std::vector<std::string> paths;
+}
