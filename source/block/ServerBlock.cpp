@@ -19,6 +19,8 @@ ServerBlock::ServerBlock(const std::string& fullBlockLine, Block* contextBlock)
 {
 	addValidContext("main");
 	addValidContext("http");
+	minArgs = 0;
+	maxArgs = 0;
 }
 
 ServerBlock::ServerBlock(const ServerBlock& other)
@@ -36,5 +38,11 @@ ServerBlock& ServerBlock::operator=(const ServerBlock& other)
 
 void ServerBlock::validate()
 {
-	isValid = validateContext(); // && check arguments
+	isValid = validateContext() && validateArgsSize() && validateSpecific();
+}
+
+bool ServerBlock::validateSpecific()
+{
+	// Placeholder implementation, update as needed
+	return true;
 }

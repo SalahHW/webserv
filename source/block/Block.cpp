@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/17 17:09:06 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 15:33:21 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ Block::Block(const std::string& fullBlockLine, Block* contextBlock)
     , fullLine(fullBlockLine)
     , contextBlock(contextBlock)
 {
-    extractName();
+    tokenizeName();
 }
 
 Block::Block(const Block& other)
@@ -35,20 +35,28 @@ Block::Block(const Block& other)
     , fullLine(other.fullLine)
     , contextBlock(other.contextBlock)
     , name(other.name)
+    , arguments(other.arguments)
     , subBlocks(other.subBlocks)
     , directives(other.directives)
     , validContexts(other.validContexts)
+    , minArgs(other.minArgs)
+    , maxArgs(other.maxArgs)
 {
 }
 
 Block& Block::operator=(const Block& other)
 {
     if (this != &other) {
+        isValid = other.isValid;
         fullLine = other.fullLine;
         contextBlock = other.contextBlock;
         name = other.name;
+        arguments = other.arguments;
         subBlocks = other.subBlocks;
         directives = other.directives;
+        validContexts = other.validContexts;
+        minArgs = other.minArgs;
+        maxArgs = other.maxArgs;
     }
     return *this;
 }
@@ -60,6 +68,25 @@ bool Block::validateContext() const
         return false;
     }
     return true;
+}
+
+bool Block::validateArgsSize() const
+{
+    int argsSize = static_cast<int>(arguments.size());
+
+    if (argsSize < minArgs || argsSize > maxArgs) {
+        std::cerr << "Error: Block \"" << name << "\" has an invalid number of arguments." << std::endl;
+        return false;
+    }
+    return true;
+}
+
+void Block::validate()
+{
+    if (name == "main")
+        isValid = validateSpecific();
+    else
+        isValid = validateContext() && validateArgsSize() && validateSpecific();
 }
 
 std::string Block::getName() const
@@ -126,13 +153,19 @@ void Block::printBlock(int indent) const
     }
 }
 
-void Block::extractName()
+void Block::tokenizeName()
 {
     std::stringstream ss(fullLine);
+    std::string token;
+
     ss >> name;
+
+    while (ss >> token) {
+        arguments.push_back(token);
+    }
 }
 
-void Block::apply(Location& location)
+void Block::apply(Location& location) const
 {
-    // This method will be overridden by derived classes
+    (void)location;
 }
