@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/18 20:52:51 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 21:04:12 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,8 @@ bool Block::validateArgsSize() const
 {
     int argsSize = static_cast<int>(arguments.size());
 
-    std::cout << "argsSize: " << argsSize << std::endl;
-    std::cout << "minArgs: " << minArgs << std::endl;
-    std::cout << "maxArgs: " << maxArgs << std::endl;
-
     if (argsSize < minArgs || argsSize > maxArgs) {
-        std::cerr << "Error: Block \"" << name << "\" has an invalid number of arguments." << std::endl;
+        std::cerr << "Error: Block \"" << fullLine << "\" has an invalid number of arguments." << std::endl;
         return false;
     }
     return true;
