@@ -202,8 +202,8 @@ void ConfigFile::processBlockDeclaration(const std::string& line, std::ifstream&
         }
     }
 
-    // Créer le nouveau bloc
-    Block* newBlock = BlockFactory().create(blockName, currentBlock, blockName);
+    std::string cleanedLine = utils::removeBraces(line);
+    Block* newBlock = BlockFactory().create(blockName, currentBlock, cleanedLine);
 
     if (!newBlock) {
         std::cerr << "Error: Block \"" << blockName << "\" in block \""
