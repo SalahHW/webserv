@@ -22,4 +22,5 @@ public:
 	ServerBlock& operator=(const ServerBlock& src);
 
 	void validate();
+	virtual bool validateSpecific();
 };

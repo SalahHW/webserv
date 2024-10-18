@@ -21,8 +21,8 @@ public:
 	MainBlock(const MainBlock& src);
 	MainBlock& operator=(const MainBlock& src);
 
-	virtual void validate();
-
+	bool validateSpecific();
+	
 private:
 	
 };
