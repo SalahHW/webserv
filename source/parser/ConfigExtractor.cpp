@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 08:10:24 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/17 16:27:10 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 21:07:02 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void ConfigExtractor::extractServerDirectives(const Block& block, Server& server
 	const std::vector<Directive*> directives = block.getDirectives();
 	for (size_t i = 0; i < directives.size(); ++i) {
 		directives[i]->apply(server);
-		// directives[i]->displayInfo();
 	}
 }
 
