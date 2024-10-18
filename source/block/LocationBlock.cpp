@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 08:56:54 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/18 20:51:22 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 21:08:55 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,4 +53,5 @@ void LocationBlock::apply(Location& location) const
     for (size_t i = 0; i < arguments.size(); ++i) {
         location.addPath(arguments[i]);
     }
+	location.setPath(arguments[arguments.size() - 1]);
 }
