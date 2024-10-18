@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 08:33:24 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/18 12:02:47 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 20:51:57 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,8 @@ public:
     LocationBlock(const LocationBlock& src);
     LocationBlock& operator=(const LocationBlock& src);
 
-    void validate();
-    const std::vector<std::string>& getPaths() const;
     void apply(Location& location) const;
+
+protected:
     virtual bool validateSpecific();
-
-private:
-	void tokenizeName();
-
-	std::vector<std::string> paths;
 };
