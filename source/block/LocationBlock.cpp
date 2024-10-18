@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 08:56:54 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/18 12:02:04 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 20:51:22 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ LocationBlock::LocationBlock(const std::string& fullBlockLine, Block* contextBlo
 	minArgs = 1;
 	maxArgs = 2;
 	validate();
-	tokenizeName();
 }
 
 LocationBlock::LocationBlock(const LocationBlock& other)
@@ -39,41 +38,19 @@ LocationBlock& LocationBlock::operator=(const LocationBlock& other)
 	return *this;
 }
 
-void LocationBlock::validate()
-{
-	isValid = validateContext() && validateArgsSize() && validateSpecific();
-}
-
 bool LocationBlock::validateSpecific()
 {
-	std::set<std::string> uniquePaths(paths.begin(), paths.end());
-	if (uniquePaths.size() != paths.size()) {
+	std::set<std::string> uniquePaths(arguments.begin(), arguments.end());
+	if (uniquePaths.size() != arguments.size()) {
 		std::cerr << "Error: Duplicate paths found in location block." << std::endl;
 		return false;
 	}
 	return true;
 }
 
-void LocationBlock::tokenizeName()
-{
-    std::stringstream ss(getFullBlockLine());
-    std::string token;
-
-    ss >> token;
-
-	while (ss >> token) {
-			paths.push_back(token);
-	}
-}
-
-const std::vector<std::string>& LocationBlock::getPaths() const
-{
-	return paths;
-}
-
 void LocationBlock::apply(Location& location) const
 {
-    for (size_t i = 0; i < paths.size(); ++i) {
-        location.addPath(paths[i]);
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        location.addPath(arguments[i]);
     }
 }
