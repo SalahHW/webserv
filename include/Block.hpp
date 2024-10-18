@@ -43,6 +43,8 @@ public:
 
     void printBlock(int indent = 0) const;
 
+    virtual void apply(Location& location) = 0;
+
 protected:
     std::stringstream ss;
     bool isValid;
@@ -57,4 +59,4 @@ protected:
 
 private:
     Block();
-};
+}
