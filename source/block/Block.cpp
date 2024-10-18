@@ -131,3 +131,8 @@ void Block::extractName()
     std::stringstream ss(fullLine);
     ss >> name;
 }
+
+void Block::apply(Location& location)
+{
+    // This method will be overridden by derived classes
+}
