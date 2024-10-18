@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 13:49:37 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:49:29 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 20:54:45 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ DirectiveFactory::DirectiveFactory()
     registerDirective<RootDirective>("root");
     registerDirective<IndexDirective>("index");
     registerDirective<AutoIndexDirective>("autoindex");
-    registerDirective<DenyDirective>("deny");
     registerDirective<ReturnDirective>("return");
 }
 
