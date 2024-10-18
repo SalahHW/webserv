@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 03:23:20 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/18 15:34:07 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/18 20:53:45 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ public:
     virtual void apply(Location& location) const;
 
 protected:
-    std::stringstream ss;
     bool isValid;
     std::string fullLine;
     Block* contextBlock;
