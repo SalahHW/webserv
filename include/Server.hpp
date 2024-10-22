@@ -3,20 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:49:53 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/22 13:47:45 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Location.hpp"
-#include <iostream>
+#include "SocketException.hpp"
+#include <cstdio> // pour sprintf
+#include <fcntl.h> // Pour fcntl
+#include <iostream> // Pour std::cerr
 #include <map>
-#include <string>
-#include <vector>
+#include <netdb.h> // Pour getaddrinfo, freeaddrinfo, gai_strerror
+#include <netinet/in.h> // Pour sockaddr_in, INADDR_ANY
+#include <stdlib.h> // Pour exit
+#include <string.h> // Pour memset, memcpy
+#include <sys/socket.h> // Pour socket, bind, listen, accept
+#include <unistd.h> // Pour close
 
 class Server {
 public:
@@ -25,7 +32,7 @@ public:
     Server(const Server& src);
     Server& operator=(const Server& src);
 
-    void setListenFd(int fd);
+    void setListenFd();
     void setPort(int port);
     void setClientMaxBodySize(int size);
     void setName(const std::string& name);
@@ -41,6 +48,8 @@ public:
 
     void displayServerInfo() const;
 
+    void start();
+
 private:
     int listenFd;
     int port;
@@ -48,4 +57,9 @@ private:
     int clientMaxBodySize;
     std::map<int, std::string> errorPages; // TODO: Use map instead to store error codes and their corresponding pages
     std::vector<Location> locations;
+    struct sockaddr_in addr;
+    void resolveHostName();
+    void bindSocket() const;
+    void setToListen() const;
+    void makeSocketNonBlocking() const;
 };
