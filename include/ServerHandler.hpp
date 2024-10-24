@@ -6,13 +6,14 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:21:07 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/22 16:24:14 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/24 16:12:04 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Block.hpp"
+#include "ClientIn.hpp"
 #include "ConfigExtractor.hpp"
 #include "ConfigFile.hpp"
 #include "EpollException.hpp"
@@ -43,10 +44,11 @@ private:
 
     void addServer(const Server& block);
 
-    std::map<int, Server> serversList; // besoin absolut de cette pair
+    std::map<int, Server> serversList; // besoin absolut de cette pair int server en map
 
     int epollFd;
     int nbEvents;
     void epollInit();
     void startToListen();
+    void addToEpoll(int fdToAdd) const;
 };
