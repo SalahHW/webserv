@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/22 16:44:01 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/24 16:16:15 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void ServerHandler::serversStart()
 {
     for (size_t i = 0; i < serversList.size(); ++i) {
         serversList[i].start();
+        addToEpoll(serversList[i].getListenFd());
     }
 }
 
@@ -43,6 +44,16 @@ void ServerHandler::epollInit()
     this->epollFd = epoll_create1(0);
     if (this->epollFd == -1) {
         throw EpollException("epoll_create1");
+    }
+}
+
+void ServerHandler::addToEpoll(int fdToAdd) const
+{
+    struct epoll_event event;
+    event.events = EPOLLIN;
+    event.data.fd = fdToAdd;
+    if (epoll_ctl(this->epollFd, EPOLL_CTL_ADD, fdToAdd, &event) == -1) {
+        throw EpollException("epoll_ctl");
     }
 }
 
@@ -60,10 +71,10 @@ void ServerHandler::startToListen()
             std::map<int, Server>::const_iterator it = this->serversList.find(current_fd);
             if (it != this->serversList.end()) {
                 // modif peut etre en dessous demain
-                ClientIn client(listen_sock_fd, *this);
+                ClientIn client(current_fd, );
             } else {
-                // modif peut etre en dessous demain
-                handleClientData(events[i].data.fd);
+                // normalement en dessous handleclientdata
+                std::cout << "ok" << std::endl;
             }
         }
     }
