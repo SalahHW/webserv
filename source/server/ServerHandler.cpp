@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/24 16:16:15 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/24 16:58:12 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void ServerHandler::displayServerHandlerInfo() const
 {
     std::cout << "Server Handler Information:" << std::endl;
     for (size_t i = 0; i < serversList.size(); ++i) {
-        serversList[i].displayServerInfo();
+        // serversList[i].displayServerInfo();
     }
 }
 
@@ -67,11 +67,11 @@ void ServerHandler::startToListen()
             throw EpollException("epoll_wait " + std::string(strerror(errno)));
         }
         for (int i = 0; i < this->nbEvents; i++) {
-            int current_fd = events[i].data.fd;
-            std::map<int, Server>::const_iterator it = this->serversList.find(current_fd);
+            int currentFd = events[i].data.fd;
+            std::map<int, Server>::const_iterator it = this->serversList.find(currentFd);
             if (it != this->serversList.end()) {
                 // modif peut etre en dessous demain
-                ClientIn client(current_fd, );
+                ClientIn client(currentFd, *this);
             } else {
                 // normalement en dessous handleclientdata
                 std::cout << "ok" << std::endl;

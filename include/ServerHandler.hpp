@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:21:07 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/24 16:12:04 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/24 16:55:55 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ public:
     void displayServerHandlerInfo() const;
     void serversStart(); // demarre les serv
     void serversStop() const; // stop les serv
+    void addToEpoll(int fdToAdd) const;
 
 private:
     ServerHandler();
@@ -50,5 +51,4 @@ private:
     int nbEvents;
     void epollInit();
     void startToListen();
-    void addToEpoll(int fdToAdd) const;
 };
