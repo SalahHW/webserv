@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:50:50 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/22 13:48:45 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,19 @@ Server& Server::operator=(const Server& src)
     return *this;
 }
 
-void Server::setListenFd(int fd)
+void Server::setListenFd()
 {
-    this->listenFd = fd;
+    resolveHostName();
+    this->listenFd = socket(AF_INET, SOCK_STREAM, 0);
+    int optval = 1;
+    if (this->listenFd == -1)
+        throw SocketException("socket");
+    if (setsockopt(this->listenFd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
+        throw SocketException("setsockopt");
+    memset(&this->addr, 0, sizeof(this->addr));
+    this->addr.sin_family = AF_INET;
+    this->addr.sin_port = htons(this->port);
+    this->addr.sin_addr.s_addr = INADDR_ANY;
 }
 
 void Server::setPort(int port)
@@ -96,14 +106,69 @@ void Server::displayServerInfo() const
     std::cout << "- Port: " << port << std::endl;
     std::cout << "- Name: " << name << std::endl;
     std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes" << std::endl;
-    
+
     // std::cout << "- Error Pages: " << std::endl;
     // for (size_t i = 0; i < errorPages.size(); ++i) {
     //      std::cout << "  * " << errorPages[i] << std::endl;
     // }
-    
+
     std::cout << "- Locations: " << std::endl;
     for (size_t i = 0; i < locations.size(); ++i) {
         locations[i].displayLocationInfo(); // Assumes Location class has a similar method to display its info
+    }
+}
+
+void Server::resolveHostName()
+{
+    struct addrinfo hints, *res;
+    int status;
+
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
+
+    char port_str[6];
+    sprintf(port_str, "%d", this->port);
+
+    status = getaddrinfo(this->name.c_str(), port_str, &hints, &res);
+    if (status != 0) {
+        throw SocketException("getaddrinfo: " + std::string(gai_strerror(status)));
+    }
+    memcpy(&this->addr, res->ai_addr, res->ai_addrlen);
+    freeaddrinfo(res);
+}
+
+void Server::bindSocket() const
+{
+    if (bind(this->listenFd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
+        throw SocketException("bind");
+}
+
+void Server::setToListen() const
+{
+    if (listen(this->listenFd, SOMAXCONN) == -1)
+        throw SocketException("listen");
+}
+
+void Server::makeSocketNonBlocking() const
+{
+    int flags = fcntl(this->listenFd, F_GETFL, 0);
+    if (flags == -1)
+        throw SocketException("fcntl");
+    flags |= O_NONBLOCK;
+    if (fcntl(this->listenFd, F_SETFL, flags) == -1)
+        throw SocketException("fcntl");
+}
+
+void Server::start()
+{
+    try {
+        setListenFd();
+        bindSocket();
+        makeSocketNonBlocking();
+        setToListen();
+    } catch (const SocketException& excp) {
+        std::cerr << "Socket error: " << excp.what() << std::endl;
     }
 }
