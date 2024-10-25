@@ -23,6 +23,24 @@ ServerHandler::ServerHandler(const ConfigFile& configFile)
     serversList = ConfigExtractor::extractServers(configFile);
 }
 
+ServerHandler::ServerHandler(const ServerHandler& other)
+    : serversList(other.serversList)
+    , epollFd(other.epollFd)
+    , nbEvents(other.nbEvents)
+{
+}
+
+ServerHandler& ServerHandler::operator=(const ServerHandler& other)
+{
+    if (this != &other)
+    {
+        serversList = other.serversList;
+        epollFd = other.epollFd;
+        nbEvents = other.nbEvents;
+    }
+    return *this;
+}
+
 void ServerHandler::displayServerHandlerInfo() const
 {
     std::cout << "Server Handler Information:" << std::endl;
