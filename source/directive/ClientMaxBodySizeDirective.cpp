@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:17:39 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 17:26:18 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/25 11:16:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,12 @@ void ClientMaxBodySizeDirective::apply(Location& location)
 	location.setClientMaxBodySize(maxBodySize);
 }
 
-void ClientMaxBodySizeDirective::setMaxBodySize(int maxBodySize)
+void ClientMaxBodySizeDirective::setMaxBodySize(size_t maxBodySize)
 {
 	this->maxBodySize = maxBodySize;
 }
 
-int ClientMaxBodySizeDirective::getMaxBodySize() const
+size_t ClientMaxBodySizeDirective::getMaxBodySize() const
 {
 	return maxBodySize;
 }
