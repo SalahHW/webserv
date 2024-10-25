@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+         #
+#    By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/10/22 14:58:37 by joakoeni         ###   ########.fr        #
+#    Updated: 2024/10/25 09:30:45 by sbouheni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,6 @@ SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
 							parser/ConfigExtractor.cpp							\
 							server/ClientIn.cpp									\
-							server/EpollManagement.cpp							\
 							server/HttpParsingRequest.cpp						\
 							server/Server.cpp									\
 							server/ServerHandler.cpp							\
