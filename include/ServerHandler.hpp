@@ -45,7 +45,7 @@ private:
 
     void addServer(const Server& block);
 
-    std::map<int, Server> serversList; // besoin absolut de cette pair int server en map
+    std::map<int, Server> serversList;
 
     int epollFd;
     int nbEvents;
