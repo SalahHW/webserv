@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:21:07 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/24 16:12:04 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/25 09:34:44 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,23 +32,23 @@ class ServerHandler {
 public:
     ~ServerHandler();
     ServerHandler(const ConfigFile& configFile);
+    ServerHandler(const ServerHandler& src);
+    ServerHandler& operator=(const ServerHandler& src);
 
     void displayServerHandlerInfo() const;
     void serversStart(); // demarre les serv
     void serversStop() const; // stop les serv
+    void addToEpoll(int fdToAdd) const;
 
 private:
     ServerHandler();
-    ServerHandler(const ServerHandler& src);
-    ServerHandler& operator=(const ServerHandler& src);
 
     void addServer(const Server& block);
 
-    std::map<int, Server> serversList; // besoin absolut de cette pair int server en map
+    std::map<int, Server> serversList;
 
     int epollFd;
     int nbEvents;
     void epollInit();
     void startToListen();
-    void addToEpoll(int fdToAdd) const;
 };

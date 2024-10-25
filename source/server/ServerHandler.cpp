@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/24 16:16:15 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/25 09:50:19 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerHandler.hpp"
-
-using namespace std;
 
 ServerHandler::~ServerHandler()
 {
@@ -23,11 +21,31 @@ ServerHandler::ServerHandler(const ConfigFile& configFile)
     serversList = ConfigExtractor::extractServers(configFile);
 }
 
+ServerHandler::ServerHandler(const ServerHandler& other)
+    : serversList(other.serversList)
+    , epollFd(other.epollFd)
+    , nbEvents(other.nbEvents)
+{
+}
+
+ServerHandler& ServerHandler::operator=(const ServerHandler& other)
+{
+    if (this != &other)
+    {
+        serversList = other.serversList;
+        epollFd = other.epollFd;
+        nbEvents = other.nbEvents;
+    }
+    return *this;
+}
+
 void ServerHandler::displayServerHandlerInfo() const
 {
+    std::map<int, Server>::const_iterator it;
+    
     std::cout << "Server Handler Information:" << std::endl;
-    for (size_t i = 0; i < serversList.size(); ++i) {
-        serversList[i].displayServerInfo();
+    for (it = serversList.begin(); it != serversList.end(); ++it) {
+        it->second.displayServerInfo();
     }
 }
 
@@ -67,11 +85,11 @@ void ServerHandler::startToListen()
             throw EpollException("epoll_wait " + std::string(strerror(errno)));
         }
         for (int i = 0; i < this->nbEvents; i++) {
-            int current_fd = events[i].data.fd;
-            std::map<int, Server>::const_iterator it = this->serversList.find(current_fd);
+            int currentFd = events[i].data.fd;
+            std::map<int, Server>::const_iterator it = this->serversList.find(currentFd);
             if (it != this->serversList.end()) {
                 // modif peut etre en dessous demain
-                ClientIn client(current_fd, );
+                ClientIn client(currentFd, *this);
             } else {
                 // normalement en dessous handleclientdata
                 std::cout << "ok" << std::endl;

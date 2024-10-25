@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 08:10:43 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 10:24:00 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/25 09:28:04 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ public:
     // ~ConfigExtractor();
     // ConfigExtractor();
 
-    static std::vector<Server> extractServers(const ConfigFile& configFile);
+    static std::map<int, Server> extractServers(const ConfigFile& configFile);
     static void extractServerDirectives(const Block& block, Server& server);
     static void extractLocationBlocks(const Block& block, Server& server);
     static void extractLocationDirectives(const Block& block, Location& location);
