@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 08:10:24 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/25 09:55:02 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/25 10:46:46 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,18 @@ std::map<int, Server> ConfigExtractor::extractServers(const ConfigFile& configFi
 	const Block& mainBlock = configFile.getMainBlock();
 	const std::vector<Block*> subBlocks = mainBlock.getSubBlocks();
 
+	int serverCount = 0;
+
 	for (size_t i = 0; i < subBlocks.size(); i++) {
 		const Block& block = *subBlocks[i];
 		if (block.getName() == "server") {
 			Server server;
 			extractServerDirectives(block, server);
 			extractLocationBlocks(block, server);
-			std::cout << server.getListenFd() << std::endl;
-			servers[server.getListenFd()] = server;
+			//TODO: use this one after bug fix
+			// servers[server.getListenFd()] = server;
+			servers[serverCount] = server;
+			serverCount++;
 		}
 	}
 	return servers;
