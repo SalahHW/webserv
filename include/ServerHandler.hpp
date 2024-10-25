@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:21:07 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/24 16:55:55 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/25 09:34:44 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ class ServerHandler {
 public:
     ~ServerHandler();
     ServerHandler(const ConfigFile& configFile);
+    ServerHandler(const ServerHandler& src);
+    ServerHandler& operator=(const ServerHandler& src);
 
     void displayServerHandlerInfo() const;
     void serversStart(); // demarre les serv
@@ -40,8 +42,6 @@ public:
 
 private:
     ServerHandler();
-    ServerHandler(const ServerHandler& src);
-    ServerHandler& operator=(const ServerHandler& src);
 
     void addServer(const Server& block);
 
