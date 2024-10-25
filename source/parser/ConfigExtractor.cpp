@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 08:10:24 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/18 21:07:02 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/25 10:46:46 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,13 @@
 
 // ConfigExtractor::ConfigExtractor() { }
 
-std::vector<Server> ConfigExtractor::extractServers(const ConfigFile& configFile)
+std::map<int, Server> ConfigExtractor::extractServers(const ConfigFile& configFile)
 {
-	std::vector<Server> servers;
+	std::map<int, Server> servers;
 	const Block& mainBlock = configFile.getMainBlock();
 	const std::vector<Block*> subBlocks = mainBlock.getSubBlocks();
+
+	int serverCount = 0;
 
 	for (size_t i = 0; i < subBlocks.size(); i++) {
 		const Block& block = *subBlocks[i];
@@ -28,7 +30,10 @@ std::vector<Server> ConfigExtractor::extractServers(const ConfigFile& configFile
 			Server server;
 			extractServerDirectives(block, server);
 			extractLocationBlocks(block, server);
-			servers.push_back(server);
+			//TODO: use this one after bug fix
+			// servers[server.getListenFd()] = server;
+			servers[serverCount] = server;
+			serverCount++;
 		}
 	}
 	return servers;

@@ -6,19 +6,19 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 16:02:27 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/09/06 16:02:28 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/24 16:54:19 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ClientIn.hpp"
 
-ClientIn::ClientIn(int listen_sock_fd, EpollManagement epoll)
+ClientIn::ClientIn(int listen_sock_fd, ServerHandler server)
 {
     try {
         CreateClientSock(listen_sock_fd);
         makeSocketNonBlocking();
         setSocketBufferSize(65536, 65536);
-        epoll.addToEpoll(this->client_fd);
+        server.addToEpoll(this->getClientFd());
     } catch (const ClientException& excp) {
         std::cerr << "Client error: " << excp.what() << std::endl;
     }

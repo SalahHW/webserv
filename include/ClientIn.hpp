@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 16:02:32 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/24 14:45:52 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/24 16:51:40 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #define CLIENT_HPP
 
 #include "ClientException.hpp"
-#include "EpollManagement.hpp"
+#include "ServerHandler.hpp"
 #include <fcntl.h>
 #include <iostream>
 #include <netinet/in.h>
@@ -22,7 +22,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-class EpollManagement;
+class ServerHandler;
 
 class ClientIn {
 private:
@@ -32,7 +32,7 @@ private:
     int flags;
 
 public:
-    ClientIn(int listen_sock_fd, EpollManagement epoll);
+    ClientIn(int listen_sock_fd, ServerHandler server);
     ~ClientIn();
     ClientIn(const ClientIn& src);
     ClientIn& operator=(const ClientIn& src);
