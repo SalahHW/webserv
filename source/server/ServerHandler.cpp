@@ -19,6 +19,7 @@ ServerHandler::~ServerHandler()
 ServerHandler::ServerHandler(const ConfigFile& configFile)
 {
     serversList = ConfigExtractor::extractServers(configFile);
+    startToListen();
 }
 
 ServerHandler::ServerHandler(const ServerHandler& other)
@@ -78,6 +79,7 @@ void ServerHandler::addToEpoll(int fdToAdd) const
 void ServerHandler::startToListen()
 {
     struct epoll_event events[MAX_EVENTS];
+    this->serversStart();
     std::cout << "----------STARTING TO LISTENING----------" << std::endl;
     while (1) {
         this->nbEvents = epoll_wait(this->epollFd, events, MAX_EVENTS, -1);
