@@ -79,6 +79,7 @@ void ServerHandler::addToEpoll(int fdToAdd) const
 void ServerHandler::startToListen()
 {
     struct epoll_event events[MAX_EVENTS];
+    this->epollInit();
     this->serversStart();
     std::cout << "----------STARTING TO LISTENING----------" << std::endl;
     while (1) {
@@ -94,7 +95,7 @@ void ServerHandler::startToListen()
                 ClientIn client(currentFd, *this);
             } else {
                 // normalement en dessous handleclientdata
-                std::cout << "ok" << std::endl;
+                //std::cout << "ok" << std::endl;
             }
         }
     }
