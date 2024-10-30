@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:21:07 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/25 09:34:44 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/30 15:53:00 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Block.hpp"
-#include "ClientIn.hpp"
+#include "Client.hpp"
 #include "ConfigExtractor.hpp"
 #include "ConfigFile.hpp"
 #include "EpollException.hpp"
@@ -46,6 +46,7 @@ private:
     void addServer(const Server& block);
 
     std::map<int, Server> serversList;
+    std::map<int, Client> clientList;
 
     int epollFd;
     int nbEvents;

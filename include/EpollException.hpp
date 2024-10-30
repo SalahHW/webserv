@@ -19,7 +19,7 @@
 class EpollException : public std::runtime_error {
 public:
     explicit EpollException(const std::string& excp)
-        : std::runtime_error(excp)
+        : std::runtime_error(excp + ": " + std::strerror(errno))
     {
         // exit(EXIT_FAILURE);
     }

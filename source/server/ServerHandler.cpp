@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/25 09:50:19 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/30 15:27:54 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ ServerHandler::ServerHandler(const ServerHandler& other)
 
 ServerHandler& ServerHandler::operator=(const ServerHandler& other)
 {
-    if (this != &other)
-    {
+    if (this != &other) {
         serversList = other.serversList;
         epollFd = other.epollFd;
         nbEvents = other.nbEvents;
@@ -43,7 +42,7 @@ ServerHandler& ServerHandler::operator=(const ServerHandler& other)
 void ServerHandler::displayServerHandlerInfo() const
 {
     std::map<int, Server>::const_iterator it;
-    
+
     std::cout << "Server Handler Information:" << std::endl;
     for (it = serversList.begin(); it != serversList.end(); ++it) {
         it->second.displayServerInfo();
@@ -95,7 +94,6 @@ void ServerHandler::startToListen()
                 ClientIn client(currentFd, *this);
             } else {
                 // normalement en dessous handleclientdata
-                //std::cout << "ok" << std::endl;
             }
         }
     }
