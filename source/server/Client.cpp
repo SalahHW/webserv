@@ -13,13 +13,12 @@
 #include "Client.hpp"
 #include "ServerHandler.hpp"
 
-Client::Client(int listen_sock_fd, ServerHandler server)
+Client::Client(int listen_sock_fd)
 {
     try {
         CreateClientSock(listen_sock_fd);
         makeSocketNonBlocking();
         setSocketBufferSize(65536, 65536);
-        server.addToEpoll(this->getClientFd());
     } catch (const ClientException& excp) {
         std::cerr << "Client error: " << excp.what() << std::endl;
     }

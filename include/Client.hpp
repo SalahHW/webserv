@@ -30,7 +30,7 @@ private:
     int flags;
 
 public:
-    Client(int listen_sock_fd, ServerHandler server);
+    Client(int listen_sock_fd);
     ~Client();
     Client(const Client& src);
     Client& operator=(const Client& src);
