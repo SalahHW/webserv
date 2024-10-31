@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ClientIn.hpp                                       :+:      :+:    :+:   */
+/*   Client.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -24,7 +24,7 @@
 
 class ServerHandler;
 
-class ClientIn {
+class Client {
 private:
     int client_fd;
     struct sockaddr_in client_addr;
@@ -32,10 +32,10 @@ private:
     int flags;
 
 public:
-    ClientIn(int listen_sock_fd, ServerHandler server);
-    ~ClientIn();
-    ClientIn(const ClientIn& src);
-    ClientIn& operator=(const ClientIn& src);
+    Client(int listen_sock_fd, ServerHandler server);
+    ~Client();
+    Client(const Client& src);
+    Client& operator=(const Client& src);
     const int& getClientFd() const;
     const struct sockaddr_in& getClientAddr() const;
     const socklen_t& getClientLen() const;

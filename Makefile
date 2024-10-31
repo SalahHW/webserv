@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+         #
+#    By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/10/25 09:30:45 by sbouheni         ###   ########.fr        #
+#    Updated: 2024/10/31 13:46:11 by joakoeni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ OBJ_DIR					=	obj
 SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
 							parser/ConfigExtractor.cpp							\
-							server/ClientIn.cpp									\
+							server/Client.cpp									\
 							server/HttpParsingRequest.cpp						\
 							server/Server.cpp									\
 							server/ServerHandler.cpp							\
