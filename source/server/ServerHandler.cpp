@@ -6,11 +6,12 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 13:46:11 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/31 16:44:33 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerHandler.hpp"
+#include "Server.hpp"
 
 ServerHandler::~ServerHandler()
 {

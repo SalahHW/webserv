@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 14:12:16 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/31 17:04:27 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "Location.hpp"
 #include "SocketException.hpp"
 #include <cstdio> // pour sprintf
 #include <fcntl.h> // Pour fcntl
@@ -24,6 +23,9 @@
 #include <string.h> // Pour memset, memcpy
 #include <sys/socket.h> // Pour socket, bind, listen, accept
 #include <unistd.h> // Pour close
+#include <vector>
+
+class Location;
 
 class Server {
 public:
@@ -57,9 +59,11 @@ private:
     int clientMaxBodySize;
     std::map<int, std::string> errorPages;
     std::vector<Location> locations;
+    std::map<int, Client> clients;
     struct sockaddr_in addr;
     void resolveHostName();
     void bindSocket() const;
     void setToListen() const;
     void makeSocketNonBlocking() const;
+    void addClientToServer(Client clientToAdd);
 };
