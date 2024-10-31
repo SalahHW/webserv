@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
 /*   Updated: 2024/10/31 14:12:16 by joakoeni         ###   ########.fr       */
@@ -55,7 +55,7 @@ private:
     int port;
     std::string name;
     int clientMaxBodySize;
-    std::map<int, std::string> errorPages; // TODO: Use map instead to store error codes and their corresponding pages
+    std::map<int, std::string> errorPages;
     std::vector<Location> locations;
     struct sockaddr_in addr;
     void resolveHostName();

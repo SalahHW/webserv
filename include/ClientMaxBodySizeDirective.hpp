@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:16:05 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:50:45 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/25 11:16:15 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ public:
     virtual void apply(Server& server);
     virtual void apply(Location& location);
 
-    void setMaxBodySize(int maxBodySize);
+    void setMaxBodySize(size_t maxBodySize);
 
-    int getMaxBodySize() const;
+    size_t getMaxBodySize() const;
 
 private:
     ClientMaxBodySizeDirective();
 
-    int maxBodySize;
+    size_t maxBodySize;
 };
