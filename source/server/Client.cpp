@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ClientIn.cpp                                       :+:      :+:    :+:   */
+/*   Client.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ClientIn.hpp"
+#include "Client.hpp"
 
-ClientIn::ClientIn(int listen_sock_fd, ServerHandler server)
+Client::Client(int listen_sock_fd, ServerHandler server)
 {
     try {
         CreateClientSock(listen_sock_fd);
@@ -24,12 +24,12 @@ ClientIn::ClientIn(int listen_sock_fd, ServerHandler server)
     }
 }
 
-ClientIn::~ClientIn()
+Client::~Client()
 {
     // close(this->client_fd);
 }
 
-ClientIn::ClientIn(const ClientIn& src)
+Client::Client(const Client& src)
     : client_fd(src.client_fd)
     , client_addr(src.client_addr)
     , client_len(src.client_len)
@@ -37,24 +37,24 @@ ClientIn::ClientIn(const ClientIn& src)
 {
 }
 
-ClientIn& ClientIn::operator=(const ClientIn& src)
+Client& Client::operator=(const Client& src)
 {
     this->client_fd = src.client_fd;
     return *this;
 }
 
-const int& ClientIn::getClientFd() const { return this->client_fd; }
+const int& Client::getClientFd() const { return this->client_fd; }
 
-const struct sockaddr_in& ClientIn::getClientAddr() const
+const struct sockaddr_in& Client::getClientAddr() const
 {
     return this->client_addr;
 }
 
-const socklen_t& ClientIn::getClientLen() const { return this->client_len; }
+const socklen_t& Client::getClientLen() const { return this->client_len; }
 
-const int& ClientIn::getFlags() const { return this->flags; }
+const int& Client::getFlags() const { return this->flags; }
 
-void ClientIn::CreateClientSock(int listen_sock_fd)
+void Client::CreateClientSock(int listen_sock_fd)
 {
     this->client_len = sizeof(this->client_addr);
     this->client_fd = accept(
@@ -63,7 +63,7 @@ void ClientIn::CreateClientSock(int listen_sock_fd)
         throw ClientException("accept");
 }
 
-void ClientIn::makeSocketNonBlocking()
+void Client::makeSocketNonBlocking()
 {
     this->flags = fcntl(this->client_fd, F_GETFL, 0);
     if (flags == -1)
@@ -73,7 +73,7 @@ void ClientIn::makeSocketNonBlocking()
         throw ClientException("fcntl");
 }
 
-void ClientIn::setSocketBufferSize(int recvBufSize, int sendBufSize) const
+void Client::setSocketBufferSize(int recvBufSize, int sendBufSize) const
 {
     if (setsockopt(this->client_fd, SOL_SOCKET, SO_RCVBUF, &recvBufSize,
             sizeof(recvBufSize))
