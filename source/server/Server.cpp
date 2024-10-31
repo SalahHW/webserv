@@ -6,11 +6,13 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/22 13:48:45 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/31 17:07:25 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Location.hpp"
+#include "ServerHandler.hpp"
 
 Server::~Server() { }
 
@@ -171,4 +173,9 @@ void Server::start()
     } catch (const SocketException& excp) {
         std::cerr << "Socket error: " << excp.what() << std::endl;
     }
+}
+
+void Server::addClientToServer(Client clientToAdd)
+{
+    this->clients[clientToAdd.getClientFd()] = clientToAdd;
 }

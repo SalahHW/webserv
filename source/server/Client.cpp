@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Client.hpp"
+#include "ServerHandler.hpp"
 
 Client::Client(int listen_sock_fd, ServerHandler server)
 {

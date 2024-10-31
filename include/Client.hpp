@@ -10,11 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_HPP
-#define CLIENT_HPP
+#pragma once
 
 #include "ClientException.hpp"
-#include "ServerHandler.hpp"
 #include <fcntl.h>
 #include <iostream>
 #include <netinet/in.h>
@@ -44,5 +42,3 @@ public:
     void makeSocketNonBlocking();
     void setSocketBufferSize(int recvBufSize, int sendBufSize) const;
 };
-
-#endif
