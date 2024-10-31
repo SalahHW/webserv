@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/25 09:50:19 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/10/31 13:46:11 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ ServerHandler::ServerHandler(const ServerHandler& other)
 
 ServerHandler& ServerHandler::operator=(const ServerHandler& other)
 {
-    if (this != &other)
-    {
+    if (this != &other) {
         serversList = other.serversList;
         epollFd = other.epollFd;
         nbEvents = other.nbEvents;
@@ -43,7 +42,7 @@ ServerHandler& ServerHandler::operator=(const ServerHandler& other)
 void ServerHandler::displayServerHandlerInfo() const
 {
     std::map<int, Server>::const_iterator it;
-    
+
     std::cout << "Server Handler Information:" << std::endl;
     for (it = serversList.begin(); it != serversList.end(); ++it) {
         it->second.displayServerInfo();
@@ -79,6 +78,7 @@ void ServerHandler::addToEpoll(int fdToAdd) const
 void ServerHandler::startToListen()
 {
     struct epoll_event events[MAX_EVENTS];
+    this->epollInit();
     this->serversStart();
     std::cout << "----------STARTING TO LISTENING----------" << std::endl;
     while (1) {
@@ -91,10 +91,10 @@ void ServerHandler::startToListen()
             std::map<int, Server>::const_iterator it = this->serversList.find(currentFd);
             if (it != this->serversList.end()) {
                 // modif peut etre en dessous demain
-                ClientIn client(currentFd, *this);
+                Client client(currentFd, *this);
             } else {
                 // normalement en dessous handleclientdata
-                std::cout << "ok" << std::endl;
+                // std::cout << "ok" << std::endl;
             }
         }
     }
