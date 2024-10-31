@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:21:07 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 16:42:57 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/31 18:27:58 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,6 @@ private:
     int nbEvents;
     void epollInit();
     void startToListen();
+    void addServerToList();
+    void updateServerList();
 };

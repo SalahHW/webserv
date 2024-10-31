@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 17:23:00 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/31 18:48:34 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,18 @@ void ServerHandler::serversStart()
         serversList[i].start();
         addToEpoll(serversList[i].getListenFd());
     }
+    updateServerList();
+}
+
+void ServerHandler::updateServerList()
+{
+    std::map<int, Server> updatedServersList;
+    std::map<int, Server>::iterator it;
+    for (it = this->serversList.begin(); it != this->serversList.end(); ++it) {
+        int newKey = it->second.getListenFd();
+        updatedServersList.insert(std::make_pair(newKey, it->second));
+    }
+    this->serversList = updatedServersList;
 }
 
 void ServerHandler::epollInit()
@@ -91,12 +103,15 @@ void ServerHandler::startToListen()
             int currentFd = events[i].data.fd;
             std::map<int, Server>::const_iterator it = this->serversList.find(currentFd);
             if (it != this->serversList.end()) {
+                std::cout << "Client" << std::endl; // debug line
                 Client client(currentFd);
                 this->serversList[currentFd].addClientToServer(client);
                 this->addToEpoll(client.getClientFd());
+                // continue;
             } else {
                 // normalement en dessous handleclientdata
-                // std::cout << "ok" << std::endl;
+                std::cout << "ok" << std::endl; // debug line
+                sleep(1000);
             }
         }
     }
