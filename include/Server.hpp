@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 17:04:27 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/31 17:27:26 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <vector>
 
 class Location;
+class Client;
 
 class Server {
 public:
@@ -51,6 +52,7 @@ public:
     void displayServerInfo() const;
 
     void start();
+    void addClientToServer(Client clientToAdd);
 
 private:
     int listenFd;
@@ -59,11 +61,10 @@ private:
     int clientMaxBodySize;
     std::map<int, std::string> errorPages;
     std::vector<Location> locations;
-    std::map<int, Client> clients;
+    std::map<int, Client> clientsList;
     struct sockaddr_in addr;
     void resolveHostName();
     void bindSocket() const;
     void setToListen() const;
     void makeSocketNonBlocking() const;
-    void addClientToServer(Client clientToAdd);
 };

@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 17:07:25 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/10/31 17:30:53 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,5 +177,5 @@ void Server::start()
 
 void Server::addClientToServer(Client clientToAdd)
 {
-    this->clients[clientToAdd.getClientFd()] = clientToAdd;
+    this->clientsList.insert(std::make_pair(clientToAdd.getClientFd(), clientToAdd));
 }
