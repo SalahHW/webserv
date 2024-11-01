@@ -6,15 +6,11 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 08:10:24 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/25 10:46:46 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/01 10:39:43 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ConfigExtractor.hpp"
-
-// ConfigExtractor::~ConfigExtractor() { }
-
-// ConfigExtractor::ConfigExtractor() { }
 
 std::map<int, Server> ConfigExtractor::extractServers(const ConfigFile& configFile)
 {
@@ -30,8 +26,6 @@ std::map<int, Server> ConfigExtractor::extractServers(const ConfigFile& configFi
 			Server server;
 			extractServerDirectives(block, server);
 			extractLocationBlocks(block, server);
-			//TODO: use this one after bug fix
-			// servers[server.getListenFd()] = server;
 			servers[serverCount] = server;
 			serverCount++;
 		}

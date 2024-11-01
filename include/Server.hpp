@@ -6,13 +6,12 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 14:12:16 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/01 10:41:18 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "Location.hpp"
 #include "SocketException.hpp"
 #include <cstdio> // pour sprintf
 #include <fcntl.h> // Pour fcntl
@@ -24,6 +23,10 @@
 #include <string.h> // Pour memset, memcpy
 #include <sys/socket.h> // Pour socket, bind, listen, accept
 #include <unistd.h> // Pour close
+#include <vector>
+
+class Location;
+class Client;
 
 class Server {
 public:
@@ -49,6 +52,7 @@ public:
     void displayServerInfo() const;
 
     void start();
+    void addClientToServer(Client clientToAdd);
 
 private:
     int listenFd;
@@ -57,6 +61,7 @@ private:
     int clientMaxBodySize;
     std::map<int, std::string> errorPages;
     std::vector<Location> locations;
+    std::map<int, Client> clientsList;
     struct sockaddr_in addr;
     void resolveHostName();
     void bindSocket() const;

@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/22 13:48:45 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/01 10:43:31 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Location.hpp"
+#include "ServerHandler.hpp"
 
 Server::~Server() { }
 
@@ -171,4 +173,9 @@ void Server::start()
     } catch (const SocketException& excp) {
         std::cerr << "Socket error: " << excp.what() << std::endl;
     }
+}
+
+void Server::addClientToServer(Client clientToAdd)
+{
+    this->clientsList.insert(std::make_pair(clientToAdd.getClientFd(), clientToAdd));
 }

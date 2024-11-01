@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:21:07 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 13:46:11 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/01 10:42:09 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #include "ConfigFile.hpp"
 #include "EpollException.hpp"
 #include "Location.hpp"
-#include "Server.hpp"
 #include <iostream>
 #include <map>
 #include <sys/epoll.h>
@@ -51,4 +50,6 @@ private:
     int nbEvents;
     void epollInit();
     void startToListen();
+    void addServerToList();
+    void updateServerList();
 };
