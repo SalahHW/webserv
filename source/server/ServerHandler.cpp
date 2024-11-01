@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 18:48:34 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/01 10:32:20 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,10 @@ void ServerHandler::displayServerHandlerInfo() const
 
 void ServerHandler::serversStart()
 {
-    for (size_t i = 0; i < serversList.size(); ++i) {
-        serversList[i].start();
-        addToEpoll(serversList[i].getListenFd());
+    std::map<int, Server>::iterator it;
+    for (it = this->serversList.begin(); it != serversList.end(); ++it) {
+        serversList[it->first].start();
+        addToEpoll(serversList[it->first].getListenFd());
     }
     updateServerList();
 }
