@@ -65,3 +65,37 @@ bool utils::isIntCompatible(const string& str)
     }
     return true;
 }
+
+bool utils::convertToLong(const char* str, long& value)
+{
+    if (!str || !*str)
+        return false;
+
+    errno = 0;
+    char* endptr;
+
+    value = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE || endptr == str || *endptr != '\0')
+        return false;
+    return true;
+}
+
+bool utils::safeMultiplyLong(long a, long b, long& result)
+{
+    if (a > 0 && b > 0 && a > LONG_MAX / b) {
+        return false;
+    }
+    if (a > 0 && b < 0 && b < LONG_MIN / a) {
+        return false;
+    }
+    if (a < 0 && b > 0 && a < LONG_MIN / b) {
+        return false;
+    }
+    if (a < 0 && b < 0 && a < LONG_MAX / b) {
+        return false;
+    }
+
+    result = a * b;
+    return true;
+}
