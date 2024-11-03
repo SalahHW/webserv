@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:51 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/11 06:03:08 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/03 08:01:42 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ public:
     int getMaxArgs() const;
     bool getIsValid() const;
 
-private:
+protected:
     Directive();
 
     void tokenizeName();
