@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 14:20:42 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/11/03 08:44:36 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/04 09:49:06 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ std::string removeBraces(const std::string& line);
 bool isIntCompatible(const std::string& str);
 // Convert a string into a long value. Return false if the conversion can't be done
 bool convertToLong(const char* str, long& value);
+// Convert a string to int. Return false if the conversion can't be done
+bool convertToInt(const char* str, int& value);
 // Return the product of a and b in result. Return false if the product can't be stored in a long
 bool safeMultiplyLong(long a, long b, long& result);
+bool safeMultiplyInt(int a, int b, int& result);
 }
