@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:17:39 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/25 11:16:48 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/04 10:13:01 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,32 @@ ClientMaxBodySizeDirective& ClientMaxBodySizeDirective::operator=(const ClientMa
 
 bool ClientMaxBodySizeDirective::validateSpecific()
 {
-	//TODO: Implement validation
+	char lastChar = arguments[0][arguments[0].size() - 1];
+	long multiplier;
+	if (isdigit(lastChar)) {
+		multiplier = 1;
+	} else if (lastChar == 'k' || lastChar == 'K') {
+		arguments[0].erase(arguments[0].size() - 1);
+		multiplier = 1024;
+	} else if (lastChar == 'm' || lastChar == 'M') {
+		arguments[0].erase(arguments[0].size() - 1);
+		multiplier = 1024 * 1024;
+	} else if (lastChar == 'g' || lastChar == 'G') {
+		arguments[0].erase(arguments[0].size() - 1);
+		multiplier = 1024 * 1024 * 1024;
+	} else {
+		std::cerr << "Error: Directive \"" << getName() << "\" has an invalid argument." << std::endl;
+		return false;
+	}
+	
+	if (!utils::convertToInt(arguments[0].c_str(), maxBodySize)) {
+		std::cerr << "Error: Directive \"" << getName() << "\" has an invalid argument." << std::endl;
+		return false;
+	}
+	if (!utils::safeMultiplyInt(maxBodySize, multiplier, maxBodySize)) {
+		std::cerr << "Error: Directive \"" << getName() << "\" exceed the maximum size." << std::endl;
+		return false;
+	}
 	return true;
 }
 
