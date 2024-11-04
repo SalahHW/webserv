@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:16:05 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/11/03 08:04:19 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/04 08:40:58 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,5 @@ public:
 private:
     ClientMaxBodySizeDirective();
 
-    long maxBodySize;
+    int maxBodySize;
 };
