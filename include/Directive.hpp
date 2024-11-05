@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:51 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/11/03 08:01:42 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/05 10:59:40 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ public:
     bool getIsValid() const;
 
 protected:
-    Directive();
 
     void tokenizeName();
 
@@ -66,4 +65,7 @@ protected:
     int minArgs;
     int maxArgs;
     std::vector<std::string> contexts;
+
+private:
+    Directive();
 };
