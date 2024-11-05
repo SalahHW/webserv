@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 17:27:26 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:00:11 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ public:
 
     void displayServerInfo() const;
 
-    void start();
+    void paramFd();
     void addClientToServer(Client clientToAdd);
 
 private:

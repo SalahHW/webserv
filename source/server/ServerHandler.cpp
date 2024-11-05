@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 18:48:34 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:08:10 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,21 +53,8 @@ void ServerHandler::displayServerHandlerInfo() const
 void ServerHandler::serversStart()
 {
     for (size_t i = 0; i < serversList.size(); ++i) {
-        serversList[i].start();
         addToEpoll(serversList[i].getListenFd());
     }
-    updateServerList();
-}
-
-void ServerHandler::updateServerList()
-{
-    std::map<int, Server> updatedServersList;
-    std::map<int, Server>::iterator it;
-    for (it = this->serversList.begin(); it != this->serversList.end(); ++it) {
-        int newKey = it->second.getListenFd();
-        updatedServersList.insert(std::make_pair(newKey, it->second));
-    }
-    this->serversList = updatedServersList;
 }
 
 void ServerHandler::epollInit()
@@ -93,6 +80,7 @@ void ServerHandler::startToListen()
     struct epoll_event events[MAX_EVENTS];
     this->epollInit();
     this->serversStart();
+    this->displayServerHandlerInfo();
     std::cout << "----------STARTING TO LISTENING----------" << std::endl;
     while (1) {
         this->nbEvents = epoll_wait(this->epollFd, events, MAX_EVENTS, -1);
