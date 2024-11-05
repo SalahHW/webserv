@@ -6,11 +6,12 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 13:46:11 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:08:10 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerHandler.hpp"
+#include "Server.hpp"
 
 ServerHandler::~ServerHandler()
 {
@@ -52,7 +53,6 @@ void ServerHandler::displayServerHandlerInfo() const
 void ServerHandler::serversStart()
 {
     for (size_t i = 0; i < serversList.size(); ++i) {
-        serversList[i].start();
         addToEpoll(serversList[i].getListenFd());
     }
 }
@@ -80,6 +80,7 @@ void ServerHandler::startToListen()
     struct epoll_event events[MAX_EVENTS];
     this->epollInit();
     this->serversStart();
+    this->displayServerHandlerInfo();
     std::cout << "----------STARTING TO LISTENING----------" << std::endl;
     while (1) {
         this->nbEvents = epoll_wait(this->epollFd, events, MAX_EVENTS, -1);
@@ -90,11 +91,15 @@ void ServerHandler::startToListen()
             int currentFd = events[i].data.fd;
             std::map<int, Server>::const_iterator it = this->serversList.find(currentFd);
             if (it != this->serversList.end()) {
-                // modif peut etre en dessous demain
-                Client client(currentFd, *this);
+                std::cout << "Client" << std::endl; // debug line
+                Client client(currentFd);
+                this->serversList[currentFd].addClientToServer(client);
+                this->addToEpoll(client.getClientFd());
+                // continue;
             } else {
                 // normalement en dessous handleclientdata
-                // std::cout << "ok" << std::endl;
+                std::cout << "ok" << std::endl; // debug line
+                sleep(1000);
             }
         }
     }

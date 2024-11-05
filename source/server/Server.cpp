@@ -6,15 +6,19 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/22 13:48:45 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:07:19 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Location.hpp"
+#include "ServerHandler.hpp"
 
 Server::~Server() { }
 
-Server::Server() { }
+Server::Server()
+{
+}
 
 Server::Server(const Server& src)
 {
@@ -161,7 +165,7 @@ void Server::makeSocketNonBlocking() const
         throw SocketException("fcntl");
 }
 
-void Server::start()
+void Server::paramFd()
 {
     try {
         setListenFd();
@@ -171,4 +175,9 @@ void Server::start()
     } catch (const SocketException& excp) {
         std::cerr << "Socket error: " << excp.what() << std::endl;
     }
+}
+
+void Server::addClientToServer(Client clientToAdd)
+{
+    this->clientsList.insert(std::make_pair(clientToAdd.getClientFd(), clientToAdd));
 }
