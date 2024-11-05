@@ -19,6 +19,7 @@ Client::Client(int listen_sock_fd)
         CreateClientSock(listen_sock_fd);
         makeSocketNonBlocking();
         setSocketBufferSize(65536, 65536);
+        readRequest();
     } catch (const ClientException& excp) {
         std::cerr << "Client error: " << excp.what() << std::endl;
     }
@@ -83,4 +84,22 @@ void Client::setSocketBufferSize(int recvBufSize, int sendBufSize) const
             sizeof(sendBufSize))
         == -1)
         throw ClientException("setsockopt SO_SNDBUF");
+}
+
+void Client::readRequest()
+{
+    size_t count = 10000;
+    std::string buffer(count, '\0');
+
+    ssize_t bytes_read = read(this->client_fd, &buffer[0], count);
+    // buffer.resize(bytes_read);
+    (void)bytes_read;
+    setRequest(buffer);
+}
+
+void Client::setRequest(std::string request)
+{
+    HttpRequest parser(request);
+    this->request = parser.getHttpRequest();
+    parser.showHttpRequest();
 }
