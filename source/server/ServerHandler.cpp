@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/05 11:08:10 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:43:38 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ ServerHandler::~ServerHandler()
 ServerHandler::ServerHandler(const ConfigFile& configFile)
 {
     serversList = ConfigExtractor::extractServers(configFile);
+    // this->displayServerHandlerInfo();
     startToListen();
 }
 
@@ -52,8 +53,9 @@ void ServerHandler::displayServerHandlerInfo() const
 
 void ServerHandler::serversStart()
 {
-    for (size_t i = 0; i < serversList.size(); ++i) {
-        addToEpoll(serversList[i].getListenFd());
+    std::map<int, Server>::iterator it;
+    for (it = serversList.begin(); it != serversList.end(); ++it) {
+        addToEpoll(it->first);
     }
 }
 
@@ -80,7 +82,6 @@ void ServerHandler::startToListen()
     struct epoll_event events[MAX_EVENTS];
     this->epollInit();
     this->serversStart();
-    this->displayServerHandlerInfo();
     std::cout << "----------STARTING TO LISTENING----------" << std::endl;
     while (1) {
         this->nbEvents = epoll_wait(this->epollFd, events, MAX_EVENTS, -1);
@@ -91,14 +92,12 @@ void ServerHandler::startToListen()
             int currentFd = events[i].data.fd;
             std::map<int, Server>::const_iterator it = this->serversList.find(currentFd);
             if (it != this->serversList.end()) {
-                std::cout << "Client" << std::endl; // debug line
                 Client client(currentFd);
                 this->serversList[currentFd].addClientToServer(client);
                 this->addToEpoll(client.getClientFd());
                 // continue;
             } else {
                 // normalement en dessous handleclientdata
-                std::cout << "ok" << std::endl; // debug line
                 sleep(1000);
             }
         }

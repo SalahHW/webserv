@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 02:13:05 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/11/05 11:01:58 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:37:22 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,6 @@ int main(int argc, char** argv)
         return (1);
     }
     ServerHandler serverHandler(server_configuration);
+    serverHandler.displayServerHandlerInfo();
     return (0);
 }
