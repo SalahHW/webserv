@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 04:17:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/18 21:04:12 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:33:51 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ bool Block::validateArgsSize() const
 void Block::validate()
 {
     if (name == "main")
+    //TODO: Check if we should also validate context or validate specific;
         isValid = validateSpecific();
     else
         isValid = validateContext() && validateArgsSize() && validateSpecific();
