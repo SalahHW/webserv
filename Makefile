@@ -6,7 +6,7 @@
 #    By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/10/31 13:46:11 by joakoeni         ###   ########.fr        #
+#    Updated: 2024/11/05 15:13:08 by joakoeni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,10 +22,10 @@ SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
 							parser/ConfigExtractor.cpp							\
 							server/Client.cpp									\
-							server/HttpParsingRequest.cpp						\
 							server/Server.cpp									\
 							server/ServerHandler.cpp							\
 							server/Location.cpp									\
+							server/HttpRequest.cpp								\
 							utils/utils.cpp										\
 							block/Block.cpp										\
 							block/BlockFactory.cpp								\

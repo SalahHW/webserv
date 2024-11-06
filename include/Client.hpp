@@ -13,6 +13,7 @@
 #pragma once
 
 #include "ClientException.hpp"
+#include "HttpRequest.hpp"
 #include <fcntl.h>
 #include <iostream>
 #include <netinet/in.h>
@@ -28,6 +29,7 @@ private:
     struct sockaddr_in client_addr;
     socklen_t client_len;
     int flags;
+    RequestParsed request;
 
 public:
     Client(int listen_sock_fd);
@@ -41,4 +43,6 @@ public:
     void CreateClientSock(int listen_sock_fd);
     void makeSocketNonBlocking();
     void setSocketBufferSize(int recvBufSize, int sendBufSize) const;
+    void readRequest();
+    void setRequest(std::string request);
 };
