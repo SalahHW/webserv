@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 13:38:36 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/05 15:13:52 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:56:03 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,15 @@ enum HttpStatusCode {
     OK = 200,
     BAD_REQUEST = 400,
     PAGE_NOT_FOUND = 404,
+    METHOD_NOT_ALLOWED = 405,
+    LENGTH_REQUIRED = 411,
+    REQUEST_ENTITY_TOO_LARGE = 413,
     INTERNAL_SERVER_ERROR = 500,
+    NOT_IMPLEMENTED = 501,
     BAD_GATEWAY = 502,
     SERVICE_UNAVAILABLE = 503,
-    GATEWAY_TIMEOUT = 504
+    GATEWAY_TIMEOUT = 504,
+    HTTP_VERSION_NOT_SUPPORTED = 505
 };
 
 struct RequestParsed {
@@ -43,8 +48,10 @@ struct RequestParsed {
 class HttpRequest {
 private:
     std::string request;
-    // enum HttpStatusCode statusCode;
     RequestParsed requestParsed;
+    bool findAndParseRequestLine(std::string::size_type& headersStartPos);
+    bool findAndParseHeaders(std::string::size_type headersStartPos, std::string::size_type& bodyStartPos);
+    bool parseRequestBody(std::string::size_type bodyStartPos);
 
 public:
     HttpRequest(std::string request);
@@ -52,10 +59,9 @@ public:
     HttpRequest(const HttpRequest& src);
     HttpRequest& operator=(const HttpRequest& src);
     const RequestParsed& getHttpRequest() const;
-    bool parseRequestLine(std::string requestLine);
+    bool parseRequestLine(const std::string requestLine);
     bool parseHeaders(const std::string& headerLines);
     void parseHttpRequest();
     void showHttpRequest();
-    // void sendHttpError(HttpStatusCode statusCode) const;
     std::string trim(const std::string& str);
 };
