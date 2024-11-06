@@ -22,7 +22,6 @@ SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
 							parser/ConfigExtractor.cpp							\
 							server/Client.cpp									\
-							server/HttpParsingRequest.cpp						\
 							server/Server.cpp									\
 							server/ServerHandler.cpp							\
 							server/Location.cpp									\
