@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 08:07:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/16 10:12:03 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/05 14:18:49 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,6 @@ ServerBlock& ServerBlock::operator=(const ServerBlock& other)
 		Block::operator=(other);
 	}
 	return *this;
-}
-
-void ServerBlock::validate()
-{
-	isValid = validateContext() && validateArgsSize() && validateSpecific();
 }
 
 bool ServerBlock::validateSpecific()
