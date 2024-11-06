@@ -6,13 +6,12 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 13:38:36 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/06 13:56:03 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/06 14:08:02 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "HttpParsingException.hpp"
 #include <cstring>
 #include <iostream>
 #include <map>
