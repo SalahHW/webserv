@@ -12,10 +12,6 @@
 
 #include "ConfigExtractor.hpp"
 
-// ConfigExtractor::~ConfigExtractor() { }
-
-// ConfigExtractor::ConfigExtractor() { }
-
 std::map<int, Server> ConfigExtractor::extractServers(const ConfigFile& configFile)
 {
     std::map<int, Server> servers;
