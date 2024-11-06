@@ -212,7 +212,7 @@ void ConfigFile::processBlockDeclaration(const std::string& line, std::ifstream&
         return;
     }
 
-    if (!newBlock->validateContext()) {
+    if (!newBlock->good()) {
         delete newBlock;
         isValid = false;
         return;
@@ -292,7 +292,7 @@ void ConfigFile::processDirective(const std::string& cleanedLine, Block* current
         isValid = false;
         return;
     }
-    if (!directive->getIsValid()) {
+    if (!directive->good()) {
         delete directive;
         isValid = false;
         return;

@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:56 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/12 08:14:05 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:37:55 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ int Directive::getMaxArgs() const
     return maxArgs;
 }
 
-bool Directive::getIsValid() const
+bool Directive::good() const
 {
     return isValid;
 }

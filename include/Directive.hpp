@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:51 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/11/05 10:59:40 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:37:48 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ public:
     std::vector<std::string> getContexts() const;
     int getMinArgs() const;
     int getMaxArgs() const;
-    bool getIsValid() const;
+    bool good() const;
 
 protected:
 
