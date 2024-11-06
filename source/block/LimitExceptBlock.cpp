@@ -18,7 +18,7 @@ LimitExceptBlock::LimitExceptBlock(const std::string& fullBlockLine, Block* cont
 	: Block(fullBlockLine, contextBlock)
 {
 	addValidContext("location");
-	minArgs = 0;
+    minArgs = 1;
 	maxArgs = 3;
 }
 
