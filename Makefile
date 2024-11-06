@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+         #
+#    By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/10/31 13:46:11 by joakoeni         ###   ########.fr        #
+#    Updated: 2024/11/05 14:26:09 by sbouheni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ SRCS					=	main.cpp											\
 							block/MainBlock.cpp									\
 							block/ServerBlock.cpp								\
 							block/LocationBlock.cpp								\
+							block/LimitExceptBlock.cpp							\
 							directive/DirectiveFactory.cpp						\
 							directive/Directive.cpp								\
 							directive/ListenDirective.cpp						\
