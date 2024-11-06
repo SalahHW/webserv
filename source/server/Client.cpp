@@ -92,7 +92,6 @@ void Client::readRequest()
     std::string buffer(count, '\0');
 
     ssize_t bytes_read = read(this->client_fd, &buffer[0], count);
-    // buffer.resize(bytes_read);
     (void)bytes_read;
     setRequest(buffer);
 }
@@ -101,5 +100,5 @@ void Client::setRequest(std::string request)
 {
     HttpRequest parser(request);
     this->request = parser.getHttpRequest();
-    parser.showHttpRequest();
+    parser.showHttpRequest(); // debug
 }
