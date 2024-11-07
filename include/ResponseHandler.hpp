@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 12:22:24 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/07 14:08:43 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/07 14:34:28 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "HeaderBuilder.hpp"
 #include "HttpRequest.hpp"
 #include <string>
+
+class Client;
 
 class ResponseHandler {
 public:

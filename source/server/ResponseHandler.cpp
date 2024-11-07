@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 12:22:54 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/07 14:09:53 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/07 14:26:54 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,8 @@ void ResponseHandler::closeConnectionIfNeeded()
     // Check the Connection header to decide whether to close the socket
     std::map<std::string, std::string>::const_iterator it = requestParsed.headers.find("Connection");
     if (it != requestParsed.headers.end() && it->second == "close") {
-        close(client.getClientFd());
+        // Set the flag in Client instead of closing the socket here
+        client.setConnectionShouldClose(true);
     }
 }
 
