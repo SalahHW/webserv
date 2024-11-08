@@ -14,6 +14,7 @@
 
 #include "ClientException.hpp"
 #include "HttpRequest.hpp"
+#include "ResponseHandler.hpp"
 #include <fcntl.h>
 #include <iostream>
 #include <netinet/in.h>
@@ -30,6 +31,8 @@ private:
     socklen_t client_len;
     int flags;
     RequestParsed request;
+    std::string requestBuffer;
+    bool connectionShouldClose;
 
 public:
     Client(int listen_sock_fd);
@@ -45,4 +48,7 @@ public:
     void setSocketBufferSize(int recvBufSize, int sendBufSize) const;
     void readRequest();
     void setRequest(std::string request);
+    void appendToRequestBuffer(const std::string& data);
+    bool shouldCloseConnection() const;
+    void setConnectionShouldClose(bool shouldClose);
 };

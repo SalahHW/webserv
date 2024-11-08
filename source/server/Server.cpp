@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/05 11:43:11 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/07 14:31:15 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,11 @@ const std::string& Server::getName() const
 const std::map<int, std::string>& Server::getErrorPages() const
 {
     return this->errorPages;
+}
+
+std::map<int, Client>& Server::getClientsList()
+{
+    return this->clientsList;
 }
 
 void Server::displayServerInfo() const

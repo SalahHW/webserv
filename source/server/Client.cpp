@@ -14,12 +14,13 @@
 #include "ServerHandler.hpp"
 
 Client::Client(int listen_sock_fd)
+    : connectionShouldClose(false)
 {
     try {
         CreateClientSock(listen_sock_fd);
         makeSocketNonBlocking();
         setSocketBufferSize(65536, 65536);
-        readRequest();
+        // readRequest();
     } catch (const ClientException& excp) {
         std::cerr << "Client error: " << excp.what() << std::endl;
     }
@@ -100,5 +101,30 @@ void Client::setRequest(std::string request)
 {
     HttpRequest parser(request);
     this->request = parser.getHttpRequest();
-    parser.showHttpRequest(); // debug
+    // Reset the flag before handling the response
+    connectionShouldClose = false;
+
+    // Handle the response
+    ResponseHandler responseHandler(*this, this->request);
+    responseHandler.handleResponse();
+}
+
+void Client::appendToRequestBuffer(const std::string& data)
+{
+    requestBuffer += data;
+    // Check if the request is complete (e.g., look for "\r\n\r\n")
+    if (requestBuffer.find("\r\n\r\n") != std::string::npos) {
+        setRequest(requestBuffer);
+        requestBuffer.clear(); // Clear the buffer after processing
+    }
+}
+
+bool Client::shouldCloseConnection() const
+{
+    return connectionShouldClose;
+}
+
+void Client::setConnectionShouldClose(bool shouldClose)
+{
+    connectionShouldClose = shouldClose;
 }
