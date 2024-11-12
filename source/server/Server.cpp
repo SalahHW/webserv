@@ -11,10 +11,14 @@
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Location.hpp"
+#include "ServerHandler.hpp"
 
 Server::~Server() { }
 
-Server::Server() { }
+Server::Server()
+{
+}
 
 Server::Server(const Server& src)
 {
@@ -99,6 +103,11 @@ const std::map<int, std::string>& Server::getErrorPages() const
     return this->errorPages;
 }
 
+std::map<int, Client>& Server::getClientsList()
+{
+    return this->clientsList;
+}
+
 void Server::displayServerInfo() const
 {
     std::cout << "Server Information:" << std::endl;
@@ -162,7 +171,7 @@ void Server::makeSocketNonBlocking() const
         throw SocketException("fcntl");
 }
 
-void Server::start()
+void Server::paramFd()
 {
     try {
         setListenFd();
@@ -172,4 +181,9 @@ void Server::start()
     } catch (const SocketException& excp) {
         std::cerr << "Socket error: " << excp.what() << std::endl;
     }
+}
+
+void Server::addClientToServer(Client clientToAdd)
+{
+    this->clientsList.insert(std::make_pair(clientToAdd.getClientFd(), clientToAdd));
 }

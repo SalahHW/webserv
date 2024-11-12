@@ -11,14 +11,16 @@
 /* ************************************************************************** */
 
 #include "Client.hpp"
+#include "ServerHandler.hpp"
 
-Client::Client(int listen_sock_fd, ServerHandler server)
+Client::Client(int listen_sock_fd)
+    : connectionShouldClose(false)
 {
     try {
         CreateClientSock(listen_sock_fd);
         makeSocketNonBlocking();
         setSocketBufferSize(65536, 65536);
-        server.addToEpoll(this->getClientFd());
+        // readRequest();
     } catch (const ClientException& excp) {
         std::cerr << "Client error: " << excp.what() << std::endl;
     }
@@ -83,4 +85,46 @@ void Client::setSocketBufferSize(int recvBufSize, int sendBufSize) const
             sizeof(sendBufSize))
         == -1)
         throw ClientException("setsockopt SO_SNDBUF");
+}
+
+void Client::readRequest()
+{
+    size_t count = 10000;
+    std::string buffer(count, '\0');
+
+    ssize_t bytes_read = read(this->client_fd, &buffer[0], count);
+    (void)bytes_read;
+    setRequest(buffer);
+}
+
+void Client::setRequest(std::string request)
+{
+    HttpRequest parser(request);
+    this->request = parser.getHttpRequest();
+    // Reset the flag before handling the response
+    connectionShouldClose = false;
+
+    // Handle the response
+    ResponseHandler responseHandler(*this, this->request);
+    responseHandler.handleResponse();
+}
+
+void Client::appendToRequestBuffer(const std::string& data)
+{
+    requestBuffer += data;
+    // Check if the request is complete (e.g., look for "\r\n\r\n")
+    if (requestBuffer.find("\r\n\r\n") != std::string::npos) {
+        setRequest(requestBuffer);
+        requestBuffer.clear(); // Clear the buffer after processing
+    }
+}
+
+bool Client::shouldCloseConnection() const
+{
+    return connectionShouldClose;
+}
+
+void Client::setConnectionShouldClose(bool shouldClose)
+{
+    connectionShouldClose = shouldClose;
 }

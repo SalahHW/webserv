@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_HPP
-#define CLIENT_HPP
+#pragma once
 
 #include "ClientException.hpp"
-#include "ServerHandler.hpp"
+#include "HttpRequest.hpp"
+#include "ResponseHandler.hpp"
 #include <fcntl.h>
 #include <iostream>
 #include <netinet/in.h>
@@ -30,9 +30,12 @@ private:
     struct sockaddr_in client_addr;
     socklen_t client_len;
     int flags;
+    RequestParsed request;
+    std::string requestBuffer;
+    bool connectionShouldClose;
 
 public:
-    Client(int listen_sock_fd, ServerHandler server);
+    Client(int listen_sock_fd);
     ~Client();
     Client(const Client& src);
     Client& operator=(const Client& src);
@@ -43,6 +46,9 @@ public:
     void CreateClientSock(int listen_sock_fd);
     void makeSocketNonBlocking();
     void setSocketBufferSize(int recvBufSize, int sendBufSize) const;
+    void readRequest();
+    void setRequest(std::string request);
+    void appendToRequestBuffer(const std::string& data);
+    bool shouldCloseConnection() const;
+    void setConnectionShouldClose(bool shouldClose);
 };
-
-#endif

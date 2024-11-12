@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigExtractor.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 08:10:24 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/11/01 10:53:01 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:23:56 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ std::map<int, Server> ConfigExtractor::extractServers(const ConfigFile& configFi
     std::map<int, Server> servers;
     const Block& mainBlock = configFile.getMainBlock();
     const std::vector<Block*> subBlocks = mainBlock.getSubBlocks();
-    int serverCount = 0;
 
     for (size_t i = 0; i < subBlocks.size(); i++) {
         const Block& block = *subBlocks[i];
@@ -25,8 +24,7 @@ std::map<int, Server> ConfigExtractor::extractServers(const ConfigFile& configFi
             Server server;
             extractServerDirectives(block, server);
             extractLocationBlocks(block, server);
-            servers[serverCount] = server;
-            serverCount++;
+            servers[server.getListenFd()] = server;
         }
     }
     return servers;
@@ -38,6 +36,7 @@ void ConfigExtractor::extractServerDirectives(const Block& block, Server& server
     for (size_t i = 0; i < directives.size(); ++i) {
         directives[i]->apply(server);
     }
+    server.paramFd();
 }
 
 void ConfigExtractor::extractLocationBlocks(const Block& block, Server& server)

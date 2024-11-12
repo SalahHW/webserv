@@ -1,27 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   HttpParsingException.hpp                           :+:      :+:    :+:   */
+/*   HeaderBuilder.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 16:03:10 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/09/06 16:03:12 by joakoeni         ###   ########.fr       */
+/*   Created: 2024/11/07 13:43:54 by joakoeni          #+#    #+#             */
+/*   Updated: 2024/11/07 13:44:07 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HTTPPARSINGEXCEPTION_HPP
-#define HTTPPARSINGEXCEPTION_HPP
+#include <map>
+#include <string>
 
-#include <cstdlib>
-#include <stdexcept>
-
-class HttpParsingException : public std::runtime_error {
+class HeaderBuilder {
 public:
-    explicit HttpParsingException(const std::string& excp)
-        : std::runtime_error(excp)
-    {
-    }
-};
+    HeaderBuilder();
+    ~HeaderBuilder();
 
-#endif
+    void addHeader(const std::string& key, const std::string& value);
+    std::string buildHeaders() const;
+
+private:
+    std::map<std::string, std::string> headers;
+};
