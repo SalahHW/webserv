@@ -4,8 +4,9 @@
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
-/*   Created: 2024/10/04 10:20:11 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 10:30:06 by sbouheni         ###   ########.fr       */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/10 10:30:06 by sbouheni          #+#    #+#             */
+/*   Updated: 2024/11/12 10:04:50 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,11 +151,12 @@ const std::vector<std::string>& Location::getPaths() const
 
 void Location::displayLocationInfo() const
 {
-    std::cout << "Location " << path << " info" << std::endl;
+    std::cout << "Location \"" << path << "\"" << std::endl;
     std::cout << "- Path: " << path << std::endl;
     std::cout << "- Root Directory: " << rootDirectory << std::endl;
     std::cout << "- Index File: " << indexFile << std::endl;
     std::cout << "- Redirection Path: " << redirectionPath << std::endl;
+	std::cout << "- Return Code: " << returnCode << std::endl;
     std::cout << "- Auto Index: " << (autoIndex ? "Enabled" : "Disabled") << std::endl;
     std::cout << "- GET Accepted: " << (getAccepted ? "Yes" : "No") << std::endl;
     std::cout << "- POST Accepted: " << (postAccepted ? "Yes" : "No") << std::endl;
