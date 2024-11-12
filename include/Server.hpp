@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 14:12:16 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/12 13:53:55 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ private:
     std::string name;
     int clientMaxBodySize;
     std::map<int, std::string> errorPages;
-    std::vector<Location> locations;
+    std::map<std::string, Location> locations;
     struct sockaddr_in addr;
     void resolveHostName();
     void bindSocket() const;
