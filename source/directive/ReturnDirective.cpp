@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:55:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/11 06:53:38 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/07 14:11:43 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,10 @@ ReturnDirective& ReturnDirective::operator=(const ReturnDirective& other)
 
 bool ReturnDirective::validateSpecific()
 {
-	//TODO: Implement validation for return directive
-	returnCode = atoi(getArguments()[0].c_str());
+	if (!utils::convertToInt(arguments[0].c_str(), returnCode)) {
+		std::cerr << "Error: Directive \"" << getName() << "\" has an invalid argument." << std::endl;
+		return false;
+	}
 	returnPath = getArguments()[1];
 	return true;
 }
