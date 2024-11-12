@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/07 14:31:15 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/12 13:50:31 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void Server::setErrorPages(std::map<int, std::string> errorPages)
 
 void Server::addLocation(const Location& location)
 {
-    this->locations.push_back(location);
+    this->locations[location.getPath()] = location;
 }
 
 int Server::getListenFd() const
@@ -121,9 +121,10 @@ void Server::displayServerInfo() const
     //      std::cout << "  * " << errorPages[i] << std::endl;
     // }
 
+    std::map<std::string, Location>::const_iterator it = this->locations.begin();
     std::cout << "- Locations: " << std::endl;
-    for (size_t i = 0; i < locations.size(); ++i) {
-        locations[i].displayLocationInfo(); // Assumes Location class has a similar method to display its info
+    for (; it != this->locations.end(); ++it) {
+        it->second.displayLocationInfo();
     }
 }
 
