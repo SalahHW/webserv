@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 12:22:54 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/13 17:13:41 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/13 18:08:56 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ std::string ResponseHandler::determineFilePath() const
     std::string filePath = getFilePathFromUri(uri);
 
     if (!fileExists(filePath)) {
-        return ""; // Fichier introuvable
+        return "";
     }
     return filePath;
 }
@@ -143,7 +143,7 @@ std::string ResponseHandler::getReasonPhrase(int code) const
 
 std::string ResponseHandler::getFilePathFromUri(const std::string& uri) const
 {
-    std::string rootDirectory = "www"; // Répertoire racine
+    std::string rootDirectory = "www";
     std::string filePath = (uri == "/") ? rootDirectory + "/index/index.html" : rootDirectory + uri;
     std::cout << "URI: " << uri << " resolved to file path: " << filePath << std::endl;
     return filePath;

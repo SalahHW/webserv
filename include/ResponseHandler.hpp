@@ -6,15 +6,15 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 12:22:24 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/13 17:12:47 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/13 18:11:26 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "HeaderBuilder.hpp"
-#include "HttpRequest.hpp" // Assurez-vous que ce fichier est correctement défini
-#include <fstream> // Pour la lecture des fichiers
+#include "HttpRequest.hpp"
+#include <fstream>
 #include <sstream>
 #include <string>
 
@@ -23,24 +23,24 @@ public:
     ResponseHandler(const RequestParsed& requestParsed);
     ~ResponseHandler();
 
-    void handleResponse(); // Méthode principale pour gérer la réponse
-    std::string getResponse() const; // Méthode pour obtenir la réponse complète
+    void handleResponse();
+    std::string getResponse() const;
 
 private:
-    const RequestParsed& requestParsed; // Référence constante de la requête analysée
+    const RequestParsed& requestParsed;
     HeaderBuilder headerBuilder;
-    std::string body; // Contenu du corps de la réponse
-    std::string fullResponse; // Contient la réponse complète
+    std::string body;
+    std::string fullResponse;
 
-    void buildResponse(); // Construire la réponse principale
-    std::string determineFilePath() const; // Déterminer le chemin du fichier pour la requête
-    void prepareSuccessResponse(const std::string& filePath); // Préparer la réponse pour une requête réussie
-    void prepareErrorResponse(int statusCode); // Préparer la réponse pour une erreur
-    void assembleFullResponse(int statusCode); // Assembler la réponse finale
+    void buildResponse();
+    std::string determineFilePath() const;
+    void prepareSuccessResponse(const std::string& filePath);
+    void prepareErrorResponse(int statusCode);
+    void assembleFullResponse(int statusCode);
 
-    std::string getReasonPhrase(int code) const; // Obtenir la phrase de raison pour le code de statut
-    std::string getFilePathFromUri(const std::string& uri) const; // Convertir URI en chemin de fichier
-    bool fileExists(const std::string& filePath) const; // Vérifier si le fichier existe
-    std::string getContentType(const std::string& filePath) const; // Déterminer le type de contenu
-    std::string readFile(const std::string& filePath) const; // Lire le contenu du fichier
+    std::string getReasonPhrase(int code) const;
+    std::string getFilePathFromUri(const std::string& uri) const;
+    bool fileExists(const std::string& filePath) const;
+    std::string getContentType(const std::string& filePath) const;
+    std::string readFile(const std::string& filePath) const;
 };

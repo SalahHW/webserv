@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/13 12:19:21 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/13 18:09:47 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ ServerHandler::ServerHandler(const ConfigFile& configFile)
 {
     std::cout << "Initialisation de ServerHandler" << std::endl;
     serversList = ConfigExtractor::extractServers(configFile);
-    // this->displayServerHandlerInfo();
     startToListen();
 }
 
@@ -117,12 +116,10 @@ void ServerHandler::handleClientRead(int clientFd)
         std::cout << "Données reçues du client " << clientFd << " :\n"
                   << data << std::endl;
 
-        // Trouver le client associé à clientFd
         Client* client = findClientByFd(clientFd);
         if (client) {
             client->appendToRequestBuffer(data);
 
-            // Si le client a des données à écrire, modifier l'intérêt epoll
             if (client->hasDataToWrite()) {
                 modifyEpollEvent(clientFd, EPOLLIN | EPOLLOUT | EPOLLET);
                 std::cout << "Modification des événements epoll pour le client " << clientFd << " pour surveiller EPOLLOUT." << std::endl;
@@ -155,7 +152,6 @@ void ServerHandler::handleNewConnection(Server& server)
         return;
     }
 
-    // Configurer le socket client en mode non bloquant
     int flags = fcntl(clientFd, F_GETFL, 0);
     if (flags == -1) {
         perror("fcntl F_GETFL");
@@ -168,7 +164,6 @@ void ServerHandler::handleNewConnection(Server& server)
         return;
     }
 
-    // Définir la taille des buffers du socket client
     int recvBufSize = 65536; // 64KB
     int sendBufSize = 65536; // 64KB
     if (setsockopt(clientFd, SOL_SOCKET, SO_RCVBUF, &recvBufSize, sizeof(recvBufSize)) == -1) {
@@ -182,13 +177,11 @@ void ServerHandler::handleNewConnection(Server& server)
         return;
     }
 
-    // Créer une instance de Client avec clientFd déjà configuré
     Client* client = new Client(clientFd);
     server.addClientToServer(client);
 
-    // Ajouter le client à epoll pour surveiller les événements de lecture
     struct epoll_event event;
-    event.events = EPOLLIN | EPOLLET; // Utilisez EPOLLET si vous voulez un comportement edge-triggered
+    event.events = EPOLLIN | EPOLLET;
     event.data.fd = clientFd;
     if (epoll_ctl(epollFd, EPOLL_CTL_ADD, clientFd, &event) == -1) {
         perror("epoll_ctl EPOLL_CTL_ADD");

@@ -11,14 +11,12 @@
 /* ************************************************************************** */
 #pragma once
 
+#include "Constants.hpp"
 #include <cstring>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
-
-// Inclure les constantes globales
-#include "Constants.hpp"
 
 enum HttpStatusCode {
     OK = Constants::OK,
@@ -49,29 +47,23 @@ private:
     std::string request;
     RequestParsed requestParsed;
 
-    // Méthodes de parsing internes
     bool findAndParseRequestLine(std::string::size_type& headersStartPos);
     bool findAndParseHeaders(std::string::size_type headersStartPos, std::string::size_type& bodyStartPos);
     bool parseRequestBody(std::string::size_type bodyStartPos);
 
 public:
-    // Constructeurs et destructeur
     HttpRequest(const std::string& request);
     ~HttpRequest();
     HttpRequest(const HttpRequest& src);
     HttpRequest& operator=(const HttpRequest& src);
 
-    // Accesseurs
     const RequestParsed& getHttpRequest() const;
 
-    // Méthodes de parsing
     void parseHttpRequest();
     void showHttpRequest() const;
 
-    // Vérification des méthodes supportées
     bool isMethodSupported(const std::string& method) const;
 
 private:
-    // Méthode utilitaire pour supprimer les espaces blancs
     std::string trim(const std::string& str) const;
 };

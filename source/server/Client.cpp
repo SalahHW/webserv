@@ -18,7 +18,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-// Constructeur
 Client::Client(int client_fd)
     : client_fd(client_fd)
     , connectionShouldClose(false)
@@ -26,20 +25,17 @@ Client::Client(int client_fd)
 {
 }
 
-// Destructeur
 Client::~Client()
 {
     closeClientSocket();
 }
 
-// Constructeur de copie
 Client::Client(const Client& other)
 {
     copyClientData(other);
     std::cout << "Client copié avec le descripteur : " << client_fd << std::endl;
 }
 
-// Opérateur d'assignation
 Client& Client::operator=(const Client& other)
 {
     if (this != &other) {
@@ -48,7 +44,6 @@ Client& Client::operator=(const Client& other)
     return *this;
 }
 
-// Copie des données du client
 void Client::copyClientData(const Client& other)
 {
     client_fd = other.client_fd;
@@ -59,7 +54,6 @@ void Client::copyClientData(const Client& other)
     request = other.request;
 }
 
-// Fermeture du socket client
 void Client::closeClientSocket()
 {
     if (client_fd != -1) {
@@ -72,7 +66,6 @@ const int& Client::getClientFd() const { return client_fd; }
 bool Client::shouldCloseConnection() const { return connectionShouldClose; }
 void Client::setConnectionShouldClose(bool shouldClose) { connectionShouldClose = shouldClose; }
 
-// Ajout de données au buffer de requête
 void Client::appendToRequestBuffer(const std::string& data)
 {
     requestBuffer += data;
@@ -82,13 +75,11 @@ void Client::appendToRequestBuffer(const std::string& data)
     }
 }
 
-// Vérification de la complétude de la requête
 bool Client::isRequestComplete() const
 {
     return requestBuffer.find(REQUEST_TERMINATOR) != std::string::npos;
 }
 
-// Traitement de la requête
 void Client::processRequest()
 {
     parseRequest();
@@ -96,15 +87,13 @@ void Client::processRequest()
     prepareForSending();
 }
 
-// Analyse de la requête
 void Client::parseRequest()
 {
     HttpRequest parser(requestBuffer);
     request = parser.getHttpRequest();
-    connectionShouldClose = false; // Réinitialisation du flag
+    connectionShouldClose = false;
 }
 
-// Gestion de la réponse
 void Client::handleResponse()
 {
     ResponseHandler responseHandler(request);
@@ -112,21 +101,18 @@ void Client::handleResponse()
     setResponse(responseHandler.getResponse());
 }
 
-// Préparation de l'envoi
 void Client::prepareForSending()
 {
     bytesSent = 0;
     checkConnectionPersistence();
 }
 
-// Définition de la réponse
 void Client::setResponse(const std::string& response)
 {
     responseBuffer = response;
     std::cout << "Réponse configurée : " << responseBuffer << std::endl;
 }
 
-// Vérification de la persistance de la connexion
 void Client::checkConnectionPersistence()
 {
     std::map<std::string, std::string>::const_iterator it = request.headers.find(CONNECTION_HEADER);
@@ -137,13 +123,11 @@ void Client::checkConnectionPersistence()
     }
 }
 
-// Vérifie si le client a des données à écrire
 bool Client::hasDataToWrite() const
 {
     return bytesSent < responseBuffer.size();
 }
 
-// Envoi de données
 ssize_t Client::sendData()
 {
     ssize_t result = send(client_fd, responseBuffer.c_str() + bytesSent, responseBuffer.size() - bytesSent, 0);
@@ -156,7 +140,6 @@ ssize_t Client::sendData()
     return result;
 }
 
-// Gestion des erreurs
 void Client::handleError(const std::string& functionName)
 {
     std::cerr << "Erreur dans " << functionName << ": " << strerror(errno) << std::endl;

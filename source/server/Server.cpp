@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/12 17:43:53 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/13 18:09:18 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,14 +116,9 @@ void Server::displayServerInfo() const
     std::cout << "- Name: " << name << std::endl;
     std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes" << std::endl;
 
-    // std::cout << "- Error Pages: " << std::endl;
-    // for (size_t i = 0; i < errorPages.size(); ++i) {
-    //      std::cout << "  * " << errorPages[i] << std::endl;
-    // }
-
     std::cout << "- Locations: " << std::endl;
     for (size_t i = 0; i < locations.size(); ++i) {
-        locations[i].displayLocationInfo(); // Assumes Location class has a similar method to display its info
+        locations[i].displayLocationInfo();
     }
 }
 
