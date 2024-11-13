@@ -6,7 +6,7 @@
 #    By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/11/07 14:33:22 by joakoeni         ###   ########.fr        #
+#    Updated: 2024/11/13 16:59:44 by joakoeni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ SRCS_DIR				=	source
 OBJ_DIR					=	obj
 
 SRCS					=	main.cpp											\
+							Constants.cpp										\
 							parser/ConfigFile.cpp								\
 							parser/ConfigExtractor.cpp							\
 							server/Client.cpp									\

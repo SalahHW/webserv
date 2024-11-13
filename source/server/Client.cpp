@@ -1,130 +1,163 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.cpp                                       :+:      :+:    :+:   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 16:02:27 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/24 16:54:19 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/13 15:00:00 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 #include "ServerHandler.hpp"
+#include <cerrno>
+#include <cstring>
+#include <iostream>
+#include <sys/socket.h>
+#include <unistd.h>
 
-Client::Client(int listen_sock_fd)
-    : connectionShouldClose(false)
+// Constructeur
+Client::Client(int client_fd)
+    : client_fd(client_fd)
+    , connectionShouldClose(false)
+    , bytesSent(0)
 {
-    try {
-        CreateClientSock(listen_sock_fd);
-        makeSocketNonBlocking();
-        setSocketBufferSize(65536, 65536);
-        // readRequest();
-    } catch (const ClientException& excp) {
-        std::cerr << "Client error: " << excp.what() << std::endl;
-    }
 }
 
+// Destructeur
 Client::~Client()
 {
-    // close(this->client_fd);
+    closeClientSocket();
 }
 
-Client::Client(const Client& src)
-    : client_fd(src.client_fd)
-    , client_addr(src.client_addr)
-    , client_len(src.client_len)
-    , flags(src.flags)
+// Constructeur de copie
+Client::Client(const Client& other)
 {
+    copyClientData(other);
+    std::cout << "Client copié avec le descripteur : " << client_fd << std::endl;
 }
 
-Client& Client::operator=(const Client& src)
+// Opérateur d'assignation
+Client& Client::operator=(const Client& other)
 {
-    this->client_fd = src.client_fd;
+    if (this != &other) {
+        copyClientData(other);
+    }
     return *this;
 }
 
-const int& Client::getClientFd() const { return this->client_fd; }
-
-const struct sockaddr_in& Client::getClientAddr() const
+// Copie des données du client
+void Client::copyClientData(const Client& other)
 {
-    return this->client_addr;
+    client_fd = other.client_fd;
+    connectionShouldClose = other.connectionShouldClose;
+    requestBuffer = other.requestBuffer;
+    responseBuffer = other.responseBuffer;
+    bytesSent = other.bytesSent;
+    request = other.request;
 }
 
-const socklen_t& Client::getClientLen() const { return this->client_len; }
-
-const int& Client::getFlags() const { return this->flags; }
-
-void Client::CreateClientSock(int listen_sock_fd)
+// Fermeture du socket client
+void Client::closeClientSocket()
 {
-    this->client_len = sizeof(this->client_addr);
-    this->client_fd = accept(
-        listen_sock_fd, (struct sockaddr*)&this->client_addr, &this->client_len);
-    if (this->client_fd == -1)
-        throw ClientException("accept");
-}
-
-void Client::makeSocketNonBlocking()
-{
-    this->flags = fcntl(this->client_fd, F_GETFL, 0);
-    if (flags == -1)
-        throw ClientException("fcntl");
-    flags |= O_NONBLOCK;
-    if (fcntl(this->client_fd, F_SETFL, this->flags) == -1)
-        throw ClientException("fcntl");
-}
-
-void Client::setSocketBufferSize(int recvBufSize, int sendBufSize) const
-{
-    if (setsockopt(this->client_fd, SOL_SOCKET, SO_RCVBUF, &recvBufSize,
-            sizeof(recvBufSize))
-        == -1)
-        throw ClientException("setsockopt SO_RCVBUF");
-    if (setsockopt(this->client_fd, SOL_SOCKET, SO_SNDBUF, &sendBufSize,
-            sizeof(sendBufSize))
-        == -1)
-        throw ClientException("setsockopt SO_SNDBUF");
-}
-
-void Client::readRequest()
-{
-    size_t count = 10000;
-    std::string buffer(count, '\0');
-
-    ssize_t bytes_read = read(this->client_fd, &buffer[0], count);
-    (void)bytes_read;
-    setRequest(buffer);
-}
-
-void Client::setRequest(std::string request)
-{
-    HttpRequest parser(request);
-    this->request = parser.getHttpRequest();
-    // Reset the flag before handling the response
-    connectionShouldClose = false;
-
-    // Handle the response
-    ResponseHandler responseHandler(*this, this->request);
-    responseHandler.handleResponse();
-}
-
-void Client::appendToRequestBuffer(const std::string& data)
-{
-    requestBuffer += data;
-    // Check if the request is complete (e.g., look for "\r\n\r\n")
-    if (requestBuffer.find("\r\n\r\n") != std::string::npos) {
-        setRequest(requestBuffer);
-        requestBuffer.clear(); // Clear the buffer after processing
+    if (client_fd != -1) {
+        close(client_fd);
+        client_fd = -1;
     }
 }
 
-bool Client::shouldCloseConnection() const
+const int& Client::getClientFd() const { return client_fd; }
+bool Client::shouldCloseConnection() const { return connectionShouldClose; }
+void Client::setConnectionShouldClose(bool shouldClose) { connectionShouldClose = shouldClose; }
+
+// Ajout de données au buffer de requête
+void Client::appendToRequestBuffer(const std::string& data)
 {
-    return connectionShouldClose;
+    requestBuffer += data;
+    if (isRequestComplete()) {
+        processRequest();
+        requestBuffer.clear();
+    }
 }
 
-void Client::setConnectionShouldClose(bool shouldClose)
+// Vérification de la complétude de la requête
+bool Client::isRequestComplete() const
 {
-    connectionShouldClose = shouldClose;
+    return requestBuffer.find(REQUEST_TERMINATOR) != std::string::npos;
+}
+
+// Traitement de la requête
+void Client::processRequest()
+{
+    parseRequest();
+    handleResponse();
+    prepareForSending();
+}
+
+// Analyse de la requête
+void Client::parseRequest()
+{
+    HttpRequest parser(requestBuffer);
+    request = parser.getHttpRequest();
+    connectionShouldClose = false; // Réinitialisation du flag
+}
+
+// Gestion de la réponse
+void Client::handleResponse()
+{
+    ResponseHandler responseHandler(request);
+    responseHandler.handleResponse();
+    setResponse(responseHandler.getResponse());
+}
+
+// Préparation de l'envoi
+void Client::prepareForSending()
+{
+    bytesSent = 0;
+    checkConnectionPersistence();
+}
+
+// Définition de la réponse
+void Client::setResponse(const std::string& response)
+{
+    responseBuffer = response;
+    std::cout << "Réponse configurée : " << responseBuffer << std::endl;
+}
+
+// Vérification de la persistance de la connexion
+void Client::checkConnectionPersistence()
+{
+    std::map<std::string, std::string>::const_iterator it = request.headers.find(CONNECTION_HEADER);
+    if (it != request.headers.end() && it->second == KEEP_ALIVE && request.version == HTTP_VERSION) {
+        setConnectionShouldClose(false);
+    } else {
+        setConnectionShouldClose(true);
+    }
+}
+
+// Vérifie si le client a des données à écrire
+bool Client::hasDataToWrite() const
+{
+    return bytesSent < responseBuffer.size();
+}
+
+// Envoi de données
+ssize_t Client::sendData()
+{
+    ssize_t result = send(client_fd, responseBuffer.c_str() + bytesSent, responseBuffer.size() - bytesSent, 0);
+    if (result > 0) {
+        bytesSent += result;
+        std::cout << "Envoyé " << result << " octets au client " << client_fd << std::endl;
+    } else if (result == -1 && (errno != EAGAIN && errno != EWOULDBLOCK)) {
+        handleError("send");
+    }
+    return result;
+}
+
+// Gestion des erreurs
+void Client::handleError(const std::string& functionName)
+{
+    std::cerr << "Erreur dans " << functionName << ": " << strerror(errno) << std::endl;
 }

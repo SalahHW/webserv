@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/07 14:31:15 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/12 17:43:53 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ const std::map<int, std::string>& Server::getErrorPages() const
     return this->errorPages;
 }
 
-std::map<int, Client>& Server::getClientsList()
+std::map<int, Client*>& Server::getClientsList()
 {
     return this->clientsList;
 }
@@ -182,7 +182,7 @@ void Server::paramFd()
     }
 }
 
-void Server::addClientToServer(Client clientToAdd)
+void Server::addClientToServer(Client* clientToAdd)
 {
-    this->clientsList.insert(std::make_pair(clientToAdd.getClientFd(), clientToAdd));
+    this->clientsList.insert(std::make_pair(clientToAdd->getClientFd(), clientToAdd));
 }

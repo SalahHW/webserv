@@ -3,36 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   HttpRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/05 13:38:36 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/06 14:08:02 by joakoeni         ###   ########.fr       */
+/*   Created: 2024/11/14 12:20:00 by joakoeni          #+#    #+#             */
+/*   Updated: 2024/11/14 12:20:00 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #pragma once
 
 #include <cstring>
 #include <iostream>
 #include <map>
 #include <sstream>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <vector>
+#include <string>
+
+// Inclure les constantes globales
+#include "Constants.hpp"
 
 enum HttpStatusCode {
-    OK = 200,
-    BAD_REQUEST = 400,
-    PAGE_NOT_FOUND = 404,
-    METHOD_NOT_ALLOWED = 405,
-    LENGTH_REQUIRED = 411,
-    REQUEST_ENTITY_TOO_LARGE = 413,
-    INTERNAL_SERVER_ERROR = 500,
-    NOT_IMPLEMENTED = 501,
-    BAD_GATEWAY = 502,
-    SERVICE_UNAVAILABLE = 503,
-    GATEWAY_TIMEOUT = 504,
-    HTTP_VERSION_NOT_SUPPORTED = 505
+    OK = Constants::OK,
+    BAD_REQUEST = Constants::BAD_REQUEST,
+    PAGE_NOT_FOUND = Constants::PAGE_NOT_FOUND,
+    METHOD_NOT_ALLOWED = Constants::METHOD_NOT_ALLOWED,
+    LENGTH_REQUIRED = Constants::LENGTH_REQUIRED,
+    REQUEST_ENTITY_TOO_LARGE = Constants::REQUEST_ENTITY_TOO_LARGE,
+    INTERNAL_SERVER_ERROR = Constants::INTERNAL_SERVER_ERROR,
+    NOT_IMPLEMENTED = Constants::NOT_IMPLEMENTED,
+    BAD_GATEWAY = Constants::BAD_GATEWAY,
+    SERVICE_UNAVAILABLE = Constants::SERVICE_UNAVAILABLE,
+    GATEWAY_TIMEOUT = Constants::GATEWAY_TIMEOUT,
+    HTTP_VERSION_NOT_SUPPORTED = Constants::HTTP_VERSION_NOT_SUPPORTED
 };
 
 struct RequestParsed {
@@ -48,19 +48,30 @@ class HttpRequest {
 private:
     std::string request;
     RequestParsed requestParsed;
+
+    // Méthodes de parsing internes
     bool findAndParseRequestLine(std::string::size_type& headersStartPos);
     bool findAndParseHeaders(std::string::size_type headersStartPos, std::string::size_type& bodyStartPos);
     bool parseRequestBody(std::string::size_type bodyStartPos);
 
 public:
-    HttpRequest(std::string request);
+    // Constructeurs et destructeur
+    HttpRequest(const std::string& request);
     ~HttpRequest();
     HttpRequest(const HttpRequest& src);
     HttpRequest& operator=(const HttpRequest& src);
+
+    // Accesseurs
     const RequestParsed& getHttpRequest() const;
-    bool parseRequestLine(const std::string requestLine);
-    bool parseHeaders(const std::string& headerLines);
+
+    // Méthodes de parsing
     void parseHttpRequest();
-    void showHttpRequest();
-    std::string trim(const std::string& str);
+    void showHttpRequest() const;
+
+    // Vérification des méthodes supportées
+    bool isMethodSupported(const std::string& method) const;
+
+private:
+    // Méthode utilitaire pour supprimer les espaces blancs
+    std::string trim(const std::string& str) const;
 };

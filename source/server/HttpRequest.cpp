@@ -3,29 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   HttpRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: joakoeni <joakoeni@student.42mulhouse.f>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/05 13:51:58 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/06 13:59:17 by joakoeni         ###   ########.fr       */
+/*   Created: 2024/11/14 12:25:00 by joakoeni          #+#    #+#             */
+/*   Updated: 2024/11/14 12:25:00 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "HttpRequest.hpp"
 
-HttpRequest::~HttpRequest() { }
-
-HttpRequest::HttpRequest(std::string request)
+// Constructeur
+HttpRequest::HttpRequest(const std::string& request)
     : request(request)
 {
     parseHttpRequest();
 }
 
+// Destructeur
+HttpRequest::~HttpRequest()
+{
+    // Rien à faire pour le moment
+}
+
+// Constructeur de copie
 HttpRequest::HttpRequest(const HttpRequest& src)
     : request(src.request)
     , requestParsed(src.requestParsed)
 {
 }
 
+// Opérateur d'assignation
 HttpRequest& HttpRequest::operator=(const HttpRequest& src)
 {
     if (this != &src) {
@@ -35,30 +41,47 @@ HttpRequest& HttpRequest::operator=(const HttpRequest& src)
     return *this;
 }
 
+// Accesseur
 const RequestParsed& HttpRequest::getHttpRequest() const
 {
     return this->requestParsed;
 }
 
-bool HttpRequest::parseRequestLine(const std::string requestLine)
+// Méthode principale de parsing de la requête HTTP
+void HttpRequest::parseHttpRequest()
 {
-    std::istringstream stream(requestLine);
-    if (!(stream >> this->requestParsed.method >> this->requestParsed.uri >> this->requestParsed.version)) {
-        this->requestParsed.status = BAD_REQUEST;
-        return false;
+    std::string::size_type headersStartPos;
+    if (!findAndParseRequestLine(headersStartPos)) {
+        return;
     }
-    if (this->requestParsed.method != "GET" && this->requestParsed.method != "POST") {
-        this->requestParsed.status = NOT_IMPLEMENTED;
-        return false;
+
+    std::string::size_type bodyStartPos;
+    if (!findAndParseHeaders(headersStartPos, bodyStartPos)) {
+        return;
     }
-    if (this->requestParsed.version != "HTTP/1.1") {
-        this->requestParsed.status = HTTP_VERSION_NOT_SUPPORTED;
-        return false;
+
+    if (!parseRequestBody(bodyStartPos)) {
+        return;
     }
-    return true;
 }
 
-std::string HttpRequest::trim(const std::string& str)
+// Afficher les détails de la requête HTTP
+void HttpRequest::showHttpRequest() const
+{
+    std::cout << "Method: " << this->requestParsed.method << std::endl;
+    std::cout << "URI: " << this->requestParsed.uri << std::endl;
+    std::cout << "Version: " << this->requestParsed.version << std::endl;
+    std::cout << "Headers:" << std::endl;
+    std::map<std::string, std::string>::const_iterator it;
+    for (it = requestParsed.headers.begin(); it != requestParsed.headers.end(); ++it) {
+        std::cout << it->first << ": " << it->second << std::endl;
+    }
+    std::cout << "Body: " << this->requestParsed.body << std::endl;
+    std::cout << "Status: " << this->requestParsed.status << std::endl;
+}
+
+// Méthode utilitaire pour supprimer les espaces blancs
+std::string HttpRequest::trim(const std::string& str) const
 {
     const std::string::size_type start = str.find_first_not_of(" \t\r\n");
     if (start == std::string::npos)
@@ -66,29 +89,8 @@ std::string HttpRequest::trim(const std::string& str)
     const std::string::size_type end = str.find_last_not_of(" \t\r\n");
     return str.substr(start, end - start + 1);
 }
-// Dans parseHeaders modif le while
-bool HttpRequest::parseHeaders(const std::string& headerLines)
-{
-    std::istringstream stream(headerLines);
-    std::string line;
-    while (std::getline(stream, line) && line != "\r") {
-        if (line.empty() || line == "\n" || line == "\r\n")
-            break;
-        std::string::size_type pos = line.find(':');
-        if (pos == std::string::npos) {
-            this->requestParsed.status = BAD_REQUEST;
-            return false;
-        }
-        std::string headerName = trim(line.substr(0, pos));
-        std::string headerValue = trim(line.substr(pos + 1)); // used to be + 2
-        if (!headerValue.empty() && headerValue[headerValue.size() - 1] == '\r') {
-            headerValue.erase(headerValue.size() - 1);
-        }
-        this->requestParsed.headers[headerName] = headerValue;
-    }
-    return true;
-}
 
+// Trouver et parser la ligne de requête
 bool HttpRequest::findAndParseRequestLine(std::string::size_type& headersStartPos)
 {
     std::string::size_type requestLineEnd = this->request.find("\r\n");
@@ -99,18 +101,35 @@ bool HttpRequest::findAndParseRequestLine(std::string::size_type& headersStartPo
 
     std::string requestLine = this->request.substr(0, requestLineEnd);
 
-    if (!parseRequestLine(requestLine)) {
+    // Parse the request line
+    std::istringstream stream(requestLine);
+    if (!(stream >> this->requestParsed.method >> this->requestParsed.uri >> this->requestParsed.version)) {
+        this->requestParsed.status = BAD_REQUEST;
         return false;
     }
 
+    // Vérifier si la méthode est supportée
+    if (!isMethodSupported(this->requestParsed.method)) {
+        this->requestParsed.status = METHOD_NOT_ALLOWED;
+        return false;
+    }
+
+    // Vérifier la version HTTP
+    if (this->requestParsed.version != Constants::HTTP_VERSION) {
+        this->requestParsed.status = HTTP_VERSION_NOT_SUPPORTED;
+        return false;
+    }
+
+    this->requestParsed.status = OK;
     headersStartPos = requestLineEnd + 2;
 
     return true;
 }
 
+// Trouver et parser les en-têtes
 bool HttpRequest::findAndParseHeaders(std::string::size_type headersStartPos, std::string::size_type& bodyStartPos)
 {
-    std::string::size_type headersEnd = this->request.find("\r\n\r\n", headersStartPos);
+    std::string::size_type headersEnd = this->request.find(Constants::REQUEST_TERMINATOR, headersStartPos);
     if (headersEnd == std::string::npos) {
         this->requestParsed.status = BAD_REQUEST;
         return false;
@@ -118,24 +137,45 @@ bool HttpRequest::findAndParseHeaders(std::string::size_type headersStartPos, st
 
     std::string headers = this->request.substr(headersStartPos, headersEnd - headersStartPos);
 
-    if (!parseHeaders(headers)) {
-        return false;
+    std::istringstream stream(headers);
+    std::string line;
+    while (std::getline(stream, line)) {
+        // Remove possible '\r' at the end
+        if (!line.empty() && line[line.size() - 1] == '\r') {
+            line.erase(line.size() - 1);
+        }
+
+        if (line.empty())
+            continue;
+
+        std::string::size_type pos = line.find(':');
+        if (pos == std::string::npos) {
+            this->requestParsed.status = BAD_REQUEST;
+            return false;
+        }
+
+        std::string headerName = trim(line.substr(0, pos));
+        std::string headerValue = trim(line.substr(pos + 1)); // Ignorer ':'
+
+        this->requestParsed.headers[headerName] = headerValue;
     }
 
-    bodyStartPos = headersEnd + 4;
+    bodyStartPos = headersEnd + Constants::REQUEST_TERMINATOR.size();
 
     return true;
 }
 
+// Méthode de parsing du corps de la requête
 bool HttpRequest::parseRequestBody(std::string::size_type bodyStartPos)
 {
     if (this->requestParsed.method == "POST") {
-        if (this->requestParsed.headers.find("Content-Length") == this->requestParsed.headers.end()) {
+        std::map<std::string, std::string>::const_iterator it = this->requestParsed.headers.find("Content-Length");
+        if (it == this->requestParsed.headers.end()) {
             this->requestParsed.status = LENGTH_REQUIRED;
             return false;
         }
 
-        std::istringstream iss(this->requestParsed.headers["Content-Length"]);
+        std::istringstream iss(it->second);
         size_t contentLength;
         if (!(iss >> contentLength)) {
             this->requestParsed.status = BAD_REQUEST;
@@ -155,34 +195,13 @@ bool HttpRequest::parseRequestBody(std::string::size_type bodyStartPos)
     return true;
 }
 
-void HttpRequest::parseHttpRequest()
+// Vérifier si une méthode HTTP est supportée
+bool HttpRequest::isMethodSupported(const std::string& method) const
 {
-    this->requestParsed.status = OK;
-
-    std::string::size_type headersStartPos;
-    if (!findAndParseRequestLine(headersStartPos)) {
-        return;
+    for (size_t i = 0; i < Constants::SUPPORTED_METHODS_COUNT; ++i) {
+        if (method == Constants::SUPPORTED_METHODS[i]) {
+            return true;
+        }
     }
-
-    std::string::size_type bodyStartPos;
-    if (!findAndParseHeaders(headersStartPos, bodyStartPos)) {
-        return;
-    }
-
-    if (!parseRequestBody(bodyStartPos)) {
-        return;
-    }
-}
-
-void HttpRequest::showHttpRequest()
-{
-    std::cout << "Method: " << this->requestParsed.method << std::endl;
-    std::cout << "URI: " << requestParsed.uri << std::endl;
-    std::cout << "Version: " << requestParsed.version << std::endl;
-    std::cout << "Headers:" << std::endl;
-    for (std::map<std::string, std::string>::iterator it = requestParsed.headers.begin(); it != requestParsed.headers.end(); ++it) {
-        std::cout << it->first << ": " << it->second << std::endl;
-    }
-    std::cout << "Body: " << requestParsed.body << std::endl;
-    std::cout << "Status: " << requestParsed.status << std::endl;
+    return false;
 }
