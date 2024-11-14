@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ServerNameDirective.hpp                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 18:05:45 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/11/14 15:02:04 by sbouheni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Directive.hpp"
 
 class ServerNameDirective : public Directive {
