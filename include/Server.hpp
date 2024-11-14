@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/12 17:45:10 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:25:06 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ private:
     std::string name;
     int clientMaxBodySize;
     std::map<int, std::string> errorPages;
-    std::vector<Location> locations;
+    std::map<std::string, Location> locations;
     std::map<int, Client*> clientsList;
     struct sockaddr_in addr;
     void resolveHostName();

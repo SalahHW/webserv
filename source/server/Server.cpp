@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/13 18:09:18 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:26:39 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void Server::setErrorPages(std::map<int, std::string> errorPages)
 
 void Server::addLocation(const Location& location)
 {
-    this->locations.push_back(location);
+    this->locations[location.getPath()] = location;
 }
 
 int Server::getListenFd() const
@@ -116,9 +116,15 @@ void Server::displayServerInfo() const
     std::cout << "- Name: " << name << std::endl;
     std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes" << std::endl;
 
+    // std::cout << "- Error Pages: " << std::endl;
+    // for (size_t i = 0; i < errorPages.size(); ++i) {
+    //      std::cout << "  * " << errorPages[i] << std::endl;
+    // }
+
+    std::map<std::string, Location>::const_iterator it = this->locations.begin();
     std::cout << "- Locations: " << std::endl;
-    for (size_t i = 0; i < locations.size(); ++i) {
-        locations[i].displayLocationInfo();
+    for (; it != this->locations.end(); ++it) {
+        it->second.displayLocationInfo();
     }
 }
 
