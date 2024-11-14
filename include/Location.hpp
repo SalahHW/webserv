@@ -1,5 +1,4 @@
-#ifndef LOCATION_HPP
-#define LOCATION_HPP
+#pragma once
 
 #include <string>
 #include <iostream>
