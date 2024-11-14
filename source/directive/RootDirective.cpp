@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:28:45 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 17:27:07 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 15:01:42 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 RootDirective::~RootDirective() { }
 
-RootDirective::RootDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+RootDirective::RootDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("root");

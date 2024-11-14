@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:28:59 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:52:38 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 15:01:05 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 class RootDirective : public Directive {
 public:
 	~RootDirective();
-	RootDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+	RootDirective(Block* currentContext, const std::string& fullDirectiveLine);
 	RootDirective(const RootDirective& other);
 	RootDirective& operator=(const RootDirective& other);
 

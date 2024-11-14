@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:51:10 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/11 06:26:15 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 14:38:25 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 DenyDirective::~DenyDirective() { }
 
-DenyDirective::DenyDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+DenyDirective::DenyDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("deny");

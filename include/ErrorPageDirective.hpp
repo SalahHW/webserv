@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:21:19 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:51:34 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 15:04:37 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 class ErrorPageDirective : public Directive {
 public:
     ~ErrorPageDirective();
-    ErrorPageDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    ErrorPageDirective(Block* currentContext, const std::string& fullDirectiveLine);
     ErrorPageDirective(const ErrorPageDirective& other);
     ErrorPageDirective& operator=(const ErrorPageDirective& other);
 

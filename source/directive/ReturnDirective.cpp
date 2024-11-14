@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:55:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/11/07 14:11:43 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 16:13:01 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 ReturnDirective::~ReturnDirective() { }
 
-ReturnDirective::ReturnDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+ReturnDirective::ReturnDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("return");

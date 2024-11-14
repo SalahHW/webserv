@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 17:16:08 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 17:26:46 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 15:03:34 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 ListenDirective::~ListenDirective() { }
 
-ListenDirective::ListenDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+ListenDirective::ListenDirective(Block* currentContext, const std::string& fullDirectiveLine)
     : Directive(currentContext, fullDirectiveLine)
     , port(0)
 {

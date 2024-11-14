@@ -1,20 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   HttpParsingRequest.hpp                             :+:      :+:    :+:   */
+/*   HttpRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 16:03:29 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/09/10 15:41:08 by joakoeni         ###   ########.fr       */
+/*   Created: 2024/11/05 13:38:36 by joakoeni          #+#    #+#             */
+/*   Updated: 2024/11/06 14:08:02 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HTTPPARSINGREQUEST_HPP
-#define HTTPPARSINGREQUEST_HPP
+#pragma once
 
-#include "HttpParsingException.hpp"
-#include <cerrno>
 #include <cstring>
 #include <iostream>
 #include <map>
@@ -27,13 +24,18 @@ enum HttpStatusCode {
     OK = 200,
     BAD_REQUEST = 400,
     PAGE_NOT_FOUND = 404,
+    METHOD_NOT_ALLOWED = 405,
+    LENGTH_REQUIRED = 411,
+    REQUEST_ENTITY_TOO_LARGE = 413,
     INTERNAL_SERVER_ERROR = 500,
+    NOT_IMPLEMENTED = 501,
     BAD_GATEWAY = 502,
     SERVICE_UNAVAILABLE = 503,
-    GATEWAY_TIMEOUT = 504
+    GATEWAY_TIMEOUT = 504,
+    HTTP_VERSION_NOT_SUPPORTED = 505
 };
 
-struct HttpRequest {
+struct RequestParsed {
     std::string method;
     std::string uri;
     std::string version;
@@ -42,25 +44,23 @@ struct HttpRequest {
     HttpStatusCode status;
 };
 
-class HttpParsing {
+class HttpRequest {
 private:
     std::string request;
-    struct HttpRequest requestParsed;
-    // enum HttpStatusCode statusCode;
-    int client_fd;
+    RequestParsed requestParsed;
+    bool findAndParseRequestLine(std::string::size_type& headersStartPos);
+    bool findAndParseHeaders(std::string::size_type headersStartPos, std::string::size_type& bodyStartPos);
+    bool parseRequestBody(std::string::size_type bodyStartPos);
 
 public:
-    HttpParsing(std::string requestToParse, int client_fd);
-    ~HttpParsing();
-    HttpParsing(const HttpParsing& src);
-    HttpParsing& operator=(const HttpParsing& src);
-    const HttpRequest& getHttpRequest() const;
-    bool parseRequestLine(std::string requestLine);
+    HttpRequest(std::string request);
+    ~HttpRequest();
+    HttpRequest(const HttpRequest& src);
+    HttpRequest& operator=(const HttpRequest& src);
+    const RequestParsed& getHttpRequest() const;
+    bool parseRequestLine(const std::string requestLine);
     bool parseHeaders(const std::string& headerLines);
     void parseHttpRequest();
     void showHttpRequest();
-    void sendHttpError(HttpStatusCode statuscode) const;
     std::string trim(const std::string& str);
 };
-
-#endif

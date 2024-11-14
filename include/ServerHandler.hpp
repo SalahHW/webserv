@@ -6,7 +6,7 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 13:21:07 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 13:46:11 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/07 14:22:42 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #include "ConfigFile.hpp"
 #include "EpollException.hpp"
 #include "Location.hpp"
-#include "Server.hpp"
 #include <iostream>
 #include <map>
 #include <sys/epoll.h>
@@ -51,4 +50,8 @@ private:
     int nbEvents;
     void epollInit();
     void startToListen();
+    void addServerToList();
+    void updateServerList();
+    void handleClientData(int clientFd);
+    ;
 };

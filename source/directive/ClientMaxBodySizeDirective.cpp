@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:17:39 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/11/04 10:13:01 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 16:12:47 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 ClientMaxBodySizeDirective::~ClientMaxBodySizeDirective() { }
 
-ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 	, maxBodySize(0)
 {
