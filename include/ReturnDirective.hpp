@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:53:38 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:52:21 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 14:40:02 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 class ReturnDirective : public Directive {
 public:
     ~ReturnDirective();
-    ReturnDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    ReturnDirective(Block* currentContext, const std::string& fullDirectiveLine);
     ReturnDirective(const ReturnDirective& other);
     ReturnDirective& operator=(const ReturnDirective& other);
 

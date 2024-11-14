@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:38:52 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:34:47 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 14:58:20 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 class AutoIndexDirective : public Directive {
 public:
 	~AutoIndexDirective();
-	AutoIndexDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+	AutoIndexDirective(Block* currentContext, const std::string& fullDirectiveLine);
 	AutoIndexDirective(const AutoIndexDirective& other);
 	AutoIndexDirective& operator=(const AutoIndexDirective& other);
 

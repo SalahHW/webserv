@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 13:49:08 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:54:30 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 14:57:30 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ public:
     ~DirectiveFactory();
     DirectiveFactory();
 
-    Directive* create(const std::string& name, const std::string& context, const std::string& fullDirectiveline) const;
+    Directive* create(const std::string& name, Block* context, const std::string& fullDirectiveline) const;
 
     template <typename T>
     void registerDirective(const std::string& name)
@@ -44,10 +44,10 @@ private:
     DirectiveFactory& operator=(const DirectiveFactory& other);
 
     template <typename T>
-    static Directive* createInstance(const std::string& context, const std::string& fullDirectiveLine)
+    static Directive* createInstance(Block* context, const std::string& fullDirectiveLine)
     {
         return new T(context, fullDirectiveLine);
     }
 
-    std::map<std::string, Directive* (*)(const std::string&, const std::string&)> factoryMap;
+    std::map<std::string, Directive* (*)(Block*, const std::string&)> factoryMap;
 };

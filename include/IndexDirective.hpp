@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:35:02 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:51:49 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 14:59:47 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 class IndexDirective : public Directive {
 public:
     ~IndexDirective();
-    IndexDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    IndexDirective(Block* currentContext, const std::string& fullDirectiveLine);
     IndexDirective(const IndexDirective& other);
     IndexDirective& operator=(const IndexDirective& other);
 

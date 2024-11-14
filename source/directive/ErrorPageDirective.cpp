@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:21:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 17:23:39 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 15:02:55 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 ErrorPageDirective::~ErrorPageDirective() { }
 
-ErrorPageDirective::ErrorPageDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+ErrorPageDirective::ErrorPageDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("error_page");

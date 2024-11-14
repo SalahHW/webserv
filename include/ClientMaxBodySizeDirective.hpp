@@ -6,7 +6,7 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:16:05 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/25 11:16:15 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 14:37:24 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 class ClientMaxBodySizeDirective : public Directive {
 public:
     ~ClientMaxBodySizeDirective();
-    ClientMaxBodySizeDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    ClientMaxBodySizeDirective(Block* currentContext, const std::string& fullDirectiveLine);
     ClientMaxBodySizeDirective(const ClientMaxBodySizeDirective& other);
     ClientMaxBodySizeDirective& operator=(const ClientMaxBodySizeDirective& other);
 

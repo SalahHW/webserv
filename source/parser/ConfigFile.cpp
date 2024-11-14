@@ -285,7 +285,7 @@ void ConfigFile::processDirective(const std::string& cleanedLine, Block* current
     std::string directiveLine = cleanedLine.substr(0, cleanedLine.size() - 1); // Enlever le ';'
     std::string directiveName = extractDirectiveName(directiveLine);
 
-    Directive* directive = directiveFactory.create(directiveName, currentBlock->getName(), directiveLine);
+    Directive* directive = directiveFactory.create(directiveName, currentBlock, directiveLine);
     if (!directive) {
         std::cerr << "Error: Directive \"" << directiveName << "\" in block \""
                   << currentBlock->getName() << "\" is not supported." << std::endl;
