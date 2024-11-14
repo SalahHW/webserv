@@ -6,15 +6,16 @@
 /*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:49:56 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/12 08:14:05 by sbouheni         ###   ########.fr       */
+/*   Updated: 2024/11/14 14:34:37 by sbouheni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Block.hpp"
 #include "Directive.hpp"
 
 Directive::~Directive() { }
 
-Directive::Directive(const std::string& currentContext, const std::string& fullDirectiveLine)
+Directive::Directive(Block* currentContext, const std::string& fullDirectiveLine)
     : currentContext(currentContext)
     , fullDirectiveLine(fullDirectiveLine)
 {
@@ -53,7 +54,7 @@ void Directive::validate()
 
 bool Directive::validateContext() const
 {
-    if (std::find(contexts.begin(), contexts.end(), currentContext) == contexts.end()) {
+    if (std::find(contexts.begin(), contexts.end(), currentContext->getName()) == contexts.end()) {
         std::cerr << "Error: Directive \"" << name << "\" cannot be used in \"" << currentContext << "\" block" << std::endl;
         return false;
     }
@@ -91,7 +92,7 @@ void Directive::setName(const std::string& name)
     this->name = name;
 }
 
-void Directive::setCurrentContext(const std::string& context)
+void Directive::setCurrentContext(Block* context)
 {
     this->currentContext = context;
 }
@@ -126,9 +127,9 @@ std::string Directive::getName() const
     return name;
 }
 
-std::string Directive::getCurrentContext() const
+Block* Directive::getCurrentContext() const
 {
-    return currentContext;
+    return this->currentContext;
 }
 
 std::vector<std::string> Directive::getArguments() const
