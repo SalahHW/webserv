@@ -1,4 +1,5 @@
 #include "Directive.hpp"
+#include "Block.hpp"
 
 Directive::~Directive() { }
 
