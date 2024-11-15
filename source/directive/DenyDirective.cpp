@@ -1,4 +1,5 @@
 #include "DenyDirective.hpp"
+#include "Block.hpp"
 
 DenyDirective::~DenyDirective() { }
 
@@ -29,11 +30,31 @@ DenyDirective& DenyDirective::operator=(const DenyDirective& other)
 
 bool DenyDirective::validateSpecific()
 {
-	//TODO: Implement validation
+	if (arguments[0] != "all")
+	{
+		std::cerr << "Error: Bad argument in deny directive inside \"" << currentContext->getName() << "\" block." << std::endl;
+		return false;
+	}
+	std::vector<std::string> contextAgruments = currentContext->getArguments();
+	for (size_t i = 0; i < contextAgruments.size(); i++)
+	{
+		if (contextAgruments[i] == "GET")
+			this->getAccepted = false;
+		else if (contextAgruments[i] == "POST")
+			this->postAccepted = false;
+		else if (contextAgruments[i] == "DELETE")
+			this->postAccepted = false;
+	}
 	return true;
 }
 
 void DenyDirective::displayInfo() const
 {
 	std::cout << "Name : " << this->getName() << std::endl;
+}
+
+void DenyDirective::apply(Location &location) {
+	location.setGetAccepted(this->getAccepted);
+	location.setPostAccepted(this->postAccepted);
+	location.setDeleteAccepted(this->deleteAccepted);
 }
