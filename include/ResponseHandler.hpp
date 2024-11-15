@@ -1,32 +1,21 @@
 #pragma once
 
-#include "Client.hpp"
 #include "HeaderBuilder.hpp"
-#include "HttpRequest.hpp"
-#include <string>
-
-class Client;
+#include "HttpStatusCode.hpp"
+#include "Location.hpp"
+#include "ParseRequest.hpp"
+#include "Server.hpp"
 
 class ResponseHandler {
 public:
-    ResponseHandler(Client& client, const RequestParsed& requestParsed);
+    ResponseHandler(RequestParsed& requestParsed, const Server& server);
     ~ResponseHandler();
 
     void handleResponse();
+    std::string getResponse() const;
 
 private:
-    Client& client;
-    const RequestParsed& requestParsed;
-    HeaderBuilder headerBuilder;
-    std::string body;
-    int statusCode;
-    std::string reasonPhrase;
-
-    void buildResponse();
-    void handleSuccess();
-    void handleError();
-    void loadErrorPage();
-    void sendResponse();
-    void closeConnectionIfNeeded();
-    std::string getReasonPhrase(int code) const;
+    RequestParsed& requestParsed;
+    const Server& server;
+    std::string fullResponse;
 };

@@ -40,9 +40,10 @@ public:
     void displayServerInfo() const;
 
     void paramFd();
-    void addClientToServer(Client clientToAdd);
+    void addClientToServer(Client* clientToAdd);
 
-    std::map<int, Client>& getClientsList();
+    std::map<int, Client*>& getClientsList();
+    std::map<std::string, Location> getLocations() const;
 
 private:
     int listenFd;
@@ -51,7 +52,7 @@ private:
     int clientMaxBodySize;
     std::map<int, std::string> errorPages;
     std::map<std::string, Location> locations;
-    std::map<int, Client> clientsList;
+    std::map<int, Client*> clientsList;
     struct sockaddr_in addr;
     void resolveHostName();
     void bindSocket() const;

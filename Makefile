@@ -12,8 +12,10 @@ SRCS					=	main.cpp											\
 							server/Client.cpp									\
 							server/Server.cpp									\
 							server/ServerHandler.cpp							\
+							server/ParseRequest.cpp								\
+							server/ResponseBuilder.cpp							\
+							server/HttpStatusCodeDeterminer.cpp					\
 							server/Location.cpp									\
-							server/HttpRequest.cpp								\
 							server/ResponseHandler.cpp							\
 							server/HeaderBuilder.cpp							\
 							utils/utils.cpp										\

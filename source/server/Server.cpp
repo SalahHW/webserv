@@ -91,9 +91,14 @@ const std::map<int, std::string>& Server::getErrorPages() const
     return this->errorPages;
 }
 
-std::map<int, Client>& Server::getClientsList()
+std::map<int, Client*>& Server::getClientsList()
 {
     return this->clientsList;
+}
+
+std::map<std::string, Location> Server::getLocations() const
+{
+    return this->locations;
 }
 
 void Server::displayServerInfo() const
@@ -171,7 +176,7 @@ void Server::paramFd()
     }
 }
 
-void Server::addClientToServer(Client clientToAdd)
+void Server::addClientToServer(Client* clientToAdd)
 {
-    this->clientsList.insert(std::make_pair(clientToAdd.getClientFd(), clientToAdd));
+    this->clientsList.insert(std::make_pair(clientToAdd->getClientFd(), clientToAdd));
 }

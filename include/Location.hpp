@@ -1,8 +1,7 @@
-#ifndef LOCATION_HPP
-#define LOCATION_HPP
+#pragma once
 
-#include <string>
 #include <iostream>
+#include <string>
 #include <vector>
 
 class Location {
@@ -53,5 +52,3 @@ private:
     int returnCode;
     std::vector<std::string> paths;
 };
-
-#endif

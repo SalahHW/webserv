@@ -1,42 +1,43 @@
 #pragma once
 
-#include "ClientException.hpp"
-#include "HttpRequest.hpp"
+#include "HttpStatusCodeDeterminer.hpp"
+#include "ParseRequest.hpp"
 #include "ResponseHandler.hpp"
-#include <fcntl.h>
-#include <iostream>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-class ServerHandler;
+#include "Server.hpp"
+#include <map>
+#include <string>
 
 class Client {
-private:
-    int client_fd;
-    struct sockaddr_in client_addr;
-    socklen_t client_len;
-    int flags;
-    RequestParsed request;
-    std::string requestBuffer;
-    bool connectionShouldClose;
-
 public:
-    Client(int listen_sock_fd);
+    Client(int client_fd, const Server& server);
     ~Client();
-    Client(const Client& src);
-    Client& operator=(const Client& src);
+    // Client& operator=(const Client& src);
+    Client(const Client& other);
+
     const int& getClientFd() const;
-    const struct sockaddr_in& getClientAddr() const;
-    const socklen_t& getClientLen() const;
-    const int& getFlags() const;
-    void CreateClientSock(int listen_sock_fd);
-    void makeSocketNonBlocking();
-    void setSocketBufferSize(int recvBufSize, int sendBufSize) const;
-    void readRequest();
-    void setRequest(std::string request);
-    void appendToRequestBuffer(const std::string& data);
     bool shouldCloseConnection() const;
     void setConnectionShouldClose(bool shouldClose);
+
+    void appendToRequestBuffer(const std::string& data);
+    bool hasDataToWrite() const;
+    ssize_t sendData();
+
+private:
+    int client_fd;
+    RequestParsed request;
+    std::string requestBuffer;
+    std::string responseBuffer;
+    bool connectionShouldClose;
+    size_t bytesSent;
+    const Server& server;
+
+    void processRequest();
+    void setResponse(const std::string& response);
+    void closeClientSocket();
+    bool isRequestComplete() const;
+    void parseRequest();
+    void handleResponse();
+    void prepareForSending();
+    void checkConnectionPersistence();
+    void handleError(const std::string& functionName);
 };
