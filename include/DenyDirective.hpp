@@ -14,4 +14,8 @@ public:
 
 private:
     DenyDirective();
+
+    bool getAccepted;
+    bool postAccepted;
+    bool deleteAccepted;
 };
