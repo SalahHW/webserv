@@ -11,6 +11,7 @@ public:
 
     virtual bool validateSpecific();
     virtual void displayInfo() const;
+    virtual void apply(Location& location);
 
 private:
     DenyDirective();
