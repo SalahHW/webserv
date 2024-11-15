@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/14 11:25:06 by joakoeni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include "SocketException.hpp"
@@ -55,6 +43,7 @@ public:
     void addClientToServer(Client* clientToAdd);
 
     std::map<int, Client*>& getClientsList();
+    std::map<std::string, Location> getLocations() const;
 
 private:
     int listenFd;

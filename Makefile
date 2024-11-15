@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/07/08 13:13:47 by sbouheni          #+#    #+#              #
-#    Updated: 2024/11/13 16:59:44 by joakoeni         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME					=	webserv
 
 CXX						=	c++ -Wall -Wextra -Werror -std=c++98 -g
@@ -19,14 +7,15 @@ SRCS_DIR				=	source
 OBJ_DIR					=	obj
 
 SRCS					=	main.cpp											\
-							Constants.cpp										\
 							parser/ConfigFile.cpp								\
 							parser/ConfigExtractor.cpp							\
 							server/Client.cpp									\
 							server/Server.cpp									\
 							server/ServerHandler.cpp							\
+							server/ParseRequest.cpp								\
+							server/ResponseBuilder.cpp							\
+							server/HttpStatusCodeDeterminer.cpp					\
 							server/Location.cpp									\
-							server/HttpRequest.cpp								\
 							server/ResponseHandler.cpp							\
 							server/HeaderBuilder.cpp							\
 							utils/utils.cpp										\

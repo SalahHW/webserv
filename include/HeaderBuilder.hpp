@@ -6,13 +6,12 @@
 /*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 13:43:54 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/13 16:40:45 by joakoeni         ###   ########.fr       */
+/*   Updated: 2024/11/15 17:22:46 by joakoeni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "Constants.hpp"
 #include <map>
 #include <string>
 
@@ -23,6 +22,7 @@ public:
 
     void setStatusCode(int code);
     void setReasonPhrase(const std::string& phrase);
+    void setContentType(const std::string& contentType);
 
     void addHeader(const std::string& key, const std::string& value);
     std::string buildStatusLine() const;
@@ -32,4 +32,10 @@ private:
     int statusCode;
     std::string reasonPhrase;
     std::map<std::string, std::string> headers;
+
+    static const char* HTTP_VERSION;
+    static const char* LINE_TERMINATOR;
+    static const char* HEADER_SEPARATOR;
+    static const int DEFAULT_STATUS_CODE;
+    static const char* DEFAULT_REASON_PHRASE;
 };

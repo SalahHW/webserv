@@ -1,31 +1,17 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 16:02:32 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/13 15:00:00 by joakoeni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
-#include "ClientException.hpp"
-#include "Constants.hpp"
-#include "HttpRequest.hpp"
+#include "HttpStatusCodeDeterminer.hpp"
+#include "ParseRequest.hpp"
 #include "ResponseHandler.hpp"
+#include "Server.hpp"
 #include <map>
 #include <string>
 
-using namespace Constants;
-
 class Client {
 public:
-    Client(int client_fd);
+    Client(int client_fd, const Server& server);
     ~Client();
-    Client& operator=(const Client& src);
+    // Client& operator=(const Client& src);
     Client(const Client& other);
 
     const int& getClientFd() const;
@@ -43,11 +29,11 @@ private:
     std::string responseBuffer;
     bool connectionShouldClose;
     size_t bytesSent;
+    const Server& server;
 
     void processRequest();
     void setResponse(const std::string& response);
     void closeClientSocket();
-    void copyClientData(const Client& other);
     bool isRequestComplete() const;
     void parseRequest();
     void handleResponse();

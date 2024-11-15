@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/03 13:20:42 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/14 11:26:39 by joakoeni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Server.hpp"
 #include "Location.hpp"
 #include "ServerHandler.hpp"
@@ -106,6 +94,11 @@ const std::map<int, std::string>& Server::getErrorPages() const
 std::map<int, Client*>& Server::getClientsList()
 {
     return this->clientsList;
+}
+
+std::map<std::string, Location> Server::getLocations() const
+{
+    return this->locations;
 }
 
 void Server::displayServerInfo() const

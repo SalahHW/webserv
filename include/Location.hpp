@@ -1,20 +1,7 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Location.hpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/03 13:20:35 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/10 08:57:52 by sbouheni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#pragma once
 
-#ifndef LOCATION_HPP
-#define LOCATION_HPP
-
-#include <string>
 #include <iostream>
+#include <string>
 #include <vector>
 
 class Location {
@@ -65,5 +52,3 @@ private:
     int returnCode;
     std::vector<std::string> paths;
 };
-
-#endif

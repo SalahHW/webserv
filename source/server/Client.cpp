@@ -1,27 +1,20 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 16:02:27 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/13 15:00:00 by joakoeni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Client.hpp"
-#include "ServerHandler.hpp"
 #include <cerrno>
 #include <cstring>
 #include <iostream>
 #include <sys/socket.h>
 #include <unistd.h>
 
-Client::Client(int client_fd)
+static const std::string REQUEST_TERMINATOR = "\r\n\r\n";
+static const std::string CONNECTION_HEADER = "Connection";
+static const std::string KEEP_ALIVE = "keep-alive";
+static const std::string HTTP_VERSION = "HTTP/1.1";
+
+Client::Client(int client_fd, const Server& server)
     : client_fd(client_fd)
     , connectionShouldClose(false)
     , bytesSent(0)
+    , server(server)
 {
 }
 
@@ -31,28 +24,17 @@ Client::~Client()
 }
 
 Client::Client(const Client& other)
+    : client_fd(other.client_fd)
+    , request(other.request)
+    , server(other.server)
 {
-    copyClientData(other);
     std::cout << "Client copié avec le descripteur : " << client_fd << std::endl;
 }
 
-Client& Client::operator=(const Client& other)
-{
-    if (this != &other) {
-        copyClientData(other);
-    }
-    return *this;
-}
-
-void Client::copyClientData(const Client& other)
-{
-    client_fd = other.client_fd;
-    connectionShouldClose = other.connectionShouldClose;
-    requestBuffer = other.requestBuffer;
-    responseBuffer = other.responseBuffer;
-    bytesSent = other.bytesSent;
-    request = other.request;
-}
+// Client& Client::operator=(const Client& other)
+// {
+// return *this;
+// }
 
 void Client::closeClientSocket()
 {
@@ -89,15 +71,21 @@ void Client::processRequest()
 
 void Client::parseRequest()
 {
-    HttpRequest parser(requestBuffer);
-    request = parser.getHttpRequest();
+    ParseRequest parser(requestBuffer);
+    request = parser.getParsedRequest();
     connectionShouldClose = false;
+    HttpStatusCodeDeterminer determine(server);
+    determine.determineStatusCode(request);
 }
 
 void Client::handleResponse()
 {
-    ResponseHandler responseHandler(request);
+    ParseRequest parser(requestBuffer);
+    RequestParsed& requestParsed = parser.getParsedRequest();
+
+    ResponseHandler responseHandler(requestParsed, server);
     responseHandler.handleResponse();
+
     setResponse(responseHandler.getResponse());
 }
 

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ServerHandler.cpp                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/03 13:20:49 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/11/13 18:09:47 by joakoeni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "ServerHandler.hpp"
 #include "Server.hpp"
 
@@ -177,7 +165,7 @@ void ServerHandler::handleNewConnection(Server& server)
         return;
     }
 
-    Client* client = new Client(clientFd);
+    Client* client = new Client(clientFd, server);
     server.addClientToServer(client);
 
     struct epoll_event event;
