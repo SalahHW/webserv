@@ -25,6 +25,7 @@ public:
     Block* getContextBlock() const;
     std::string getFullBlockLine() const;
     std::vector<Block*> getSubBlocks() const;
+    std::vector<std::string> const &getArguments() const;
     std::vector<Directive*> getDirectives() const;
     bool good() const;
 

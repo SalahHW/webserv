@@ -93,6 +93,11 @@ std::string Block::getFullBlockLine() const
     return fullLine;
 }
 
+std::vector<std::string> const &Block::getArguments() const
+{
+    return this->arguments;
+}
+
 std::vector<Block*> Block::getSubBlocks() const
 {
     return subBlocks;
