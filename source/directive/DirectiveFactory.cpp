@@ -12,6 +12,7 @@ DirectiveFactory::DirectiveFactory()
     registerDirective<IndexDirective>("index");
     registerDirective<AutoIndexDirective>("autoindex");
     registerDirective<ReturnDirective>("return");
+    registerDirective<DenyDirective>("deny");
 }
 
 Directive* DirectiveFactory::create(const std::string& name, Block* context, const std::string& fullDirectiveline) const
