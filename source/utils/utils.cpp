@@ -53,3 +53,73 @@ bool utils::isIntCompatible(const string& str)
     }
     return true;
 }
+
+bool utils::convertToLong(const char* str, long& value)
+{
+    if (!str || !*str)
+        return false;
+
+    errno = 0;
+    char* endptr;
+
+    value = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE || endptr == str || *endptr != '\0')
+        return false;
+    return true;
+}
+
+bool utils::convertToInt(const char* str, int& value)
+{
+    if (!str || !*str)
+        return false;
+
+    errno = 0;
+    char* endptr;
+
+    value = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE || endptr == str || *endptr != '\0')
+        return false;
+    if (value > INT_MAX || value < INT_MIN)
+        return false;
+    return true;
+}
+
+bool utils::safeMultiplyLong(long a, long b, long& result)
+{
+    if (a > 0 && b > 0 && a > LONG_MAX / b) {
+        return false;
+    }
+    if (a > 0 && b < 0 && b < LONG_MIN / a) {
+        return false;
+    }
+    if (a < 0 && b > 0 && a < LONG_MIN / b) {
+        return false;
+    }
+    if (a < 0 && b < 0 && a < LONG_MAX / b) {
+        return false;
+    }
+
+    result = a * b;
+    return true;
+}
+
+bool utils::safeMultiplyInt(int a, int b, int& result)
+{
+    if (a > 0 && b > 0 && a > INT_MAX / b) {
+        return false;
+    }
+    if (a > 0 && b < 0 && b < INT_MIN / a) {
+        return false;
+    }
+    if (a < 0 && b > 0 && a < INT_MIN / b) {
+        return false;
+    }
+    if (a < 0 && b < 0 && a < INT_MAX / b) {
+        return false;
+    }
+
+    result = a * b;
+    return true;
+}

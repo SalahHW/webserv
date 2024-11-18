@@ -2,7 +2,7 @@
 
 ListenDirective::~ListenDirective() { }
 
-ListenDirective::ListenDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+ListenDirective::ListenDirective(Block* currentContext, const std::string& fullDirectiveLine)
     : Directive(currentContext, fullDirectiveLine)
     , port(0)
 {

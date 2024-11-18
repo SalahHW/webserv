@@ -200,7 +200,7 @@ void ConfigFile::processBlockDeclaration(const std::string& line, std::ifstream&
         return;
     }
 
-    if (!newBlock->validateContext()) {
+    if (!newBlock->good()) {
         delete newBlock;
         isValid = false;
         return;
@@ -273,14 +273,14 @@ void ConfigFile::processDirective(const std::string& cleanedLine, Block* current
     std::string directiveLine = cleanedLine.substr(0, cleanedLine.size() - 1); // Enlever le ';'
     std::string directiveName = extractDirectiveName(directiveLine);
 
-    Directive* directive = directiveFactory.create(directiveName, currentBlock->getName(), directiveLine);
+    Directive* directive = directiveFactory.create(directiveName, currentBlock, directiveLine);
     if (!directive) {
         std::cerr << "Error: Directive \"" << directiveName << "\" in block \""
                   << currentBlock->getName() << "\" is not supported." << std::endl;
         isValid = false;
         return;
     }
-    if (!directive->getIsValid()) {
+    if (!directive->good()) {
         delete directive;
         isValid = false;
         return;

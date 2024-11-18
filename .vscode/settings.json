@@ -75,6 +75,11 @@
 			"cwd": "/home/salah/Projects/webserv",
 			"binaryPath": "/home/salah/Projects/webserv/webserv",
 			"binaryArgs": []
+		},
+		{
+			"cwd": "/home/salah/projects/webserv",
+			"binaryPath": "/home/salah/projects/webserv/webserv",
+			"binaryArgs": []
 		}
 	]
 }

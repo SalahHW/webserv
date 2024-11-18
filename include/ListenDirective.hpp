@@ -6,7 +6,7 @@
 class ListenDirective : public Directive {
 public:
     ~ListenDirective();
-    ListenDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    ListenDirective(Block* currentContext, const std::string& fullDirectiveLine);
     ListenDirective(const ListenDirective& other);
     ListenDirective& operator=(const ListenDirective& other);
 

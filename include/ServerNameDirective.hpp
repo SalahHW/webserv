@@ -3,7 +3,7 @@
 class ServerNameDirective : public Directive {
 public:
     ~ServerNameDirective();
-    ServerNameDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    ServerNameDirective(Block* currentContext, const std::string& fullDirectiveLine);
     ServerNameDirective(const ServerNameDirective& other);
     ServerNameDirective& operator=(const ServerNameDirective& other);
 

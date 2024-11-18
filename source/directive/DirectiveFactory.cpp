@@ -12,11 +12,12 @@ DirectiveFactory::DirectiveFactory()
     registerDirective<IndexDirective>("index");
     registerDirective<AutoIndexDirective>("autoindex");
     registerDirective<ReturnDirective>("return");
+    registerDirective<DenyDirective>("deny");
 }
 
-Directive* DirectiveFactory::create(const std::string& name, const std::string& context, const std::string& fullDirectiveline) const
+Directive* DirectiveFactory::create(const std::string& name, Block* context, const std::string& fullDirectiveline) const
 {
-    std::map<std::string, Directive* (*)(const std::string&, const std::string&)>::const_iterator it = factoryMap.find(name);
+    std::map<std::string, Directive* (*)(Block*, const std::string&)>::const_iterator it = factoryMap.find(name);
     if (it != factoryMap.end()) {
         return it->second(context, fullDirectiveline);
     }

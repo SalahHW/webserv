@@ -6,6 +6,7 @@ BlockFactory::BlockFactory()
 {
     registerBlock<ServerBlock>("server");
     registerBlock<LocationBlock>("location");
+    registerBlock<LimitExceptBlock>("limit_except");
 }
 
 Block* BlockFactory::create(const std::string& name, Block* contextBlock, const std::string& fullBlockLine) const

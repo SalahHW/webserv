@@ -2,7 +2,7 @@
 
 ServerNameDirective::~ServerNameDirective() { }
 
-ServerNameDirective::ServerNameDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+ServerNameDirective::ServerNameDirective(Block* currentContext, const std::string& fullDirectiveLine)
     : Directive(currentContext, fullDirectiveLine)
     , serverName("default")
 {

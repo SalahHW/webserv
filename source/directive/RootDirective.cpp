@@ -2,7 +2,7 @@
 
 RootDirective::~RootDirective() { }
 
-RootDirective::RootDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+RootDirective::RootDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("root");

@@ -6,7 +6,7 @@
 class ClientMaxBodySizeDirective : public Directive {
 public:
     ~ClientMaxBodySizeDirective();
-    ClientMaxBodySizeDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    ClientMaxBodySizeDirective(Block* currentContext, const std::string& fullDirectiveLine);
     ClientMaxBodySizeDirective(const ClientMaxBodySizeDirective& other);
     ClientMaxBodySizeDirective& operator=(const ClientMaxBodySizeDirective& other);
 
@@ -22,5 +22,5 @@ public:
 private:
     ClientMaxBodySizeDirective();
 
-    size_t maxBodySize;
+    int maxBodySize;
 };

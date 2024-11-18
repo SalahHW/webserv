@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Block.hpp"
+#include "LimitExceptBlock.hpp"
 #include "LocationBlock.hpp"
 #include "MainBlock.hpp"
 #include "ServerBlock.hpp"

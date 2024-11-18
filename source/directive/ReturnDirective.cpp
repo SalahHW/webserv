@@ -2,7 +2,7 @@
 
 ReturnDirective::~ReturnDirective() { }
 
-ReturnDirective::ReturnDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+ReturnDirective::ReturnDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("return");
@@ -32,8 +32,10 @@ ReturnDirective& ReturnDirective::operator=(const ReturnDirective& other)
 
 bool ReturnDirective::validateSpecific()
 {
-	//TODO: Implement validation for return directive
-	returnCode = atoi(getArguments()[0].c_str());
+	if (!utils::convertToInt(arguments[0].c_str(), returnCode)) {
+		std::cerr << "Error: Directive \"" << getName() << "\" has an invalid argument." << std::endl;
+		return false;
+	}
 	returnPath = getArguments()[1];
 	return true;
 }

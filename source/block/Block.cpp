@@ -72,6 +72,7 @@ bool Block::validateArgsSize() const
 void Block::validate()
 {
     if (name == "main")
+    //TODO: Check if we should also validate context or validate specific;
         isValid = validateSpecific();
     else
         isValid = validateContext() && validateArgsSize() && validateSpecific();
@@ -90,6 +91,11 @@ Block* Block::getContextBlock() const
 std::string Block::getFullBlockLine() const
 {
     return fullLine;
+}
+
+std::vector<std::string> const &Block::getArguments() const
+{
+    return this->arguments;
 }
 
 std::vector<Block*> Block::getSubBlocks() const

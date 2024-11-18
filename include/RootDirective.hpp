@@ -5,7 +5,7 @@
 class RootDirective : public Directive {
 public:
 	~RootDirective();
-	RootDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+	RootDirective(Block* currentContext, const std::string& fullDirectiveLine);
 	RootDirective(const RootDirective& other);
 	RootDirective& operator=(const RootDirective& other);
 

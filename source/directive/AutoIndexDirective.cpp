@@ -2,7 +2,7 @@
 
 AutoIndexDirective::~AutoIndexDirective() { }
 
-AutoIndexDirective::AutoIndexDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+AutoIndexDirective::AutoIndexDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("autoindex");

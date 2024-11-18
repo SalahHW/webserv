@@ -7,7 +7,7 @@
 class ErrorPageDirective : public Directive {
 public:
     ~ErrorPageDirective();
-    ErrorPageDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    ErrorPageDirective(Block* currentContext, const std::string& fullDirectiveLine);
     ErrorPageDirective(const ErrorPageDirective& other);
     ErrorPageDirective& operator=(const ErrorPageDirective& other);
 

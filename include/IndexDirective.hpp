@@ -5,7 +5,7 @@
 class IndexDirective : public Directive {
 public:
     ~IndexDirective();
-    IndexDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    IndexDirective(Block* currentContext, const std::string& fullDirectiveLine);
     IndexDirective(const IndexDirective& other);
     IndexDirective& operator=(const IndexDirective& other);
 

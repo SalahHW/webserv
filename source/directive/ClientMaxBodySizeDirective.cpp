@@ -2,7 +2,7 @@
 
 ClientMaxBodySizeDirective::~ClientMaxBodySizeDirective() { }
 
-ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+ClientMaxBodySizeDirective::ClientMaxBodySizeDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 	, maxBodySize(0)
 {
@@ -32,7 +32,32 @@ ClientMaxBodySizeDirective& ClientMaxBodySizeDirective::operator=(const ClientMa
 
 bool ClientMaxBodySizeDirective::validateSpecific()
 {
-	//TODO: Implement validation
+	char lastChar = arguments[0][arguments[0].size() - 1];
+	long multiplier;
+	if (isdigit(lastChar)) {
+		multiplier = 1;
+	} else if (lastChar == 'k' || lastChar == 'K') {
+		arguments[0].erase(arguments[0].size() - 1);
+		multiplier = 1024;
+	} else if (lastChar == 'm' || lastChar == 'M') {
+		arguments[0].erase(arguments[0].size() - 1);
+		multiplier = 1024 * 1024;
+	} else if (lastChar == 'g' || lastChar == 'G') {
+		arguments[0].erase(arguments[0].size() - 1);
+		multiplier = 1024 * 1024 * 1024;
+	} else {
+		std::cerr << "Error: Directive \"" << getName() << "\" has an invalid argument." << std::endl;
+		return false;
+	}
+	
+	if (!utils::convertToInt(arguments[0].c_str(), maxBodySize)) {
+		std::cerr << "Error: Directive \"" << getName() << "\" has an invalid argument." << std::endl;
+		return false;
+	}
+	if (!utils::safeMultiplyInt(maxBodySize, multiplier, maxBodySize)) {
+		std::cerr << "Error: Directive \"" << getName() << "\" exceed the maximum size." << std::endl;
+		return false;
+	}
 	return true;
 }
 

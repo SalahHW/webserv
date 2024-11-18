@@ -8,10 +8,12 @@
 #include <string>
 #include <vector>
 
+class Block;
+
 class Directive {
 public:
     virtual ~Directive();
-    Directive(const std::string& currentContext, const std::string& fullDirectiveLine);
+    Directive(Block* currentContext, const std::string& fullDirectiveLine);
     Directive(const Directive& other);
     Directive& operator=(const Directive& other);
 
@@ -26,7 +28,7 @@ public:
 
     void setFullDirectiveLine(const std::string& line);
     void setName(const std::string& name);
-    void setCurrentContext(const std::string& context);
+    void setCurrentContext(Block* context);
     void addArgument(const std::string& argument);
     void addContext(const std::string& context);
     void setMinArgs(int min);
@@ -34,24 +36,26 @@ public:
 
     std::string getFullDirectiveLine() const;
     std::string getName() const;
-    std::string getCurrentContext() const;
+    Block* getCurrentContext() const;
     std::vector<std::string> getArguments() const;
     std::vector<std::string> getContexts() const;
     int getMinArgs() const;
     int getMaxArgs() const;
-    bool getIsValid() const;
+    bool good() const;
 
-private:
-    Directive();
+protected:
 
     void tokenizeName();
 
     bool isValid;
-    std::string currentContext;
+    Block* currentContext;
     std::string fullDirectiveLine;
     std::string name;
     std::vector<std::string> arguments;
     int minArgs;
     int maxArgs;
     std::vector<std::string> contexts;
+
+private:
+    Directive();
 };

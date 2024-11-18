@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Directive.hpp"
+#include "utils.hpp"
 
 class ReturnDirective : public Directive {
 public:
     ~ReturnDirective();
-    ReturnDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+    ReturnDirective(Block* currentContext, const std::string& fullDirectiveLine);
     ReturnDirective(const ReturnDirective& other);
     ReturnDirective& operator=(const ReturnDirective& other);
 

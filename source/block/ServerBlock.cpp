@@ -24,11 +24,6 @@ ServerBlock& ServerBlock::operator=(const ServerBlock& other)
 	return *this;
 }
 
-void ServerBlock::validate()
-{
-	isValid = validateContext() && validateArgsSize() && validateSpecific();
-}
-
 bool ServerBlock::validateSpecific()
 {
 	// Placeholder implementation, update as needed

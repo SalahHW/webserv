@@ -2,7 +2,7 @@
 
 ErrorPageDirective::~ErrorPageDirective() { }
 
-ErrorPageDirective::ErrorPageDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+ErrorPageDirective::ErrorPageDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("error_page");

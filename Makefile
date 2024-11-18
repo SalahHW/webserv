@@ -24,6 +24,7 @@ SRCS					=	main.cpp											\
 							block/MainBlock.cpp									\
 							block/ServerBlock.cpp								\
 							block/LocationBlock.cpp								\
+							block/LimitExceptBlock.cpp							\
 							directive/DirectiveFactory.cpp						\
 							directive/Directive.cpp								\
 							directive/ListenDirective.cpp						\

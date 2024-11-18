@@ -5,7 +5,7 @@
 class AutoIndexDirective : public Directive {
 public:
 	~AutoIndexDirective();
-	AutoIndexDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
+	AutoIndexDirective(Block* currentContext, const std::string& fullDirectiveLine);
 	AutoIndexDirective(const AutoIndexDirective& other);
 	AutoIndexDirective& operator=(const AutoIndexDirective& other);
 

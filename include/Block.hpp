@@ -18,12 +18,14 @@ public:
     void validate();
     bool validateContext() const;
     bool validateArgsSize() const;
+    
     virtual bool validateSpecific() = 0;
 
     std::string getName() const;
     Block* getContextBlock() const;
     std::string getFullBlockLine() const;
     std::vector<Block*> getSubBlocks() const;
+    std::vector<std::string> const &getArguments() const;
     std::vector<Directive*> getDirectives() const;
     bool good() const;
 

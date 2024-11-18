@@ -2,7 +2,7 @@
 
 IndexDirective::~IndexDirective() { }
 
-IndexDirective::IndexDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
+IndexDirective::IndexDirective(Block* currentContext, const std::string& fullDirectiveLine)
 	: Directive(currentContext, fullDirectiveLine)
 {
 	setName("index");
