@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Directive.hpp"
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -8,49 +7,51 @@
 #include <string>
 #include <vector>
 
+#include "Directive.hpp"
+
 class Block {
-public:
-    virtual ~Block();
-    Block(const std::string& fullBlockLine, Block* contextBlock);
-    Block(const Block& other);
-    Block& operator=(const Block& other);
+ public:
+  virtual ~Block();
+  Block(const std::string& fullBlockLine, Block* contextBlock);
+  Block(const Block& other);
+  Block& operator=(const Block& other);
 
-    void validate();
-    bool validateContext() const;
-    bool validateArgsSize() const;
-    
-    virtual bool validateSpecific() = 0;
+  void validate();
+  bool validateContext() const;
+  bool validateArgsSize() const;
 
-    std::string getName() const;
-    Block* getContextBlock() const;
-    std::string getFullBlockLine() const;
-    std::vector<Block*> getSubBlocks() const;
-    std::vector<std::string> const &getArguments() const;
-    std::vector<Directive*> getDirectives() const;
-    bool good() const;
+  virtual bool validateSpecific() = 0;
 
-    void addSubBlock(Block* block);
-    void addDirective(Directive* directive);
-    void addValidContext(const std::string& context);
+  std::string getName() const;
+  Block* getContextBlock() const;
+  std::string getFullBlockLine() const;
+  std::vector<Block*> getSubBlocks() const;
+  std::vector<std::string> const& getArguments() const;
+  std::vector<Directive*> getDirectives() const;
+  bool good() const;
 
-    void printBlock(int indent = 0) const;
+  void addSubBlock(Block* block);
+  void addDirective(Directive* directive);
+  void addValidContext(const std::string& context);
 
-    virtual void apply(Location& location) const;
+  void printBlock(int indent = 0) const;
 
-protected:
-    bool isValid;
-    std::string fullLine;
-    Block* contextBlock;
-    std::string name;
-    std::vector<std::string> arguments;
-    std::vector<Block*> subBlocks;
-    std::vector<Directive*> directives;
-    std::vector<std::string> validContexts;
-    int minArgs;
-    int maxArgs;
+  virtual void apply(Location& location) const;
 
-private:
-    Block();
-    
-    void tokenizeName();
+ protected:
+  bool isValid;
+  std::string fullLine;
+  Block* contextBlock;
+  std::string name;
+  std::vector<std::string> arguments;
+  std::vector<Block*> subBlocks;
+  std::vector<Directive*> directives;
+  std::vector<std::string> validContexts;
+  int minArgs;
+  int maxArgs;
+
+ private:
+  Block();
+
+  void tokenizeName();
 };

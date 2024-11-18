@@ -1,22 +1,23 @@
 #include "Directive.hpp"
 
 class ServerNameDirective : public Directive {
-public:
-    ~ServerNameDirective();
-    ServerNameDirective(Block* currentContext, const std::string& fullDirectiveLine);
-    ServerNameDirective(const ServerNameDirective& other);
-    ServerNameDirective& operator=(const ServerNameDirective& other);
+ public:
+  ~ServerNameDirective();
+  ServerNameDirective(Block* currentContext,
+                      const std::string& fullDirectiveLine);
+  ServerNameDirective(const ServerNameDirective& other);
+  ServerNameDirective& operator=(const ServerNameDirective& other);
 
-    virtual bool validateSpecific();
-    virtual void displayInfo() const;
-    virtual void apply(Server& server);
+  virtual bool validateSpecific();
+  virtual void displayInfo() const;
+  virtual void apply(Server& server);
 
-    void setServerName(const std::string& serverName);
+  void setServerName(const std::string& serverName);
 
-    const std::string& getServername() const;
+  const std::string& getServername() const;
 
-private:
-    ServerNameDirective();
+ private:
+  ServerNameDirective();
 
-    std::string serverName;
+  std::string serverName;
 };

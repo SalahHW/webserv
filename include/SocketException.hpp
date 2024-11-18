@@ -5,12 +5,10 @@
 #include <stdexcept>
 
 class SocketException : public std::runtime_error {
-public:
-    explicit SocketException(const std::string& excp)
-        : std::runtime_error(excp)
-    {
-        // exit(EXIT_FAILURE);
-    }
+ public:
+  explicit SocketException(const std::string& excp) : std::runtime_error(excp) {
+    // exit(EXIT_FAILURE);
+  }
 };
 
 #endif
