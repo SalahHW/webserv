@@ -4,7 +4,6 @@ Location::~Location() {}
 
 Location::Location()
     : getAccepted(true), postAccepted(true), deleteAccepted(true) {
-  displayLocationInfo();
 }
 
 Location::Location(const Location &src) { *this = src; }

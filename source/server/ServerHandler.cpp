@@ -10,6 +10,7 @@ ServerHandler::~ServerHandler() {
 ServerHandler::ServerHandler(const ConfigFile &configFile) {
   std::cout << "Initialisation de ServerHandler" << std::endl;
   serversList = ConfigExtractor::extractServers(configFile);
+  displayServerHandlerInfo();
   startToListen();
 }
 
