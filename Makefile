@@ -36,6 +36,7 @@ SRCS					=	main.cpp											\
 							directive/AutoIndexDirective.cpp					\
 							directive/DenyDirective.cpp							\
 							directive/ReturnDirective.cpp						\
+							cgi/CgiHandler.cpp									\
 
 OBJS					=	$(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 

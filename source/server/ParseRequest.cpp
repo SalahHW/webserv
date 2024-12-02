@@ -2,6 +2,12 @@
 
 ParseRequest::ParseRequest(const std::string &request) : request(request) {
   parseHttpRequest();
+  // TEST. TO RM LATER
+  std::cout << "##### METHOD STRCT#####" << std::endl;
+  std::cout << "METHOD ===" << requestParsed.method << std::endl;
+  std::cout << "URI =====" << requestParsed.uri << std::endl;
+  std::cout << "VERSION =====" << requestParsed.version << std::endl;
+  std::cout << "BODY =====" << requestParsed.body << std::endl;
 }
 
 ParseRequest::~ParseRequest() {}
