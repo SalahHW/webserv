@@ -69,6 +69,7 @@ void ResponseBuilder::prepareRedirectionResponse() {
   headerBuilder.setStatusCode(requestParsed.statusCode);
   headerBuilder.addHeader("Location", matchingLocation.getRedirectionPath());
   body = "<html><body><h1>Redirecting...</h1></body></html>";
+  headerBuilder.setContentLength(body.size());
 }
 
 void ResponseBuilder::prepareClientErrorResponse() {
@@ -90,6 +91,7 @@ void ResponseBuilder::prepareClientErrorResponse() {
 void ResponseBuilder::prepareServerErrorResponse() {
   headerBuilder.setStatusCode(INTERNAL_SERVER_ERROR);
   body = "<html><body><h1>500 Internal Server Error</h1></body></html>";
+  headerBuilder.setContentLength(body.size());
   headerBuilder.setContentType("text/html");
 }
 
@@ -186,6 +188,7 @@ std::string ResponseBuilder::getContentType(const std::string &filePath) {
 }
 
 std::string ResponseBuilder::getReasonPhrase(int code) {
+  std::cout << "REASON PHRASE CODE= " << code << std::endl;
   switch (code) {
     case 200:
       return "OK";
