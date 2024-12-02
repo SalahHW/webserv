@@ -10,10 +10,6 @@ ResponseHandler::ResponseHandler(RequestParsed &requestParsed,
 ResponseHandler::~ResponseHandler() {}
 
 void ResponseHandler::handleResponse() {
-  HttpStatusCodeDeterminer determiner(server);
-
-  determiner.determineStatusCode(requestParsed);
-
   ResponseBuilder responseBuilder(requestParsed, server);
   fullResponse = responseBuilder.buildResponse();
 }

@@ -14,8 +14,9 @@ class HeaderBuilder {
   void setContentLength(size_t contentLength);
 
   void addHeader(const std::string& key, const std::string& value);
-  std::string buildStatusLine() const;
+  std::string buildStatusLine();
   std::string buildHeaders() const;
+  std::string getReasonPhrase(int code);
 
  private:
   int statusCode;

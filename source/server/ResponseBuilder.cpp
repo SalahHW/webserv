@@ -99,6 +99,15 @@ bool ResponseBuilder::findMatchingLocation(const std::string &uri,
   size_t longestMatch = 0;
   bool found = false;
 
+  // Priorité aux correspondances exactes
+  std::map<std::string, Location>::const_iterator exactMatch =
+      locations.find(uri);
+  if (exactMatch != locations.end()) {
+    matchingLocation = exactMatch->second;
+    return true;
+  }
+
+  // Chercher le préfixe le plus long
   for (std::map<std::string, Location>::const_iterator it = locations.begin();
        it != locations.end(); ++it) {
     const std::string &locationPath = it->first;
@@ -109,6 +118,8 @@ bool ResponseBuilder::findMatchingLocation(const std::string &uri,
       found = true;
     }
   }
+
+  // Retourner si un préfixe a été trouvé
   return found;
 }
 
