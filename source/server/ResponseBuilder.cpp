@@ -61,7 +61,7 @@ void ResponseBuilder::prepareSuccessResponse() {
     body = readFile(filePath);
     headerBuilder.setContentType(getContentType(filePath));
   }
-
+  headerBuilder.setContentLength(body.size());
   headerBuilder.setStatusCode(OK);
 }
 
@@ -82,6 +82,7 @@ void ResponseBuilder::prepareClientErrorResponse() {
   } else {
     body = "<html><body><h1>" + getReasonPhrase(requestParsed.statusCode) +
            "</h1></body></html>";
+    headerBuilder.setContentLength(body.size());
     headerBuilder.setContentType("text/html");
   }
 }

@@ -44,3 +44,9 @@ std::string HeaderBuilder::buildHeaders() const {
 void HeaderBuilder::setContentType(const std::string &contentType) {
   addHeader("Content-Type", contentType);
 }
+
+void HeaderBuilder::setContentLength(size_t contentLength) {
+  std::ostringstream oss;
+  oss << contentLength;
+  addHeader("Content-Length", oss.str());
+}
