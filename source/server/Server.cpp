@@ -109,6 +109,7 @@ void Server::resolveHostName() {
 
 void Server::bindSocket() const {
   if (bind(this->listenFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+  //TODO: fix uncaught exception
     throw SocketException("bind");
 }
 
