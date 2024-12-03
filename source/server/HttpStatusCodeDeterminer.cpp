@@ -16,6 +16,8 @@ HttpStatusCodeDeterminer::~HttpStatusCodeDeterminer() {}
 
 void HttpStatusCodeDeterminer::determineStatusCode(
     RequestParsed &requestParsed) {
+  // debug
+  std::cout << "HELLO FROM DETERMINESTATUSCODE " << std::endl;
   // 1. Check for basic request validity
   if (requestParsed.method.empty() || requestParsed.uri.empty() ||
       requestParsed.version.empty()) {
@@ -47,6 +49,8 @@ void HttpStatusCodeDeterminer::determineStatusCode(
   // 5. Find matching location
   Location matchingLocation;
   if (!findMatchingLocation(requestParsed.uri, matchingLocation)) {
+    // debug
+    std::cout << "HELLO FROM finding matching location " << std::endl;
     requestParsed.statusCode = PAGE_NOT_FOUND;  // 404 Not Found
     return;
   }
@@ -93,7 +97,12 @@ void HttpStatusCodeDeterminer::determineStatusCode(
 
   // 11. Check if the resource exists
   if (!fileExists(filePath)) {
+    // debug
+    std::cout << "HELLO FROM file existence checking " << std::endl;
     requestParsed.statusCode = PAGE_NOT_FOUND;  // 404 Not Found
+    // debug
+    std::cout << "statuscode in file existence checking "
+              << requestParsed.statusCode << std::endl;
     return;
   }
 
@@ -126,6 +135,8 @@ void HttpStatusCodeDeterminer::determineStatusCode(
         return;
       }
     } else {
+      // debug
+      std::cout << "HELLO FROM intern error " << std::endl;
       requestParsed.statusCode =
           INTERNAL_SERVER_ERROR;  // 500 Internal Server Error
       return;

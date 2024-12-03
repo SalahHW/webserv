@@ -1,6 +1,7 @@
 #pragma once
 
 enum HttpStatusCode {
+  NADA = 0,
   OK = 200,
   CREATED = 201,
   NO_CONTENT = 204,

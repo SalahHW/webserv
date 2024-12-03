@@ -12,7 +12,7 @@ class Client {
  public:
   Client(int client_fd, const Server& server);
   ~Client();
-  // Client& operator=(const Client& src);
+  Client& operator=(const Client& src);
   Client(const Client& other);
 
   const int& getClientFd() const;

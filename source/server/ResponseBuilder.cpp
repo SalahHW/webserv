@@ -24,6 +24,8 @@ std::string ResponseBuilder::buildResponse() {
 
 void ResponseBuilder::prepareResponse() {
   HttpStatusCode statusCode = requestParsed.statusCode;
+  // debug
+  std::cout << "statuscode in prepareResponse " << statusCode << std::endl;
 
   if (statusCode == OK) {
     prepareSuccessResponse();
@@ -32,6 +34,8 @@ void ResponseBuilder::prepareResponse() {
   } else if (statusCode >= 400 && statusCode < 500) {
     prepareClientErrorResponse();
   } else if (statusCode >= 500) {
+    // debug
+    std::cout << "statusCode in 500" << statusCode << std::endl;
     prepareServerErrorResponse();
   } else {
     prepareServerErrorResponse();
