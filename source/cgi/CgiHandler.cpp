@@ -28,8 +28,7 @@ CgiHandler::CgiHandler(const CgiHandler &other)
 }
 
 void	CgiHandler::testParse()
-{
-}
+{}
 
 const std::pair<std::string, std::string> CgiHandler::getQueryString()
 {
@@ -43,3 +42,5 @@ const std::pair<std::string, std::string> CgiHandler::getQueryString()
     }
     return std::make_pair(request.uri, "");
 }
+
+// TO DO : BUILD ENV ARRAY, K.I.S.S

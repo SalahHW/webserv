@@ -7,15 +7,7 @@
 #include "Server.hpp"
 #include <algorithm>
 #include <utility>
-
-//struct RequestParsed {
-//  std::string method;
-//  std::string uri;
-//  std::string version;
-//  std::map<std::string, std::string> headers;
-//  std::string body;
-//  HttpStatusCode statusCode;
-//};
+#include <vector>
 
 class CgiHandler
 {
