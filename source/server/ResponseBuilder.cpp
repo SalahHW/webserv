@@ -42,8 +42,6 @@ void ResponseBuilder::prepareResponse() {
 
 void ResponseBuilder::prepareSuccessResponse() {
   if (!findMatchingLocation(requestParsed.uri, matchingLocation)) {
-    // debug
-    std::cout << "hello from findMatchingLocation " << std::endl;
     requestParsed.statusCode = PAGE_NOT_FOUND;
     prepareClientErrorResponse();
     return;
@@ -60,6 +58,7 @@ void ResponseBuilder::prepareSuccessResponse() {
   std::cout << "NOMALIZE PATH= " << filePath << std::endl;
 
   if (!fileExists(filePath)) {
+    // debug
     std::cout << "FILE??? " << fileExists(filePath) << std::endl;
     requestParsed.statusCode = PAGE_NOT_FOUND;
     prepareClientErrorResponse();
@@ -193,7 +192,11 @@ std::string ResponseBuilder::getContentType(const std::string &filePath) {
     return "application/octet-stream";
   }
 
+  // debug
+  std::cout << "FPTH FOR EXTEN= " << filePath << std::endl;
   std::string extension = filePath.substr(dotPos + 1);
+  // debug
+  std::cout << "EXTENSIONNNNNNNNNNNN = " << extension << std::endl;
   if (extension == "html") {
     return "text/html";
   } else if (extension == "css") {
@@ -204,6 +207,8 @@ std::string ResponseBuilder::getContentType(const std::string &filePath) {
     return "image/png";
   } else if (extension == "jpg" || extension == "jpeg") {
     return "image/jpeg";
+  } else if (extension == "ico") {
+    return "image/x-icon";
   }
   return "application/octet-stream";
 }
