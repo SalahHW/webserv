@@ -22,4 +22,5 @@ class HttpStatusCodeDeterminer {
   bool isValidRange(const RequestParsed& requestParsed, size_t fileSize);
   std::string determineFilePath(const Location& location,
                                 const std::string& uri);
+  std::string normalizePath(const std::string& path);
 };

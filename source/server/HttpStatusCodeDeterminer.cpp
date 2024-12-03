@@ -17,7 +17,7 @@ HttpStatusCodeDeterminer::~HttpStatusCodeDeterminer() {}
 void HttpStatusCodeDeterminer::determineStatusCode(
     RequestParsed &requestParsed) {
   // debug
-  std::cout << "HELLO FROM DETERMINESTATUSCODE " << std::endl;
+  std::cout << "Requested URI: " << requestParsed.uri << std::endl;
   // 1. Check for basic request validity
   if (requestParsed.method.empty() || requestParsed.uri.empty() ||
       requestParsed.version.empty()) {
@@ -94,15 +94,12 @@ void HttpStatusCodeDeterminer::determineStatusCode(
 
   // 10. Determine file path
   std::string filePath = determineFilePath(matchingLocation, requestParsed.uri);
+  std::cout << "Determined file path: " << filePath << std::endl;
 
   // 11. Check if the resource exists
   if (!fileExists(filePath)) {
-    // debug
-    std::cout << "HELLO FROM file existence checking " << std::endl;
+    std::cout << "File does not exist: " << filePath << std::endl;
     requestParsed.statusCode = PAGE_NOT_FOUND;  // 404 Not Found
-    // debug
-    std::cout << "statuscode in file existence checking "
-              << requestParsed.statusCode << std::endl;
     return;
   }
 
@@ -135,8 +132,7 @@ void HttpStatusCodeDeterminer::determineStatusCode(
         return;
       }
     } else {
-      // debug
-      std::cout << "HELLO FROM intern error " << std::endl;
+      std::cout << "File exists: " << filePath << std::endl;
       requestParsed.statusCode =
           INTERNAL_SERVER_ERROR;  // 500 Internal Server Error
       return;
@@ -157,15 +153,28 @@ bool HttpStatusCodeDeterminer::findMatchingLocation(
   size_t longestMatch = 0;
   bool found = false;
 
+  std::cout << "findMatchingLocation: uri = " << uri << std::endl;
+  std::cout << "Available locations:" << std::endl;
+  for (std::map<std::string, Location>::const_iterator it = locations.begin();
+       it != locations.end(); ++it) {
+    std::cout << " - " << it->first << std::endl;
+  }
+
   for (std::map<std::string, Location>::const_iterator it = locations.begin();
        it != locations.end(); ++it) {
     const std::string &locationPath = it->first;
+    std::cout << "Checking location path: " << locationPath << std::endl;
     if (uri.compare(0, locationPath.length(), locationPath) == 0 &&
         locationPath.length() > longestMatch) {
+      std::cout << "Found matching location: " << locationPath << std::endl;
       longestMatch = locationPath.length();
       matchingLocation = it->second;
       found = true;
     }
+  }
+
+  if (!found) {
+    std::cout << "No matching location found" << std::endl;
   }
 
   return found;
@@ -261,5 +270,13 @@ std::string HttpStatusCodeDeterminer::determineFilePath(
   if (relativeUri.empty() || relativeUri == "/") {
     relativeUri = "/" + location.getIndexFile();
   }
-  return location.getRootDirectory() + relativeUri;
+  return normalizePath(location.getRootDirectory() + relativeUri);
+}
+
+std::string HttpStatusCodeDeterminer::normalizePath(const std::string &path) {
+  std::string normalizedPath = path;
+  while (normalizedPath.find("//") != std::string::npos) {
+    normalizedPath = normalizedPath.replace(normalizedPath.find("//"), 2, "/");
+  }
+  return normalizedPath;
 }

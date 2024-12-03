@@ -18,12 +18,7 @@ ParseRequest &ParseRequest::operator=(const ParseRequest &src) {
   return *this;
 }
 
-RequestParsed &ParseRequest::getParsedRequest() {
-  // debug
-  std::cout << "CODE IN getPARSEDREquest" << requestParsed.statusCode
-            << std::endl;
-  return this->requestParsed;
-}
+RequestParsed &ParseRequest::getParsedRequest() { return this->requestParsed; }
 
 void ParseRequest::parseHttpRequest() {
   std::string::size_type headersStartPos;

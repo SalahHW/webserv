@@ -24,9 +24,9 @@ std::string ResponseBuilder::buildResponse() {
 
 void ResponseBuilder::prepareResponse() {
   HttpStatusCode statusCode = requestParsed.statusCode;
-  // debug
-  std::cout << "statuscode in prepareResponse " << statusCode << std::endl;
 
+  // debug
+  std::cout << "HERE= " << statusCode << std::endl;
   if (statusCode == OK) {
     prepareSuccessResponse();
   } else if (statusCode == MOVED_PERMANENTLY || statusCode == FOUND) {
@@ -34,8 +34,6 @@ void ResponseBuilder::prepareResponse() {
   } else if (statusCode >= 400 && statusCode < 500) {
     prepareClientErrorResponse();
   } else if (statusCode >= 500) {
-    // debug
-    std::cout << "statusCode in 500" << statusCode << std::endl;
     prepareServerErrorResponse();
   } else {
     prepareServerErrorResponse();
@@ -44,13 +42,29 @@ void ResponseBuilder::prepareResponse() {
 
 void ResponseBuilder::prepareSuccessResponse() {
   if (!findMatchingLocation(requestParsed.uri, matchingLocation)) {
+    // debug
+    std::cout << "hello from findMatchingLocation " << std::endl;
     requestParsed.statusCode = PAGE_NOT_FOUND;
     prepareClientErrorResponse();
     return;
   }
 
-  std::string filePath =
-      matchingLocation.getRootDirectory() + requestParsed.uri;
+  std::string relativeUri =
+      requestParsed.uri.substr(matchingLocation.getPath().length());
+  if (relativeUri.empty() || relativeUri == "/") {
+    relativeUri = "/" + matchingLocation.getIndexFile();
+  }
+
+  std::string filePath = matchingLocation.getRootDirectory() + relativeUri;
+  // debug
+  std::cout << "NOMALIZE PATH= " << filePath << std::endl;
+
+  if (!fileExists(filePath)) {
+    std::cout << "FILE??? " << fileExists(filePath) << std::endl;
+    requestParsed.statusCode = PAGE_NOT_FOUND;
+    prepareClientErrorResponse();
+    return;
+  }
 
   if (isDirectory(filePath)) {
     if (matchingLocation.getAutoIndex()) {
@@ -85,8 +99,10 @@ void ResponseBuilder::prepareClientErrorResponse() {
     body = readFile(it->second);
     headerBuilder.setContentType(getContentType(it->second));
   } else {
-    body = "<html><body><h1>" + getReasonPhrase(requestParsed.statusCode) +
-           "</h1></body></html>";
+    std::ostringstream oss;
+    oss << "<html><body><h1>" << requestParsed.statusCode << " "
+        << getReasonPhrase(requestParsed.statusCode) << "</h1></body></html>";
+    body = oss.str();
     headerBuilder.setContentLength(body.size());
     headerBuilder.setContentType("text/html");
   }
@@ -161,6 +177,7 @@ std::string ResponseBuilder::generateDirectoryListing(
 std::string ResponseBuilder::readFile(const std::string &filePath) {
   std::ifstream file(filePath.c_str());
   if (!file.is_open()) {
+    std::cerr << "Failed to open file: " << filePath << std::endl;
     return "<html><body><h1>404 Not Found</h1></body></html>";
   }
 
@@ -213,5 +230,7 @@ std::string ResponseBuilder::getReasonPhrase(int code) {
   }
 }
 
-// Implement other methods similarly, ensuring to use requestParsed.statusCode
-// ...
+bool ResponseBuilder::fileExists(const std::string &filePath) {
+  struct stat buffer;
+  return (stat(filePath.c_str(), &buffer) == 0);
+}

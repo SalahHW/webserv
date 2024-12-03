@@ -77,17 +77,9 @@ void Client::parseRequest() {
   connectionShouldClose = false;
   HttpStatusCodeDeterminer determine(server);
   determine.determineStatusCode(request);
-  // debug
-  std::cout << "statuscode in parseRequest" << request.statusCode << std::endl;
 }
 
 void Client::handleResponse() {
-  // ParseRequest parser(requestBuffer);
-  // RequestParsed &requestParsed = parser.getParsedRequest();
-  // debug
-  std::cout << "statuscode in handleResponse" << request.statusCode
-            << std::endl;
-
   ResponseHandler responseHandler(request, server);
   responseHandler.handleResponse();
 
