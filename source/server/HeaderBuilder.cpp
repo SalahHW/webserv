@@ -1,5 +1,6 @@
 #include "HeaderBuilder.hpp"
 
+#include <iostream>
 #include <sstream>
 
 const char *HeaderBuilder::HTTP_VERSION = "HTTP/1.1";
@@ -24,8 +25,9 @@ void HeaderBuilder::addHeader(const std::string &key,
   headers[key] = value;
 }
 
-std::string HeaderBuilder::buildStatusLine() const {
+std::string HeaderBuilder::buildStatusLine() {
   std::ostringstream statusLineStream;
+  reasonPhrase = getReasonPhrase(statusCode);
   statusLineStream << HTTP_VERSION << " " << statusCode << " " << reasonPhrase
                    << LINE_TERMINATOR;
   return statusLineStream.str();
@@ -49,4 +51,25 @@ void HeaderBuilder::setContentLength(size_t contentLength) {
   std::ostringstream oss;
   oss << contentLength;
   addHeader("Content-Length", oss.str());
+}
+
+std::string HeaderBuilder::getReasonPhrase(int code) {
+  switch (code) {
+    case 200:
+      return "OK";
+    case 301:
+      return "Moved Permanently";
+    case 302:
+      return "Found";
+    case 400:
+      return "Bad Request";
+    case 403:
+      return "Forbidden";
+    case 404:
+      return "Not Found";
+    case 500:
+      return "Internal Server Error";
+    default:
+      return "Unknown Status";
+  }
 }

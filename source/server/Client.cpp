@@ -25,9 +25,19 @@ Client::Client(const Client &other)
   std::cout << "Client copié avec le descripteur : " << client_fd << std::endl;
 }
 
-// Client& Client::operator=(const Client& other)
-// {
-// return *this;
+// Client &Client::Client(const Client &other)
+//     : client_fd(other.client_fd),
+//       request(other.request),
+//       requestBuffer(other.requestBuffer),
+//       responseBuffer(other.responseBuffer),
+//       connectionShouldClose(other.connectionShouldClose),
+//       bytesSent(other.bytesSent),
+//       server(other.server) {
+//   // Message de débogage pour vérifier que la copie s'effectue correctement
+//   std::cout << "Constructeur de copie appelé pour Client avec client_fd: "
+//             << client_fd << std::endl;
+
+//   return *this;
 // }
 
 void Client::closeClientSocket() {
@@ -70,10 +80,7 @@ void Client::parseRequest() {
 }
 
 void Client::handleResponse() {
-  ParseRequest parser(requestBuffer);
-  RequestParsed &requestParsed = parser.getParsedRequest();
-
-  ResponseHandler responseHandler(requestParsed, server);
+  ResponseHandler responseHandler(request, server);
   responseHandler.handleResponse();
 
   setResponse(responseHandler.getResponse());

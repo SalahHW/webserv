@@ -1,6 +1,7 @@
 #include "ParseRequest.hpp"
 
 ParseRequest::ParseRequest(const std::string &request) : request(request) {
+  requestParsed.statusCode = NADA;
   parseHttpRequest();
   // TEST. TO RM LATER
   std::cout << "##### METHOD STRCT#####" << std::endl;

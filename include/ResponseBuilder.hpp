@@ -34,6 +34,7 @@ class ResponseBuilder {
   std::string readFile(const std::string& filePath);
   std::string getContentType(const std::string& filePath);
   std::string getReasonPhrase(int code);
+  bool fileExists(const std::string& filePath);
 
   // Additional members
   Location matchingLocation;
