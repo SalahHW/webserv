@@ -2,6 +2,7 @@
 #include <string>
 
 #include "webserv.hpp"
+#include "CgiHandler.hpp"
 
 using namespace std;
 

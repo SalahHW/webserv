@@ -257,7 +257,7 @@ void ServerHandler::startToListen() {
       uint32_t eventFlags = events[i].events;
       std::map<int, Server>::iterator serverIt =
           this->serversList.find(currentFd);
-  	CgiHandler newCgi(serverIt->second);
+//  	CgiHandler newCgi(serverIt->second);
       if (serverIt != this->serversList.end()) {
         std::cout << "Événement sur le descripteur d'écoute : " << currentFd
                   << std::endl;
