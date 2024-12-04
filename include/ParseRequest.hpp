@@ -5,6 +5,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <fstream>
 
 #include "HttpStatusCode.hpp"
 

@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <utility>
 #include <vector>
+#include <string>
 
 class CgiHandler
 {
@@ -16,11 +17,14 @@ class CgiHandler
 		~CgiHandler();
 		CgiHandler (const CgiHandler &other);
 		void printHeader();
+		size_t genContentLenght();
 		const std::string genQueryString();
 		const std::string genRequestMethod();
 		const std::string genServerProtocol();
+		const std::string genScriptPath();
+		const std::string getPathInfo(const std::string &input);
 	private:
 		RequestParsed request;
 };
 
-#endif /* CGI_HANDLER_HPP */
+#endif /*CGI_HANDLER_HPP*/

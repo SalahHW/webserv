@@ -251,9 +251,10 @@ void ServerHandler::startToListen() {
   const std::string queryString = testing.genQueryString();
   const std::string requestMethod = testing.genRequestMethod();
   const std::string serverProtocol = testing.genServerProtocol();
-  std::cout << queryString << " " << requestMethod << " " << serverProtocol << std::endl;
+  std::cout << queryString << " " << requestMethod << " "
+   << serverProtocol << " " << testing.genContentLenght() << std::endl;
 
-
+  std::cout << testing.getPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche") << std::endl;
   while (1) {
     this->nbEvents = epoll_wait(this->epollFd, events, MAX_EVENTS, -1);
     if (this->nbEvents == -1) {
