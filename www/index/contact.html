@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Welcome</title>
+    <title>Contact</title>
     <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
     <style>
         body,
@@ -70,24 +70,68 @@
             background: #aaaaaa;
             color: #0414a7;
         }
+
+        .contact-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .contact-list li {
+            margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contact-list img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .contact-list a {
+            color: #e0e2f4;
+            text-decoration: none;
+            font-size: 1.25rem;
+        }
+
+        .contact-list a:hover,
+        .contact-list a:focus {
+            text-decoration: underline;
+        }
+
+        .contact-list h3 {
+            margin: 2px;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="main-content">
-            <h1 class="title">Welcome to our WebservProject Web Page</h1>
-            <p>
-                The WebservProject is an initiative from École 42 aimed at replicating the functionality of the popular
-                web server **nginx** using **C++**. This project focuses on deepening understanding of server mechanics,
-                handling HTTP requests, managing concurrency, and ensuring high performance. By undertaking this
-                project,
-                students gain hands-on experience in systems programming, network protocols, and software optimization,
-                making it an excellent platform for aspiring developers to hone their technical skills.
-            </p>
+            <h1 class="title">Contact</h1>
+            <ul class="contact-list">
+                <li>
+                    <img src="images/sbouheni.jpg" alt="Photo of Salah Bouheniche">
+                    <h3>Salah Bouheniche</h3>
+                    <a href="https://github.com/SalahHW" target="_blank">GitHub Profile</a>
+                </li>
+                <li>
+                    <img src="images/joakoeni.jpg" alt="Photo of Joachim Koenig">
+                    <h3>Joachim Koenig</h3>
+                    <a href="https://github.com/joel688" target="_blank">GitHub Profile</a>
+                </li>
+                <li>
+                    <img src="images/rvan-den.jpg" alt="Photo of Richard Van Den Reysen">
+                    <h3>Richard Van Den Reysen</h3>
+                    <a href="https://github.com/SickestOne" target="_blank">GitHub Profile</a>
+                </li>
+            </ul>
             <nav class="nav">
+                <a href="index.html" class="link">Home</a>
                 <a href="about.html" class="link">About Us</a>
-                <a href="contact.html" class="link">Contact</a>
                 <a href="project.html" class="link">Project</a>
                 <a href="team.html" class="link">Our Team</a>
             </nav>

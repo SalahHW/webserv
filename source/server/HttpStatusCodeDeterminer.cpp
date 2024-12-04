@@ -162,5 +162,7 @@ std::string HttpStatusCodeDeterminer::normalizePath(
   while ((pos = normalizedPath.find("//")) != std::string::npos) {
     normalizedPath.replace(pos, 2, "/");
   }
+  // debug
+  std::cout << "Normalize Path = " << normalizedPath << std::endl;
   return normalizedPath;
 }

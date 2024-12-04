@@ -11,7 +11,7 @@ Location::Location()
       getAccepted(true),
       postAccepted(true),
       deleteAccepted(true),
-      clientMaxBodySize(0),
+      clientMaxBodySize(10485760),  // 10MB
       returnCode(0),
       paths() {}
 

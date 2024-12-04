@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>T'as la ref?</title>
+    <title>Project</title>
     <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
     <style>
         body,
@@ -70,18 +70,44 @@
             background: #aaaaaa;
             color: #0414a7;
         }
+
+        .project-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .project-list li {
+            margin: 20px 0;
+        }
+
+        .project-list a {
+            color: #e0e2f4;
+            text-decoration: none;
+            font-size: 1.25rem;
+        }
+
+        .project-list a:hover,
+        .project-list a:focus {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="main-content">
-            <h1 class="title">Do you prefere me or Linus? Answer. Fast.</h1>
-            <p>TOoOooOiiii ToooOOOOoOooiiii</p>
+            <h1 class="title">Project</h1>
+            <ul class="project-list">
+                <li>
+                    <a href="https://github.com/SalahHW/webserv" target="_blank">Link To The Webserv Github</a>
+                </li>
+                <!-- Add more projects here if needed -->
+            </ul>
             <nav class="nav">
+                <a href="index.html" class="link">Home</a>
                 <a href="about.html" class="link">About Us</a>
-                <a href="services.html" class="link">Services</a>
                 <a href="contact.html" class="link">Contact</a>
+                <a href="team.html" class="link">Our Team</a>
             </nav>
         </div>
     </div>
