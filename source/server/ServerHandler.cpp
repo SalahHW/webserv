@@ -245,6 +245,15 @@ void ServerHandler::startToListen() {
   this->epollInit();
   this->serversStart();
   std::cout << "----------STARTING TO LISTEN----------" << std::endl;
+
+
+  CgiHandler testing;
+  const std::string queryString = testing.genQueryString();
+  const std::string requestMethod = testing.genRequestMethod();
+  const std::string serverProtocol = testing.genServerProtocol();
+  std::cout << queryString << " " << requestMethod << " " << serverProtocol << std::endl;
+
+
   while (1) {
     this->nbEvents = epoll_wait(this->epollFd, events, MAX_EVENTS, -1);
     if (this->nbEvents == -1) {
@@ -257,7 +266,6 @@ void ServerHandler::startToListen() {
       uint32_t eventFlags = events[i].events;
       std::map<int, Server>::iterator serverIt =
           this->serversList.find(currentFd);
-//  	CgiHandler newCgi(serverIt->second);
       if (serverIt != this->serversList.end()) {
         std::cout << "Événement sur le descripteur d'écoute : " << currentFd
                   << std::endl;

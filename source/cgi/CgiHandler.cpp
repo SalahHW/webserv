@@ -27,20 +27,31 @@ CgiHandler::CgiHandler(const CgiHandler &other)
 	(void)other;
 }
 
-void	CgiHandler::testParse()
-{}
-
-const std::pair<std::string, std::string> CgiHandler::getQueryString()
+const std::string CgiHandler::genQueryString()
 {
     std::string::const_iterator it = std::find(request.uri.begin(), request.uri.end(), '?');
     if (it != request.uri.end()) {
         size_t pos = it - request.uri.begin();
-        std::string beforeQuery = request.uri.substr(0, pos);
-        std::string query = request.uri.substr(pos + 1);
-		std::pair<std::string, std::string> queryPair(beforeQuery, query);
-        return (queryPair);
+        std::string queryString = request.uri.substr(pos + 1).c_str();
+        return ("QUERY_STRING=" + queryString);
     }
-    return std::make_pair(request.uri, "");
+    return ("QUERY_STRING=");
+}
+
+const std::string CgiHandler::genRequestMethod()
+{
+    const std::string requestMethod = request.method.c_str();
+    return ("REQUEST_METHOD=" + requestMethod);
+}
+
+const std::string CgiHandler::genServerProtocol()
+{
+    const std::string serverProtocol = request.version.c_str();
+    return ("SERVER_PROTOCOL=" + serverProtocol);
+}
+
+void    CgiHandler::printHeader()
+{
 }
 
 // TO DO : BUILD ENV ARRAY, K.I.S.S

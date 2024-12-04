@@ -15,10 +15,12 @@ class CgiHandler
 		CgiHandler();
 		~CgiHandler();
 		CgiHandler (const CgiHandler &other);
-		const std::pair<std::string, std::string> getQueryString();
+		void printHeader();
+		const std::string genQueryString();
+		const std::string genRequestMethod();
+		const std::string genServerProtocol();
 	private:
 		RequestParsed request;
-		void	testParse();
 };
 
 #endif /* CGI_HANDLER_HPP */
