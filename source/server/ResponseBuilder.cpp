@@ -7,8 +7,8 @@
 #include <fstream>
 #include <sstream>
 
-ResponseBuilder::ResponseBuilder(RequestParsed &requestParsed,
-                                 const Server &server)
+ResponseBuilder::ResponseBuilder(RequestParsed& requestParsed,
+                                 const Server& server)
     : requestParsed(requestParsed), server(server) {}
 
 ResponseBuilder::~ResponseBuilder() {}
@@ -25,8 +25,6 @@ std::string ResponseBuilder::buildResponse() {
 void ResponseBuilder::prepareResponse() {
   HttpStatusCode statusCode = requestParsed.statusCode;
 
-  // debug
-  std::cout << "HERE= " << statusCode << std::endl;
   if (statusCode == OK) {
     prepareSuccessResponse();
   } else if (statusCode == MOVED_PERMANENTLY || statusCode == FOUND) {
@@ -49,17 +47,14 @@ void ResponseBuilder::prepareSuccessResponse() {
 
   std::string relativeUri =
       requestParsed.uri.substr(matchingLocation.getPath().length());
-  if (relativeUri.empty() || relativeUri == "/") {
+  if ((relativeUri.empty() || relativeUri == "/") &&
+      !matchingLocation.getIndexFile().empty()) {
     relativeUri = "/" + matchingLocation.getIndexFile();
   }
 
   std::string filePath = matchingLocation.getRootDirectory() + relativeUri;
-  // debug
-  std::cout << "NOMALIZE PATH= " << filePath << std::endl;
 
   if (!fileExists(filePath)) {
-    // debug
-    std::cout << "FILE??? " << fileExists(filePath) << std::endl;
     requestParsed.statusCode = PAGE_NOT_FOUND;
     prepareClientErrorResponse();
     return;
@@ -71,13 +66,16 @@ void ResponseBuilder::prepareSuccessResponse() {
       headerBuilder.setContentType("text/html");
     } else {
       filePath += "/" + matchingLocation.getIndexFile();
+      serveFile(filePath);
     }
+  } else {
+    serveFile(filePath);
   }
+}
 
-  if (body.empty()) {
-    body = readFile(filePath);
-    headerBuilder.setContentType(getContentType(filePath));
-  }
+void ResponseBuilder::serveFile(const std::string& filePath) {
+  body = readFile(filePath);
+  headerBuilder.setContentType(getContentType(filePath));
   headerBuilder.setContentLength(body.size());
   headerBuilder.setStatusCode(OK);
 }
@@ -87,24 +85,30 @@ void ResponseBuilder::prepareRedirectionResponse() {
   headerBuilder.addHeader("Location", matchingLocation.getRedirectionPath());
   body = "<html><body><h1>Redirecting...</h1></body></html>";
   headerBuilder.setContentLength(body.size());
+  headerBuilder.setContentType("text/html");
 }
 
 void ResponseBuilder::prepareClientErrorResponse() {
   headerBuilder.setStatusCode(requestParsed.statusCode);
 
+  const std::map<int, std::string>& errorPages = server.getErrorPages();
   std::map<int, std::string>::const_iterator it =
-      server.getErrorPages().find(requestParsed.statusCode);
-  if (it != server.getErrorPages().end()) {
-    body = readFile(it->second);
-    headerBuilder.setContentType(getContentType(it->second));
+      errorPages.find(requestParsed.statusCode);
+  if (it != errorPages.end()) {
+    const std::string& errorPagePath = it->second;
+    body = readFile(errorPagePath);
+    if (body.empty()) {
+      body = generateDefaultErrorPage(requestParsed.statusCode);
+      headerBuilder.setContentType("text/html");
+    } else {
+      headerBuilder.setContentType(getContentType(errorPagePath));
+    }
   } else {
-    std::ostringstream oss;
-    oss << "<html><body><h1>" << requestParsed.statusCode << " "
-        << getReasonPhrase(requestParsed.statusCode) << "</h1></body></html>";
-    body = oss.str();
-    headerBuilder.setContentLength(body.size());
+    body = generateDefaultErrorPage(requestParsed.statusCode);
     headerBuilder.setContentType("text/html");
   }
+
+  headerBuilder.setContentLength(body.size());
 }
 
 void ResponseBuilder::prepareServerErrorResponse() {
@@ -114,24 +118,15 @@ void ResponseBuilder::prepareServerErrorResponse() {
   headerBuilder.setContentType("text/html");
 }
 
-bool ResponseBuilder::findMatchingLocation(const std::string &uri,
-                                           Location &matchingLocation) {
-  const std::map<std::string, Location> &locations = server.getLocations();
+bool ResponseBuilder::findMatchingLocation(const std::string& uri,
+                                           Location& matchingLocation) {
+  const std::map<std::string, Location>& locations = server.getLocations();
   size_t longestMatch = 0;
   bool found = false;
 
-  // Priorité aux correspondances exactes
-  std::map<std::string, Location>::const_iterator exactMatch =
-      locations.find(uri);
-  if (exactMatch != locations.end()) {
-    matchingLocation = exactMatch->second;
-    return true;
-  }
-
-  // Chercher le préfixe le plus long
-  for (std::map<std::string, Location>::const_iterator it = locations.begin();
-       it != locations.end(); ++it) {
-    const std::string &locationPath = it->first;
+  std::map<std::string, Location>::const_iterator it = locations.begin();
+  for (; it != locations.end(); ++it) {
+    const std::string& locationPath = it->first;
     if (uri.compare(0, locationPath.length(), locationPath) == 0 &&
         locationPath.length() > longestMatch) {
       longestMatch = locationPath.length();
@@ -140,11 +135,10 @@ bool ResponseBuilder::findMatchingLocation(const std::string &uri,
     }
   }
 
-  // Retourner si un préfixe a été trouvé
   return found;
 }
 
-bool ResponseBuilder::isDirectory(const std::string &path) {
+bool ResponseBuilder::isDirectory(const std::string& path) const {
   struct stat s;
   if (stat(path.c_str(), &s) == 0) {
     return S_ISDIR(s.st_mode);
@@ -153,16 +147,16 @@ bool ResponseBuilder::isDirectory(const std::string &path) {
 }
 
 std::string ResponseBuilder::generateDirectoryListing(
-    const std::string &directoryPath, const std::string &uri) {
+    const std::string& directoryPath, const std::string& uri) const {
   std::ostringstream html;
   html << "<html><body><h1>Index of " << uri << "</h1><ul>";
 
-  DIR *dir = opendir(directoryPath.c_str());
+  DIR* dir = opendir(directoryPath.c_str());
   if (!dir) {
     return "<html><body><h1>403 Forbidden</h1></body></html>";
   }
 
-  struct dirent *entry;
+  struct dirent* entry;
   while ((entry = readdir(dir)) != NULL) {
     html << "<li><a href=\"" << uri << entry->d_name << "\">" << entry->d_name
          << "</a></li>";
@@ -173,11 +167,10 @@ std::string ResponseBuilder::generateDirectoryListing(
   return html.str();
 }
 
-std::string ResponseBuilder::readFile(const std::string &filePath) {
+std::string ResponseBuilder::readFile(const std::string& filePath) const {
   std::ifstream file(filePath.c_str());
   if (!file.is_open()) {
-    std::cerr << "Failed to open file: " << filePath << std::endl;
-    return "<html><body><h1>404 Not Found</h1></body></html>";
+    return "";
   }
 
   std::ostringstream content;
@@ -186,17 +179,13 @@ std::string ResponseBuilder::readFile(const std::string &filePath) {
   return content.str();
 }
 
-std::string ResponseBuilder::getContentType(const std::string &filePath) {
+std::string ResponseBuilder::getContentType(const std::string& filePath) const {
   size_t dotPos = filePath.find_last_of('.');
   if (dotPos == std::string::npos) {
     return "application/octet-stream";
   }
 
-  // debug
-  std::cout << "FPTH FOR EXTEN= " << filePath << std::endl;
   std::string extension = filePath.substr(dotPos + 1);
-  // debug
-  std::cout << "EXTENSIONNNNNNNNNNNN = " << extension << std::endl;
   if (extension == "html") {
     return "text/html";
   } else if (extension == "css") {
@@ -213,29 +202,14 @@ std::string ResponseBuilder::getContentType(const std::string &filePath) {
   return "application/octet-stream";
 }
 
-std::string ResponseBuilder::getReasonPhrase(int code) {
-  std::cout << "REASON PHRASE CODE= " << code << std::endl;
-  switch (code) {
-    case 200:
-      return "OK";
-    case 301:
-      return "Moved Permanently";
-    case 302:
-      return "Found";
-    case 400:
-      return "Bad Request";
-    case 403:
-      return "Forbidden";
-    case 404:
-      return "Not Found";
-    case 500:
-      return "Internal Server Error";
-    default:
-      return "Unknown Status";
-  }
+std::string ResponseBuilder::generateDefaultErrorPage(int statusCode) const {
+  std::ostringstream oss;
+  oss << "<html><body><h1>" << statusCode << " "
+      << headerBuilder.getReasonPhrase(statusCode) << "</h1></body></html>";
+  return oss.str();
 }
 
-bool ResponseBuilder::fileExists(const std::string &filePath) {
+bool ResponseBuilder::fileExists(const std::string& filePath) const {
   struct stat buffer;
   return (stat(filePath.c_str(), &buffer) == 0);
 }

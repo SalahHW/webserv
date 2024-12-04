@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "HeaderBuilder.hpp"
 #include "Location.hpp"
 #include "ParseRequest.hpp"
@@ -18,24 +20,22 @@ class ResponseBuilder {
 
   HeaderBuilder headerBuilder;
   std::string body;
+  Location matchingLocation;
 
   void prepareResponse();
-
   void prepareSuccessResponse();
   void prepareRedirectionResponse();
   void prepareClientErrorResponse();
   void prepareServerErrorResponse();
 
-  // Utility methods
   bool findMatchingLocation(const std::string& uri, Location& matchingLocation);
-  bool isDirectory(const std::string& path);
+  void handleDirectoryRequest(const std::string& filePath);
+  void serveFile(const std::string& filePath);
+  bool isDirectory(const std::string& path) const;
   std::string generateDirectoryListing(const std::string& directoryPath,
-                                       const std::string& uri);
-  std::string readFile(const std::string& filePath);
-  std::string getContentType(const std::string& filePath);
-  std::string getReasonPhrase(int code);
-  bool fileExists(const std::string& filePath);
-
-  // Additional members
-  Location matchingLocation;
+                                       const std::string& uri) const;
+  std::string readFile(const std::string& filePath) const;
+  std::string getContentType(const std::string& filePath) const;
+  std::string generateDefaultErrorPage(int statusCode) const;
+  bool fileExists(const std::string& filePath) const;
 };

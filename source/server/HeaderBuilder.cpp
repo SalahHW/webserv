@@ -1,27 +1,26 @@
 #include "HeaderBuilder.hpp"
 
-#include <iostream>
 #include <sstream>
 
-const char *HeaderBuilder::HTTP_VERSION = "HTTP/1.1";
-const char *HeaderBuilder::LINE_TERMINATOR = "\r\n";
-const char *HeaderBuilder::HEADER_SEPARATOR = ": ";
+const char* HeaderBuilder::HTTP_VERSION = "HTTP/1.1";
+const char* HeaderBuilder::LINE_TERMINATOR = "\r\n";
+const char* HeaderBuilder::HEADER_SEPARATOR = ": ";
 const int HeaderBuilder::DEFAULT_STATUS_CODE = 200;
-const char *HeaderBuilder::DEFAULT_REASON_PHRASE = "OK";
-
-HeaderBuilder::~HeaderBuilder() {}
+const char* HeaderBuilder::DEFAULT_REASON_PHRASE = "OK";
 
 HeaderBuilder::HeaderBuilder()
     : statusCode(DEFAULT_STATUS_CODE), reasonPhrase(DEFAULT_REASON_PHRASE) {}
 
+HeaderBuilder::~HeaderBuilder() {}
+
 void HeaderBuilder::setStatusCode(int code) { statusCode = code; }
 
-void HeaderBuilder::setReasonPhrase(const std::string &phrase) {
+void HeaderBuilder::setReasonPhrase(const std::string& phrase) {
   reasonPhrase = phrase;
 }
 
-void HeaderBuilder::addHeader(const std::string &key,
-                              const std::string &value) {
+void HeaderBuilder::addHeader(const std::string& key,
+                              const std::string& value) {
   headers[key] = value;
 }
 
@@ -43,7 +42,7 @@ std::string HeaderBuilder::buildHeaders() const {
   return headersStream.str();
 }
 
-void HeaderBuilder::setContentType(const std::string &contentType) {
+void HeaderBuilder::setContentType(const std::string& contentType) {
   addHeader("Content-Type", contentType);
 }
 
@@ -53,7 +52,7 @@ void HeaderBuilder::setContentLength(size_t contentLength) {
   addHeader("Content-Length", oss.str());
 }
 
-std::string HeaderBuilder::getReasonPhrase(int code) {
+std::string HeaderBuilder::getReasonPhrase(int code) const {
   switch (code) {
     case 200:
       return "OK";

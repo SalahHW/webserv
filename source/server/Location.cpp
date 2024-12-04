@@ -3,24 +3,44 @@
 Location::~Location() {}
 
 Location::Location()
-    : getAccepted(true), postAccepted(true), deleteAccepted(true) {
-}
+    : path(""),
+      rootDirectory(""),
+      indexFile(""),
+      redirectionPath(""),
+      autoIndex(false),
+      getAccepted(true),
+      postAccepted(true),
+      deleteAccepted(true),
+      clientMaxBodySize(0),
+      returnCode(0),
+      paths() {}
 
-Location::Location(const Location &src) { *this = src; }
+Location::Location(const Location &src)
+    : path(src.path),
+      rootDirectory(src.rootDirectory),
+      indexFile(src.indexFile),
+      redirectionPath(src.redirectionPath),
+      autoIndex(src.autoIndex),
+      getAccepted(src.getAccepted),
+      postAccepted(src.postAccepted),
+      deleteAccepted(src.deleteAccepted),
+      clientMaxBodySize(src.clientMaxBodySize),
+      returnCode(src.returnCode),
+      paths(src.paths) {}
 
 Location &Location::operator=(const Location &src) {
   if (this != &src) {
-    this->path = src.path;
-    this->rootDirectory = src.rootDirectory;
-    this->indexFile = src.indexFile;
-    this->redirectionPath = src.redirectionPath;
-    this->autoIndex = src.autoIndex;
-    this->getAccepted = src.getAccepted;
-    this->postAccepted = src.postAccepted;
-    this->deleteAccepted = src.deleteAccepted;
-    this->clientMaxBodySize = src.clientMaxBodySize;
-    this->returnCode = src.returnCode;
-    this->paths = src.paths;
+    path = src.path;
+    rootDirectory = src.rootDirectory;
+    indexFile = src.indexFile;
+    redirectionPath = src.redirectionPath;
+    autoIndex = src.autoIndex;
+    getAccepted = src.getAccepted;
+    postAccepted = src.postAccepted;
+    deleteAccepted = src.deleteAccepted;
+    clientMaxBodySize = src.clientMaxBodySize;
+    returnCode = src.returnCode;
+    paths = src.paths;
   }
   return *this;
 }

@@ -43,6 +43,9 @@ void Server::setName(const std::string &name) { this->name = name; }
 
 void Server::setErrorPages(std::map<int, std::string> errorPages) {
   this->errorPages = errorPages;
+  // debug
+  this->errorPages[PAGE_NOT_FOUND] = "./www/errorsPages/404.html";
+  std::cout << "ERROR PATH IN MAP= " << errorPages[PAGE_NOT_FOUND] << std::endl;
 }
 
 void Server::addLocation(const Location &location) {
@@ -109,7 +112,7 @@ void Server::resolveHostName() {
 
 void Server::bindSocket() const {
   if (bind(this->listenFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-  //TODO: fix uncaught exception
+    // TODO: fix uncaught exception
     throw SocketException("bind");
 }
 

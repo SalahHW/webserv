@@ -6,12 +6,12 @@
 
 class Location {
  public:
-  ~Location();
   Location();
+  ~Location();
+
   Location(const Location& src);
   Location& operator=(const Location& src);
 
-  // Setters
   void setPath(const std::string& path);
   void setRootDirectory(const std::string& rootDirectory);
   void setIndexFile(const std::string& indexFile);
@@ -24,7 +24,6 @@ class Location {
   void setReturnCode(int returnCode);
   void addPath(const std::string& path);
 
-  // Getters
   const std::string& getPath() const;
   const std::string& getRootDirectory() const;
   const std::string& getIndexFile() const;

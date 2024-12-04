@@ -1,24 +1,16 @@
 #include "ParseRequest.hpp"
 
-ParseRequest::ParseRequest(const std::string &request) : request(request) {
+#include <cstdlib>
+#include <sstream>
+
+ParseRequest::ParseRequest(const std::string& request) : request(request) {
   requestParsed.statusCode = NADA;
   parseHttpRequest();
 }
 
 ParseRequest::~ParseRequest() {}
 
-ParseRequest::ParseRequest(const ParseRequest &src)
-    : request(src.request), requestParsed(src.requestParsed) {}
-
-ParseRequest &ParseRequest::operator=(const ParseRequest &src) {
-  if (this != &src) {
-    this->request = src.request;
-    this->requestParsed = src.requestParsed;
-  }
-  return *this;
-}
-
-RequestParsed &ParseRequest::getParsedRequest() { return this->requestParsed; }
+RequestParsed& ParseRequest::getParsedRequest() { return this->requestParsed; }
 
 void ParseRequest::parseHttpRequest() {
   std::string::size_type headersStartPos;
@@ -31,7 +23,7 @@ void ParseRequest::parseHttpRequest() {
 }
 
 void ParseRequest::findAndParseRequestLine(
-    std::string::size_type &headersStartPos) {
+    std::string::size_type& headersStartPos) {
   std::string::size_type requestLineEnd = this->request.find("\r\n");
   if (requestLineEnd == std::string::npos) {
     headersStartPos = this->request.length();
@@ -48,7 +40,7 @@ void ParseRequest::findAndParseRequestLine(
 }
 
 void ParseRequest::findAndParseHeaders(std::string::size_type headersStartPos,
-                                       std::string::size_type &bodyStartPos) {
+                                       std::string::size_type& bodyStartPos) {
   std::string::size_type headersEnd =
       this->request.find("\r\n\r\n", headersStartPos);
   if (headersEnd == std::string::npos) {
@@ -62,7 +54,7 @@ void ParseRequest::findAndParseHeaders(std::string::size_type headersStartPos,
   std::istringstream stream(headers);
   std::string line;
   while (std::getline(stream, line)) {
-    if (!line.empty() && line[line.size() - 1] == '\r') {
+    if (!line.empty() && *line.rbegin() == '\r') {
       line.erase(line.size() - 1);
     }
 
@@ -86,9 +78,11 @@ void ParseRequest::parseRequestBody(std::string::size_type bodyStartPos) {
     std::map<std::string, std::string>::const_iterator it =
         this->requestParsed.headers.find("Content-Length");
     if (it != this->requestParsed.headers.end()) {
-      std::istringstream iss(it->second);
-      size_t contentLength = 0;
-      iss >> contentLength;
+      char* endptr;
+      size_t contentLength = std::strtoul(it->second.c_str(), &endptr, 10);
+      if (*endptr != '\0') {
+        contentLength = 0;
+      }
 
       if (contentLength > 0 &&
           this->request.size() >= bodyStartPos + contentLength) {
@@ -105,22 +99,9 @@ void ParseRequest::parseRequestBody(std::string::size_type bodyStartPos) {
   }
 }
 
-std::string ParseRequest::trim(const std::string &str) const {
+std::string ParseRequest::trim(const std::string& str) const {
   const std::string::size_type start = str.find_first_not_of(" \t\r\n");
   if (start == std::string::npos) return "";
   const std::string::size_type end = str.find_last_not_of(" \t\r\n");
   return str.substr(start, end - start + 1);
-}
-
-void ParseRequest::showHttpRequest() const {
-  std::cout << "Method: " << this->requestParsed.method << std::endl;
-  std::cout << "URI: " << this->requestParsed.uri << std::endl;
-  std::cout << "Version: " << this->requestParsed.version << std::endl;
-  std::cout << "Headers:" << std::endl;
-  for (std::map<std::string, std::string>::const_iterator it =
-           requestParsed.headers.begin();
-       it != requestParsed.headers.end(); ++it) {
-    std::cout << it->first << ": " << it->second << std::endl;
-  }
-  std::cout << "Body: " << this->requestParsed.body << std::endl;
 }

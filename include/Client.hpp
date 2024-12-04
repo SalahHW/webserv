@@ -1,21 +1,17 @@
 #pragma once
 
-#include <map>
 #include <string>
 
 #include "HttpStatusCodeDeterminer.hpp"
 #include "ParseRequest.hpp"
-#include "ResponseHandler.hpp"
 #include "Server.hpp"
 
 class Client {
  public:
   Client(int client_fd, const Server& server);
   ~Client();
-  // Client& operator=(const Client& src);
-  Client(const Client& other);
 
-  const int& getClientFd() const;
+  int getClientFd() const;
   bool shouldCloseConnection() const;
   void setConnectionShouldClose(bool shouldClose);
 
@@ -24,6 +20,9 @@ class Client {
   ssize_t sendData();
 
  private:
+  Client(const Client& other);
+  Client& operator=(const Client& other);
+
   int client_fd;
   RequestParsed request;
   std::string requestBuffer;

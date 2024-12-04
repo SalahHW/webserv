@@ -1,9 +1,6 @@
 #pragma once
 
-#include <cstring>
-#include <iostream>
 #include <map>
-#include <sstream>
 #include <string>
 
 #include "HttpStatusCode.hpp"
@@ -18,24 +15,20 @@ struct RequestParsed {
 };
 
 class ParseRequest {
+ public:
+  explicit ParseRequest(const std::string& request);
+  ~ParseRequest();
+
+  RequestParsed& getParsedRequest();
+
  private:
   std::string request;
   RequestParsed requestParsed;
 
+  void parseHttpRequest();
   void findAndParseRequestLine(std::string::size_type& headersStartPos);
   void findAndParseHeaders(std::string::size_type headersStartPos,
                            std::string::size_type& bodyStartPos);
   void parseRequestBody(std::string::size_type bodyStartPos);
   std::string trim(const std::string& str) const;
-
- public:
-  ParseRequest(const std::string& request);
-  ~ParseRequest();
-  ParseRequest(const ParseRequest& src);
-  ParseRequest& operator=(const ParseRequest& src);
-
-  RequestParsed& getParsedRequest();
-
-  void parseHttpRequest();
-  void showHttpRequest() const;
 };

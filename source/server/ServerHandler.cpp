@@ -67,28 +67,41 @@ void ServerHandler::handleClientWrite(int clientFd) {
   Client *client = findClientByFd(clientFd);
   if (client && client->hasDataToWrite()) {
     ssize_t result = client->sendData();
-    if (result == -1) {
-      std::cerr << "Erreur lors de l'envoi des données au client " << clientFd
+    if (result > 0) {
+      if (!client->hasDataToWrite()) {
+        std::cout << "Toutes les données ont été envoyées au client "
+                  << clientFd << std::endl;
+        if (client->shouldCloseConnection()) {
+          std::cout << "Fermeture de la connexion pour le client " << clientFd
+                    << std::endl;
+          closeClientConnection(clientFd);
+        } else {
+          std::cout << "Modification des événements epoll pour surveiller "
+                       "uniquement EPOLLIN pour le client "
+                    << clientFd << std::endl;
+          modifyEpollEvent(clientFd, EPOLLIN | EPOLLET);
+        }
+      }
+    } else if (result == 0) {
+      std::cout << "Le client " << clientFd << " a fermé la connexion."
                 << std::endl;
       closeClientConnection(clientFd);
-    } else if (!client->hasDataToWrite()) {
-      std::cout << "Toutes les données ont été envoyées au client " << clientFd
-                << std::endl;
-      if (client->shouldCloseConnection()) {
-        std::cout << "Fermeture de la connexion pour le client " << clientFd
-                  << std::endl;
-        closeClientConnection(clientFd);
-      } else {
-        std::cout << "Modification des événements epoll pour surveiller "
-                     "uniquement EPOLLIN pour le client "
+    } else {
+      if (errno == EAGAIN || errno == EWOULDBLOCK) {
+        std::cout << "Le socket est non bloquant et l'opération aurait bloqué, "
+                     "réessayer plus tard pour le client "
                   << clientFd << std::endl;
-        modifyEpollEvent(clientFd, EPOLLIN | EPOLLONESHOT | EPOLLET);
+      } else {
+        std::cerr << "Erreur lors de l'envoi des données au client " << clientFd
+                  << ": " << strerror(errno) << std::endl;
+        closeClientConnection(clientFd);
       }
     }
   } else {
     std::cerr
         << "Client non trouvé ou aucune donnée à écrire pour le descripteur : "
         << clientFd << std::endl;
+    closeClientConnection(clientFd);
   }
 }
 
