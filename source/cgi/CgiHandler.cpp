@@ -99,6 +99,8 @@ std::vector<std::string> CgiHandler::buildEnv() {
     env.push_back(this->genServerProtocol());
     if (!query.empty())
         env.push_back(query);
+
+    // !!! Try using putenv () --> cstdlib
     return (env);
 }
 
