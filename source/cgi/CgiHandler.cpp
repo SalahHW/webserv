@@ -13,20 +13,6 @@
 #include "CgiHandler.hpp"
 
 CgiHandler::CgiHandler() {
-    //request.headers.insert("Host", "localhost:8080");
-    //request.headers.insert("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:132.0) Gecko/20100101 Firefox/132.0");
-    //request.headers.insert("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,/;q=0.8");
-    //request.headers.insert("Accept-Language", "en-US,en;q=0.5");
-    //request.headers.insert("Accept-Encoding", "gzip, deflate, br, zstd");
-    //request.headers.insert("Connection", "keep-alive");
-    //request.headers.insert("Upgrade-Insecure-Requests", "1");
-    //request.headers.insert("Sec-Fetch-Dest", "document");
-    //request.headers.insert("Sec-Fetch-Mode", "navigate");
-    //request.headers.insert("Sec-Fetch-Site", "none");
-    //request.headers.insert("Sec-Fetch-User", "?1");
-    //request.headers.insert("Priority", "u=0, i");
-    //request.body = "";
-
 	request.method = "GET";
 	request.uri = "http://example.com/cgi-bin/script.cgi?num1=2&num2=4";
 	request.version = "HTTP/1.1";
@@ -52,7 +38,7 @@ const std::string CgiHandler::genQueryString() {
         std::string queryString = request.uri.substr(pos + 1).c_str();
         return ("QUERY_STRING=" + queryString);
     }
-    return ("QUERY_STRING=");
+    return ("");
 }
 
 const std::string CgiHandler::genRequestMethod() {
@@ -71,9 +57,9 @@ const std::string CgiHandler::genScriptPath()
     return ("SCRIPT PATH=");
 }
 
-const std::string CgiHandler::getPathInfo(const std::string &input)
+const std::string CgiHandler::genPathInfo(const std::string &input)
 {
-     const std::string marker = "cgi-bin/";
+    const std::string marker = "cgi-bin/";
     std::string pathInfo;
 
     std::string::size_type markerPos = input.find(marker);
@@ -101,8 +87,27 @@ const std::string CgiHandler::genContentLenght()
     return ("CONTENT_LENGHT=" + this->convertSizetToString(static_cast<size_t>(size)));
 }
 
-void    CgiHandler::printHeader()
+std::vector<std::string> CgiHandler::buildEnv() {
+    std::vector<std::string> env;
+    std::string query = this->genQueryString();
+
+    env.push_back(this->genRequestMethod());
+    env.push_back(this->genPathInfo(request.uri));
+    env.push_back(this->genContentLenght());
+    env.push_back(this->genServerProtocol());
+    if (!query.empty())
+        env.push_back(query);
+    return (env);
+}
+
+void CgiHandler::printEnv(std::vector<std::string> &env)
 {
+    std::vector<std::string>::iterator vec_it;
+    for (vec_it = env.begin(); vec_it != env.end(); vec_it++) {
+        std::cout << *vec_it;
+        std::cout << " " << std::endl;
+        std::cout << std::endl;
+    }
 }
 
 // TO DO : BUILD ENV ARRAY, K.I.S.S

@@ -16,14 +16,17 @@ class CgiHandler
 		CgiHandler();
 		~CgiHandler();
 		CgiHandler (const CgiHandler &other);
-		void printHeader();
+
 		const std::string genContentLenght();
 		const std::string genQueryString();
 		const std::string genRequestMethod();
 		const std::string genServerProtocol();
 		const std::string genScriptPath();
-		const std::string getPathInfo(const std::string &input);
+		const std::string genPathInfo(const std::string &input);
 		const std::string convertSizetToString(size_t value);
+
+		std::vector<std::string> buildEnv();
+		void printEnv(std::vector<std::string> &env);
 	private:
 		RequestParsed request;
 };

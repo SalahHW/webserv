@@ -246,6 +246,7 @@ void ServerHandler::startToListen() {
   this->serversStart();
   std::cout << "----------STARTING TO LISTEN----------" << std::endl;
 
+  // CGI TEST BEGIN //
 
   CgiHandler testing;
   const std::string queryString = testing.genQueryString();
@@ -254,7 +255,12 @@ void ServerHandler::startToListen() {
   std::cout << queryString << " " << requestMethod << " "
    << serverProtocol << " " << testing.genContentLenght() << std::endl;
 
-  std::cout << testing.getPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche") << std::endl;
+  std::vector<std::string> genEnv = testing.buildEnv();
+  testing.printEnv(genEnv);
+
+  // CGI TEST ENDING //
+
+  std::cout << testing.genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche") << std::endl;
   while (1) {
     this->nbEvents = epoll_wait(this->epollFd, events, MAX_EVENTS, -1);
     if (this->nbEvents == -1) {
