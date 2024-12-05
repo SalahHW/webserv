@@ -39,6 +39,12 @@ CgiHandler::CgiHandler(const CgiHandler &other) {
 	(void)other;
 }
 
+const std::string CgiHandler::convertSizetToString(size_t value) {
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
+}
+
 const std::string CgiHandler::genQueryString() {
     std::string::const_iterator it = std::find(request.uri.begin(), request.uri.end(), '?');
     if (it != request.uri.end()) {
@@ -62,7 +68,7 @@ const std::string CgiHandler::genServerProtocol() {
 const std::string CgiHandler::genScriptPath()
 {
     // TEMPORARY ! FIX LATER
-    return ("SCRIPT PATH");
+    return ("SCRIPT PATH=");
 }
 
 const std::string CgiHandler::getPathInfo(const std::string &input)
@@ -77,10 +83,10 @@ const std::string CgiHandler::getPathInfo(const std::string &input)
             pathInfo = input.substr(nextSlashPos + 1);
         }
     }
-    return (pathInfo);
+    return ("PATH_INFO=" + pathInfo);
 }
 
-size_t CgiHandler::genContentLenght()
+const std::string CgiHandler::genContentLenght()
 {
     // TEMPORARY ! FIX LATER
     // SHOULD GET CONTENT LENGHT VIA PAGE REQUEST (sortof...)
@@ -89,10 +95,10 @@ size_t CgiHandler::genContentLenght()
     std::ifstream file(filePath, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filePath << std::endl;
-        return 1;
+        return ("");
     }
     std::streampos size = file.tellg();
-    return (static_cast<size_t>(size));
+    return ("CONTENT_LENGHT=" + this->convertSizetToString(static_cast<size_t>(size)));
 }
 
 void    CgiHandler::printHeader()
