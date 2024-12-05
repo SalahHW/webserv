@@ -88,6 +88,7 @@ const std::string CgiHandler::genContentLenght()
 }
 
 std::vector<std::string> CgiHandler::buildEnv() {
+    // NOT DONE, NEED MORE DETAILS NIGGA
     std::vector<std::string> env;
     std::string query = this->genQueryString();
 
@@ -95,6 +96,8 @@ std::vector<std::string> CgiHandler::buildEnv() {
     env.push_back(this->genPathInfo(request.uri));
     env.push_back(this->genContentLenght());
     env.push_back(this->genServerProtocol());
+    // not sure
+    env.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
     if (!query.empty())
         env.push_back(query);
     return (env);
@@ -102,11 +105,10 @@ std::vector<std::string> CgiHandler::buildEnv() {
 
 void CgiHandler::printEnv(std::vector<std::string> &env)
 {
+    // FOR DEBUG, DELETE LATER
     std::vector<std::string>::iterator vec_it;
     for (vec_it = env.begin(); vec_it != env.end(); vec_it++) {
-        std::cout << *vec_it;
-        std::cout << " " << std::endl;
-        std::cout << std::endl;
+        std::cout << *vec_it << std::endl;
     }
 }
 
