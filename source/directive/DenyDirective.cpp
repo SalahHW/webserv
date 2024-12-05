@@ -26,12 +26,13 @@ DenyDirective &DenyDirective::operator=(const DenyDirective &other) {
 }
 
 bool DenyDirective::validateSpecific() {
+  std::vector<std::string> arguments = getArguments();
   if (arguments[0] != "all") {
     std::cerr << "Error: Bad argument in deny directive inside \""
-              << currentContext->getName() << "\" block." << std::endl;
+              << getCurrentContext()->getName() << "\" block." << std::endl;
     return false;
   }
-  std::vector<std::string> contextAgruments = currentContext->getArguments();
+  std::vector<std::string> contextAgruments = getCurrentContext()->getArguments();
   for (size_t i = 0; i < contextAgruments.size(); i++) {
     if (contextAgruments[i] == "GET")
       this->getAccepted = false;

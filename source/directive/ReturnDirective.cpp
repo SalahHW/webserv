@@ -28,6 +28,7 @@ ReturnDirective &ReturnDirective::operator=(const ReturnDirective &other) {
 }
 
 bool ReturnDirective::validateSpecific() {
+  std::vector<std::string> arguments = getArguments();
   if (!utils::convertToInt(arguments[0].c_str(), returnCode)) {
     std::cerr << "Error: Directive \"" << getName()
               << "\" has an invalid argument." << std::endl;
