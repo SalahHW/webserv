@@ -9,8 +9,8 @@ LocationBlock::LocationBlock(const std::string &fullBlockLine,
     : Block(fullBlockLine, contextBlock) {
   addValidContext("server");
   addValidContext("location");
-  minArgs = 1;
-  maxArgs = 2;
+  setMinArgs(1);
+  setMaxArgs(2);
   validate();
 }
 
@@ -24,6 +24,7 @@ LocationBlock &LocationBlock::operator=(const LocationBlock &other) {
 }
 
 bool LocationBlock::validateSpecific() {
+  std::vector<std::string> arguments = getArguments();
   std::set<std::string> uniquePaths(arguments.begin(), arguments.end());
   if (uniquePaths.size() != arguments.size()) {
     std::cerr << "Error: Duplicate paths found in location block." << std::endl;
@@ -33,6 +34,7 @@ bool LocationBlock::validateSpecific() {
 }
 
 void LocationBlock::apply(Location &location) const {
+  std::vector<std::string> arguments = getArguments();
   for (size_t i = 0; i < arguments.size(); ++i) {
     location.addPath(arguments[i]);
   }

@@ -22,13 +22,23 @@ class Block {
 
   virtual bool validateSpecific() = 0;
 
-  std::string getName() const;
-  Block* getContextBlock() const;
-  std::string getFullBlockLine() const;
-  std::vector<Block*> getSubBlocks() const;
-  std::vector<std::string> const& getArguments() const;
-  std::vector<Directive*> getDirectives() const;
+  bool getIsValid() const;
+  const std::string& getFullBlockLine() const;
+  const Block* getContextBlock() const;
+  const std::string& getName() const;
+  const std::vector<std::string>& getArguments() const;
+  const std::vector<Block*>& getSubBlocks() const;
+  const std::vector<Directive*>& getDirectives() const;
+  const std::vector<std::string>& getValidContexts() const;
+  int getMinArgs() const;
+  int getMaxArgs() const;
+
   bool good() const;
+
+  void setIsValid(bool isValid);
+  void setName(const std::string& name);
+  void setMinArgs(int min);
+  void setMaxArgs(int max);
 
   void addSubBlock(Block* block);
   void addDirective(Directive* directive);
@@ -38,7 +48,9 @@ class Block {
 
   virtual void apply(Location& location) const;
 
- protected:
+ private:
+  Block();
+
   bool isValid;
   std::string fullLine;
   Block* contextBlock;
@@ -49,9 +61,6 @@ class Block {
   std::vector<std::string> validContexts;
   int minArgs;
   int maxArgs;
-
- private:
-  Block();
 
   void tokenizeName();
 };

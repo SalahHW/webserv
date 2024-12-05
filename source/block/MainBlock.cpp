@@ -3,8 +3,8 @@
 MainBlock::~MainBlock() {}
 
 MainBlock::MainBlock() : Block("main", NULL) {
-  minArgs = 0;
-  maxArgs = 0;
+  setMinArgs(0);
+  setMaxArgs(0);
   validate();
 }
 
