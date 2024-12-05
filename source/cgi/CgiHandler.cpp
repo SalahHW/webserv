@@ -76,7 +76,7 @@ const std::string CgiHandler::genContentLenght()
 {
     // TEMPORARY ! FIX LATER
     // SHOULD GET CONTENT LENGHT VIA PAGE REQUEST (sortof...)
-    const char* filePath = "/home/sickest_one/Travail/webserv/www/index/index.html";
+    const char* filePath = "/home/sickest-one/Travail/webserv/www/index/index.html";
 
     std::ifstream file(filePath, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
@@ -93,11 +93,9 @@ std::vector<std::string> CgiHandler::buildEnv() {
     std::string query = this->genQueryString();
 
     env.push_back(this->genRequestMethod());
-    env.push_back(this->genPathInfo(request.uri));
+    env.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
     env.push_back(this->genContentLenght());
     env.push_back(this->genServerProtocol());
-    // not sure
-    env.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
     if (!query.empty())
         env.push_back(query);
     return (env);
@@ -112,4 +110,67 @@ void CgiHandler::printEnv(std::vector<std::string> &env)
     }
 }
 
+void CgiHandler::cgiHandler()
+{
+    std::vector<std::string> envVars = this->buildEnv();
+
+    int fd_in[2];
+    int fd_out[2];
+
+    if (pipe(fd_in) == -1 || pipe(fd_out) == -1) {
+        perror("Cgi pipe");
+        return ;
+    }
+
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("Cgi fork");
+        return ;
+    }
+    if (pid == 0) {
+        dup2(fd_in[0], STDIN_FILENO);
+        dup2(fd_out[1], STDOUT_FILENO);
+        close(fd_in[1]);
+        close(fd_out[0]);
+
+        std::vector<std::string> envVars = this->buildEnv();
+    }
+}
+
+//std::vector<std::string> env = buildEnvironment(method, query, "application/x-www-form-urlencoded", std::to_string(body.size()));
+        //char **envArray = convertToCArray(env);
+
+        //// Execute CGI script
+        //char *args[] = { const_cast<char *>(scriptPath.c_str()), NULL };
+        //execve(scriptPath.c_str(), args, envArray);
+
+        //// Cleanup in case execve fails
+        //perror("execve");
+        //for (size_t i = 0; envArray[i] != NULL; ++i) {
+            //free(envArray[i]);
+        //}
+        //delete[] envArray;
+        //exit(1);
+    //} else { // Parent process
+        //close(fd_in[0]);
+        //close(fd_out[1]);
+
+        //// Write POST body to child's STDIN
+        //if (method == "POST") {
+            //write(fd_in[1], body.c_str(), body.size());
+        //}
+        //close(fd_in[1]);
+
+        //// Read output from child's STDOUT
+        //char buffer[1024];
+        //ssize_t bytesRead;
+        //while ((bytesRead = read(fd_out[0], buffer, sizeof(buffer))) > 0) {
+            //std::cout.write(buffer, bytesRead); // Send to client
+        //}
+        //close(fd_out[0]);
+
+        //// Wait for child process
+        //waitpid(pid, NULL, 0);
+    //}
+//}
 // TO DO : BUILD ENV ARRAY, K.I.S.S
