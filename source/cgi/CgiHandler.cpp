@@ -93,6 +93,7 @@ std::vector<std::string> CgiHandler::buildEnv() {
     std::string query = this->genQueryString();
 
     env.push_back(this->genRequestMethod());
+    // NOT CLEAN
     env.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
     env.push_back(this->genContentLenght());
     env.push_back(this->genServerProtocol());
@@ -132,7 +133,6 @@ void CgiHandler::cgiHandler()
         dup2(fd_out[1], STDOUT_FILENO);
         close(fd_in[1]);
         close(fd_out[0]);
-
         std::vector<std::string> envVars = this->buildEnv();
     }
 }
