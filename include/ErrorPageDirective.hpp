@@ -1,7 +1,5 @@
 #pragma once
 
-#include <map>
-
 #include "Directive.hpp"
 #include "utils.hpp"
 
@@ -24,5 +22,6 @@ class ErrorPageDirective : public Directive {
  private:
   ErrorPageDirective();
 
-  std::map<int, std::string> errorPages;
+  int errorCode;
+  std::string errorPath;
 };

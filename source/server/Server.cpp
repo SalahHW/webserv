@@ -49,6 +49,10 @@ void Server::addLocation(const Location &location) {
   this->locations[location.getPath()] = location;
 }
 
+void Server::addErrorPage(int errorCode, std::string errorPath) {
+  errorPages[errorCode] = errorPath;
+}
+
 int Server::getListenFd() const { return this->listenFd; }
 
 int Server::getPort() const { return this->port; }
@@ -75,10 +79,13 @@ void Server::displayServerInfo() const {
   std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes"
             << std::endl;
 
-  // std::cout << "- Error Pages: " << std::endl;
-  // for (size_t i = 0; i < errorPages.size(); ++i) {
-  //      std::cout << "  * " << errorPages[i] << std::endl;
-  // }
+  std::map<int, std::string>::const_iterator errorPages_it = errorPages.begin();
+  std::cout << "- Error Pages: " << std::endl;
+  while (errorPages_it != errorPages.end())
+  {
+    std::cout << "  * " << errorPages_it->first << " " << errorPages_it->second << std::endl;
+    errorPages_it++;
+  }
 
   std::map<std::string, Location>::const_iterator it = this->locations.begin();
   std::cout << "- Locations: " << std::endl;
