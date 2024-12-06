@@ -5,6 +5,7 @@
 
 ParseRequest::ParseRequest(const std::string& request) : request(request) {
   requestParsed.statusCode = NADA;
+  requestParsed.keepAlive = true;
   parseHttpRequest();
   showHttpRequest();
 }
@@ -92,34 +93,28 @@ void ParseRequest::parseRequestBody(std::string::size_type bodyStartPos) {
         std::cout << "Body parsed successfully. Length: " << contentLength
                   << std::endl;
 
-        // Analyse des parties multipart si le Content-Type contient
-        // "multipart/form-data"
         if (this->requestParsed.headers["Content-Type"].find(
                 "multipart/form-data") != std::string::npos) {
           std::string contentType = this->requestParsed.headers["Content-Type"];
           size_t pos = contentType.find("boundary=");
           if (pos != std::string::npos) {
-            std::string boundary =
-                "--" + contentType.substr(pos + 9);  // Extraire le boundary
+            std::string boundary = "--" + contentType.substr(pos + 9);
 
             std::cout << "Boundary extracted: " << boundary << std::endl;
 
             size_t posStart = this->requestParsed.body.find(boundary);
             if (posStart != std::string::npos) {
-              posStart +=
-                  boundary.length();  // Avancer après le premier boundary
+              posStart += boundary.length();
               size_t posEnd = this->requestParsed.body.find(boundary, posStart);
 
               while (posEnd != std::string::npos) {
                 std::string part = this->requestParsed.body.substr(
                     posStart, posEnd - posStart);
 
-                // Affichez chaque partie (les 200 premiers caractères)
                 std::cout << "Part found: " << part.substr(0, 200) << "..."
                           << std::endl;
 
-                posStart =
-                    posEnd + boundary.length();  // Passer au prochain boundary
+                posStart = posEnd + boundary.length();
                 posEnd = this->requestParsed.body.find(boundary, posStart);
               }
 
@@ -146,6 +141,21 @@ void ParseRequest::parseRequestBody(std::string::size_type bodyStartPos) {
               << std::endl;
     this->requestParsed.body = "";
   }
+  std::map<std::string, std::string>::const_iterator connIt =
+      this->requestParsed.headers.find("Connection");
+  if (connIt != this->requestParsed.headers.end()) {
+    if (connIt->second == "keep-alive" ||
+        (requestParsed.version == "HTTP/1.1" && connIt->second != "close")) {
+      requestParsed.keepAlive = true;
+    } else {
+      requestParsed.keepAlive = false;
+    }
+  } else {
+    // Default for HTTP/1.1 is keep-alive
+    requestParsed.keepAlive = (requestParsed.version == "HTTP/1.1");
+  }
+  std::cout << "Keep-Alive: " << (requestParsed.keepAlive ? "Yes" : "No")
+            << std::endl;
 }
 
 std::string ParseRequest::trim(const std::string& str) const {
@@ -166,4 +176,6 @@ void ParseRequest::showHttpRequest() const {
     std::cout << it->first << ": " << it->second << std::endl;
   }
   std::cout << "Body: " << this->requestParsed.body << std::endl;
+  std::cout << "Keep-Alive: " << (this->requestParsed.keepAlive ? "Yes" : "No")
+            << std::endl;
 }

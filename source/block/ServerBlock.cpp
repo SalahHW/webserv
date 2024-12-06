@@ -6,8 +6,8 @@ ServerBlock::ServerBlock(const std::string &fullBlockLine, Block *contextBlock)
     : Block(fullBlockLine, contextBlock) {
   addValidContext("main");
   addValidContext("http");
-  minArgs = 0;
-  maxArgs = 0;
+  setMinArgs(0);
+  setMaxArgs(0);
 }
 
 ServerBlock::ServerBlock(const ServerBlock &other) : Block(other) {}

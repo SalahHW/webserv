@@ -9,18 +9,55 @@ ResponseBuilder::ResponseBuilder(RequestParsed& requestParsed,
 
 ResponseBuilder::~ResponseBuilder() {}
 
-// Build the complete HTTP response
+// ResponseBuilder.cpp
+
+#include <iostream>
+
+#include "ResponseBuilder.hpp"
+
+// Supposons que vous avez une méthode buildResponse dans votre classe
+// ResponseBuilder
 std::string ResponseBuilder::buildResponse() {
-  prepareResponse();
+  prepareResponse();  // Prépare les en-têtes et le corps de la réponse
 
-  std::string statusLine = headerBuilder.buildStatusLine();
-  std::string headers = headerBuilder.buildHeaders();
+  // Construction des lignes de statut et des en-têtes
+  std::string statusLine =
+      headerBuilder.buildStatusLine();  // Ex: "HTTP/1.1 200 OK\r\n"
+  std::string headers =
+      headerBuilder
+          .buildHeaders();  // Ex: "Content-Length: 5996\r\nContent-Type:
+                            // text/html\r\nConnection: keep-alive\r\n"
 
+  // Détermination de la taille du corps
+  std::size_t bodySize = body.size();
+  headerBuilder.setContentLength(bodySize);  // "Content-Length: 5996\r\n"
+
+  // Reconstruction des en-têtes avec Content-Length mis à jour
+  headers = headerBuilder.buildHeaders();
+
+  // Construction complète de la réponse avec séparation correcte entre en-têtes
+  // et corps
+  std::string response = statusLine + headers + "\r\n" + body;
+
+  // Calcul des tailles pour vérification
+  std::size_t totalResponseSize = response.size();
+  std::size_t expectedTotalSize =
+      statusLine.size() + headers.size() + 2 + body.size();  // 2 pour "\r\n"
+
+  // Vérification de la correspondance des tailles
+  if (totalResponseSize != expectedTotalSize) {
+    std::cerr << "[ERROR] Mismatch in response size: expected "
+              << expectedTotalSize << " bytes, but got " << totalResponseSize
+              << " bytes." << std::endl;
+  }
+
+  // Log pour débogage
   std::cout << "[DEBUG] Building response. Status Line: " << statusLine
             << "Headers:\n"
-            << headers << "Body size: " << body.size() << std::endl;
+            << headers << "Body size: " << body.size() << " bytes."
+            << std::endl;
 
-  return statusLine + headers + "\r\n" + body;
+  return response;
 }
 
 // Prepare the response based on the status code
@@ -78,6 +115,8 @@ void ResponseBuilder::prepareSuccessResponse() {
   }
 
   headerBuilder.setContentLength(body.size());
+  std::cout << "[DEBUG] Set Content-Length to " << body.size() << " bytes."
+            << std::endl;
 }
 
 // Serve a static file
@@ -209,18 +248,20 @@ std::string ResponseBuilder::generateDirectoryListing(
 
 // Read the content of a file into a string
 std::string ResponseBuilder::readFile(const std::string& filePath) const {
-  std::ifstream file(filePath.c_str());
+  std::ifstream file(filePath.c_str(),
+                     std::ios::in | std::ios::binary | std::ios::ate);
   if (!file.is_open()) {
     std::cerr << "[ERROR] Failed to open file: " << filePath << std::endl;
     return "";
   }
 
-  std::ostringstream content;
-  content << file.rdbuf();
+  std::ifstream::pos_type pos = file.tellg();
+  size_t fileSize = static_cast<std::size_t>(pos);
+  std::string result(fileSize, '\0');
+  file.seekg(0, std::ios::beg);
+  file.read(&result[0], pos);
   file.close();
-  std::cout << "[DEBUG] Read file: " << filePath
-            << " with size: " << content.str().size() << " bytes." << std::endl;
-  return content.str();
+  return result;
 }
 
 // Determine the Content-Type based on file extension

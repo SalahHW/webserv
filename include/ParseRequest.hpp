@@ -13,6 +13,7 @@ struct RequestParsed {
   std::map<std::string, std::string> headers;
   std::string body;
   HttpStatusCode statusCode;
+  bool keepAlive;
 };
 
 class ParseRequest {

@@ -31,7 +31,7 @@ void Client::closeClientSocket() {
 }
 
 int Client::getClientFd() const { return client_fd; }
-bool Client::shouldCloseConnection() const { return connectionShouldClose; }
+bool Client::shouldCloseConnection() const { return !request.keepAlive; }
 void Client::setConnectionShouldClose(bool shouldClose) {
   connectionShouldClose = shouldClose;
 }
@@ -67,7 +67,11 @@ void Client::prepareForSending() {
 
 void Client::appendToRequestBuffer(const std::string& data) {
   requestBuffer += data;
+  std::cout << "[DEBUG] Appended " << data.size()
+            << " bytes to request buffer for client " << client_fd << std::endl;
   if (isRequestComplete()) {
+    std::cout << "[INFO] Complete request received from client " << client_fd
+              << ". Processing request." << std::endl;
     processRequest();
     requestBuffer.clear();
   }
@@ -101,12 +105,25 @@ ssize_t Client::sendData() {
                         responseBuffer.size() - bytesSent, 0);
   if (result > 0) {
     bytesSent += result;
+    std::cout << "[DEBUG] Sent " << result << " bytes to client " << client_fd
+              << ". Total sent: " << bytesSent << "/" << responseBuffer.size()
+              << " bytes." << std::endl;
+    if (bytesSent > responseBuffer.size()) {
+      std::cerr << "[ERROR] bytesSent (" << bytesSent
+                << ") exceeds responseBuffer size (" << responseBuffer.size()
+                << ") for client " << client_fd << std::endl;
+      connectionShouldClose = true;
+    }
   } else if (result == -1) {
     if (errno != EAGAIN && errno != EWOULDBLOCK) {
-      handleError("send");
+      std::cerr << "[ERROR] send failed for FD " << client_fd << ": "
+                << strerror(errno) << std::endl;
       connectionShouldClose = true;
     }
   } else {
+    // result == 0, connection closed by client
+    std::cout << "[INFO] Client " << client_fd
+              << " closed the connection during send." << std::endl;
     connectionShouldClose = true;
   }
   return result;

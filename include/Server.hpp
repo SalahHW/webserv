@@ -30,6 +30,7 @@ class Server {
   void setErrorPages(std::map<int, std::string> errorPages);
 
   void addLocation(const Location& location);
+  void addErrorPage(int errorCode, std::string errorPath);
 
   int getListenFd() const;
   int getPort() const;

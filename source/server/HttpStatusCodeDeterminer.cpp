@@ -190,7 +190,7 @@ bool HttpStatusCodeDeterminer::isMethodAllowed(const Location &location,
 
 bool HttpStatusCodeDeterminer::fileExists(const std::string &filePath) {
   struct stat buffer;
-  return (stat(filePath.c_str(), &buffer) == 0);
+  return (stat(filePath.c_str(), &buffer) == 0 && S_ISREG(buffer.st_mode));
 }
 
 bool HttpStatusCodeDeterminer::hasAccessPermissions(

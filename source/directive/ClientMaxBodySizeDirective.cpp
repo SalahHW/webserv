@@ -27,6 +27,7 @@ ClientMaxBodySizeDirective &ClientMaxBodySizeDirective::operator=(
 }
 
 bool ClientMaxBodySizeDirective::validateSpecific() {
+  std::vector<std::string> arguments = getArguments();
   char lastChar = arguments[0][arguments[0].size() - 1];
   long multiplier;
   if (isdigit(lastChar)) {

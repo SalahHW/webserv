@@ -45,7 +45,7 @@ ServerHandler& ServerHandler::operator=(const ServerHandler& other) {
 
 // Initialize epoll
 void ServerHandler::initializeEpoll() {
-  epollFd = epoll_create1(0);
+  epollFd = epoll_create1(EPOLL_CLOEXEC);
   if (epollFd == -1) {
     std::cerr << "[ERROR] epoll_create1" << std::endl;
   }
@@ -263,7 +263,6 @@ void ServerHandler::handleClientWrite(int clientFd) {
             modifyEpollEvent(clientFd, EPOLLIN | EPOLLET);
             std::cout << "[DEBUG] Modified epoll events for client " << clientFd
                       << " to EPOLLIN | EPOLLET." << std::endl;
-            break;
           }
         }
       } else if (result == 0) {

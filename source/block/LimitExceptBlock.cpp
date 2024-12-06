@@ -6,8 +6,8 @@ LimitExceptBlock::LimitExceptBlock(const std::string &fullBlockLine,
                                    Block *contextBlock)
     : Block(fullBlockLine, contextBlock) {
   addValidContext("location");
-  minArgs = 1;
-  maxArgs = 3;
+  setMinArgs(1);
+  setMaxArgs(3);
 
   isGetConcerned = false;
   isPostConcerned = false;
@@ -28,6 +28,7 @@ LimitExceptBlock &LimitExceptBlock::operator=(const LimitExceptBlock &other) {
 bool LimitExceptBlock::validateSpecific() { return extractArguments(); }
 
 bool LimitExceptBlock::extractArguments() {
+  std::vector<std::string> arguments = getArguments();
   for (size_t i = 0; i < arguments.size(); i++) {
     if (arguments[i] == "GET") {
       isGetConcerned = true;

@@ -27,25 +27,28 @@ class Directive {
   virtual void apply(Server& server);
   virtual void apply(Location& location);
 
+  bool getIsValid() const { return isValid; };
+  const Block* getCurrentContext() const;
+  const std::string &getFullDirectiveLine() const;
+  const std::string &getName() const;
+  const std::vector<std::string> &getArguments() const;
+  int getMinArgs() const;
+  int getMaxArgs() const;
+  const std::vector<std::string> &getContexts() const;
+  bool good() const;
+
+  void setIsValid(bool valid);
   void setFullDirectiveLine(const std::string& line);
   void setName(const std::string& name);
   void setCurrentContext(Block* context);
-  void addArgument(const std::string& argument);
-  void addContext(const std::string& context);
   void setMinArgs(int min);
   void setMaxArgs(int max);
 
-  std::string getFullDirectiveLine() const;
-  std::string getName() const;
-  Block* getCurrentContext() const;
-  std::vector<std::string> getArguments() const;
-  std::vector<std::string> getContexts() const;
-  int getMinArgs() const;
-  int getMaxArgs() const;
-  bool good() const;
+  void addArgument(const std::string& argument);
+  void addContext(const std::string& context);
 
- protected:
-  void tokenizeName();
+ private:
+  Directive();
 
   bool isValid;
   Block* currentContext;
@@ -56,6 +59,5 @@ class Directive {
   int maxArgs;
   std::vector<std::string> contexts;
 
- private:
-  Directive();
+  void tokenizeName();
 };

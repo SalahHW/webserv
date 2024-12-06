@@ -83,17 +83,21 @@ void Directive::setMinArgs(int min) { this->minArgs = min; }
 
 void Directive::setMaxArgs(int max) { this->maxArgs = max; }
 
-std::string Directive::getFullDirectiveLine() const {
+const std::string &Directive::getFullDirectiveLine() const {
   return fullDirectiveLine;
 }
 
-std::string Directive::getName() const { return name; }
+const std::string &Directive::getName() const { return name; }
 
-Block *Directive::getCurrentContext() const { return this->currentContext; }
+const Block *Directive::getCurrentContext() const { return currentContext; }
 
-std::vector<std::string> Directive::getArguments() const { return arguments; }
+const std::vector<std::string> &Directive::getArguments() const {
+  return arguments;
+}
 
-std::vector<std::string> Directive::getContexts() const { return contexts; }
+const std::vector<std::string> &Directive::getContexts() const {
+  return contexts;
+}
 
 int Directive::getMinArgs() const { return minArgs; }
 

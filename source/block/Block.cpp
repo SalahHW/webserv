@@ -71,21 +71,25 @@ void Block::validate() {
     isValid = validateContext() && validateArgsSize() && validateSpecific();
 }
 
-std::string Block::getName() const { return name; }
-
-Block *Block::getContextBlock() const { return contextBlock; }
-
-std::string Block::getFullBlockLine() const { return fullLine; }
-
-std::vector<std::string> const &Block::getArguments() const {
-  return this->arguments;
+bool Block::getIsValid() const { return isValid; }
+const std::string &Block::getFullBlockLine() const { return fullLine; }
+const Block *Block::getContextBlock() const { return contextBlock; }
+const std::string &Block::getName() const { return name; }
+const std::vector<std::string> &Block::getArguments() const {
+  return arguments;
 }
+const std::vector<Block *> &Block::getSubBlocks() const { return subBlocks; }
+const std::vector<Directive *> &Block::getDirectives() const { return directives; }
+int Block::getMinArgs() const { return minArgs; }
+int Block::getMaxArgs() const { return maxArgs; }
 
-std::vector<Block *> Block::getSubBlocks() const { return subBlocks; }
-
-std::vector<Directive *> Block::getDirectives() const { return directives; }
 
 bool Block::good() const { return isValid; }
+
+void Block::setIsValid(bool isValid) { this->isValid = isValid; }
+void Block::setName(const std::string &name) { this->name = name; }
+void Block::setMinArgs(int min) { minArgs = min; }
+void Block::setMaxArgs(int max) { maxArgs = max; }
 
 void Block::addSubBlock(Block *block) { subBlocks.push_back(block); }
 
