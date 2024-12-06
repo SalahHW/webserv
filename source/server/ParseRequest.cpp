@@ -75,7 +75,7 @@ void ParseRequest::findAndParseHeaders(std::string::size_type headersStartPos,
 void ParseRequest::parseRequestBody(std::string::size_type bodyStartPos) {
   if (this->requestParsed.method == "POST" ||
       this->requestParsed.method == "PUT") {
-    // Trouver Content-Length
+    // Find Content-Length
     std::map<std::string, std::string>::const_iterator it =
         this->requestParsed.headers.find("Content-Length");
     if (it != this->requestParsed.headers.end()) {

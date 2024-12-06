@@ -201,34 +201,41 @@ void ServerHandler::handleNewConnection(Server& server) {
 void ServerHandler::handleClientRead(int clientFd) {
   std::cout << "[INFO] Handling read for client FD: " << clientFd << std::endl;
   char buffer[4096];
-  ssize_t bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
+  while (true) {  // Loop until all data is read
+    ssize_t bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
+    if (bytesRead > 0) {
+      buffer[bytesRead] = '\0';
+      std::string data(buffer);
+      std::cout << "[DEBUG] Received data from client " << clientFd << ":\n"
+                << data << std::endl;
 
-  if (bytesRead > 0) {
-    buffer[bytesRead] = '\0';
-    std::string data(buffer);
-    std::cout << "[DEBUG] Received data from client " << clientFd << ":\n"
-              << data << std::endl;
+      Client* client = findClientByFd(clientFd);
+      if (client) {
+        client->appendToRequestBuffer(data);
 
-    Client* client = findClientByFd(clientFd);
-    if (client) {
-      client->appendToRequestBuffer(data);
-
-      if (client->hasDataToWrite()) {
-        modifyEpollEvent(clientFd, EPOLLIN | EPOLLOUT | EPOLLET);
-        std::cout << "[DEBUG] Modified epoll events for client " << clientFd
-                  << " to include EPOLLOUT." << std::endl;
+        if (client->hasDataToWrite()) {
+          modifyEpollEvent(clientFd, EPOLLIN | EPOLLOUT | EPOLLET);
+          std::cout << "[DEBUG] Modified epoll events for client " << clientFd
+                    << " to include EPOLLOUT." << std::endl;
+        }
+      } else {
+        std::cerr << "[ERROR] Client not found for FD: " << clientFd
+                  << std::endl;
       }
-    } else {
-      std::cerr << "[ERROR] Client not found for FD: " << clientFd << std::endl;
-    }
-  } else if (bytesRead == 0) {
-    std::cout << "[INFO] Client " << clientFd << " closed the connection."
-              << std::endl;
-    closeClientConnection(clientFd);
-  } else {
-    if (errno != EAGAIN && errno != EWOULDBLOCK) {
-      std::cerr << "[ERROR] recv" << std::endl;
+    } else if (bytesRead == 0) {
+      std::cout << "[INFO] Client " << clientFd << " closed the connection."
+                << std::endl;
       closeClientConnection(clientFd);
+      break;
+    } else {
+      if (errno == EAGAIN || errno == EWOULDBLOCK) {
+        // No more data to read
+        break;
+      } else {
+        std::cerr << "[ERROR] recv" << std::endl;
+        closeClientConnection(clientFd);
+        break;
+      }
     }
   }
 }
