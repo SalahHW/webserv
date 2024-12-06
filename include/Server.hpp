@@ -13,8 +13,6 @@
 #include <map>
 #include <vector>
 
-#include "SocketException.hpp"
-
 class Location;
 class Client;
 

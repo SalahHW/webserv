@@ -1,8 +1,16 @@
 #pragma once
 
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include <string>
 
 #include "HeaderBuilder.hpp"
+#include "HttpStatusCode.hpp"
 #include "Location.hpp"
 #include "ParseRequest.hpp"
 #include "Server.hpp"
@@ -29,7 +37,6 @@ class ResponseBuilder {
   void prepareServerErrorResponse();
 
   bool findMatchingLocation(const std::string& uri, Location& matchingLocation);
-  void handleDirectoryRequest(const std::string& filePath);
   void serveFile(const std::string& filePath);
   bool isDirectory(const std::string& path) const;
   std::string generateDirectoryListing(const std::string& directoryPath,

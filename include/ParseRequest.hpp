@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <map>
 #include <string>
 
@@ -31,4 +32,5 @@ class ParseRequest {
                            std::string::size_type& bodyStartPos);
   void parseRequestBody(std::string::size_type bodyStartPos);
   std::string trim(const std::string& str) const;
+  void showHttpRequest() const;
 };

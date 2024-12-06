@@ -1,3 +1,4 @@
+// Server.cpp
 #include "Server.hpp"
 
 #include "Location.hpp"
@@ -25,10 +26,13 @@ void Server::setListenFd() {
   resolveHostName();
   this->listenFd = socket(AF_INET, SOCK_STREAM, 0);
   int optval = 1;
-  if (this->listenFd == -1) throw SocketException("socket");
+  if (this->listenFd == -1) {
+    std::cerr << "socket" << std::endl;
+  }
   if (setsockopt(this->listenFd, SOL_SOCKET, SO_REUSEADDR, &optval,
-                 sizeof(optval)) == -1)
-    throw SocketException("setsockopt");
+                 sizeof(optval)) == -1) {
+    std::cerr << "setsockopt" << std::endl;
+  }
   memset(&this->addr, 0, sizeof(this->addr));
   this->addr.sin_family = AF_INET;
   this->addr.sin_port = htons(this->port);
@@ -104,7 +108,8 @@ void Server::resolveHostName() {
 
   status = getaddrinfo(this->name.c_str(), port_str, &hints, &res);
   if (status != 0) {
-    throw SocketException("getaddrinfo: " + std::string(gai_strerror(status)));
+    std::cout << "getaddrinfo: " + std::string(gai_strerror(status))
+              << std::endl;
   }
   memcpy(&this->addr, res->ai_addr, res->ai_addrlen);
   freeaddrinfo(res);
@@ -112,31 +117,31 @@ void Server::resolveHostName() {
 
 void Server::bindSocket() const {
   if (bind(this->listenFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-    // TODO: fix uncaught exception
-    throw SocketException("bind");
+    std::cerr << "bind" << std::endl;
 }
 
 void Server::setToListen() const {
-  if (listen(this->listenFd, SOMAXCONN) == -1) throw SocketException("listen");
+  if (listen(this->listenFd, SOMAXCONN) == -1) {
+    std::cerr << "listen" << std::endl;
+  }
 }
 
 void Server::makeSocketNonBlocking() const {
   int flags = fcntl(this->listenFd, F_GETFL, 0);
-  if (flags == -1) throw SocketException("fcntl");
+  if (flags == -1) {
+    std::cerr << "fcntl" << std::endl;
+  }
   flags |= O_NONBLOCK;
-  if (fcntl(this->listenFd, F_SETFL, flags) == -1)
-    throw SocketException("fcntl");
+  if (fcntl(this->listenFd, F_SETFL, flags) == -1) {
+    std::cerr << "fcntl" << std::endl;
+  }
 }
 
 void Server::paramFd() {
-  try {
-    setListenFd();
-    bindSocket();
-    makeSocketNonBlocking();
-    setToListen();
-  } catch (const SocketException &excp) {
-    std::cerr << "Socket error: " << excp.what() << std::endl;
-  }
+  setListenFd();
+  bindSocket();
+  makeSocketNonBlocking();
+  setToListen();
 }
 
 void Server::addClientToServer(Client *clientToAdd) {

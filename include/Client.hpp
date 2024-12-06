@@ -40,4 +40,5 @@ class Client {
   void prepareForSending();
   void checkConnectionPersistence();
   void handleError(const std::string& functionName);
+  void determineStatusCode();
 };

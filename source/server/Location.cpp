@@ -7,6 +7,7 @@ Location::Location()
       rootDirectory(""),
       indexFile(""),
       redirectionPath(""),
+      uploadDirectory("./www/upload"),
       autoIndex(false),
       getAccepted(true),
       postAccepted(true),
@@ -20,6 +21,7 @@ Location::Location(const Location &src)
       rootDirectory(src.rootDirectory),
       indexFile(src.indexFile),
       redirectionPath(src.redirectionPath),
+      uploadDirectory(src.uploadDirectory),
       autoIndex(src.autoIndex),
       getAccepted(src.getAccepted),
       postAccepted(src.postAccepted),
@@ -34,6 +36,7 @@ Location &Location::operator=(const Location &src) {
     rootDirectory = src.rootDirectory;
     indexFile = src.indexFile;
     redirectionPath = src.redirectionPath;
+    uploadDirectory = src.uploadDirectory;
     autoIndex = src.autoIndex;
     getAccepted = src.getAccepted;
     postAccepted = src.postAccepted;
@@ -104,6 +107,10 @@ bool Location::getDeleteAccepted() const { return this->deleteAccepted; }
 int Location::getClientMaxBodySize() const { return this->clientMaxBodySize; }
 
 int Location::getReturnCode() const { return this->returnCode; }
+
+const std::string &Location::getUploadDirectory() const {
+  return this->uploadDirectory;
+}
 
 const std::vector<std::string> &Location::getPaths() const {
   return this->paths;

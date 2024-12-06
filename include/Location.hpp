@@ -34,6 +34,7 @@ class Location {
   bool getDeleteAccepted() const;
   int getClientMaxBodySize() const;
   int getReturnCode() const;
+  const std::string& getUploadDirectory() const;
   const std::vector<std::string>& getPaths() const;
 
   void displayLocationInfo() const;
@@ -43,6 +44,7 @@ class Location {
   std::string rootDirectory;
   std::string indexFile;
   std::string redirectionPath;
+  std::string uploadDirectory;
   bool autoIndex;
   bool getAccepted;
   bool postAccepted;

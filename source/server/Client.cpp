@@ -15,13 +15,13 @@ static const std::string CONNECTION_HEADER = "Connection";
 static const std::string KEEP_ALIVE = "keep-alive";
 static const std::string HTTP_VERSION = "HTTP/1.1";
 
+Client::~Client() { closeClientSocket(); }
+
 Client::Client(int client_fd, const Server& server)
     : client_fd(client_fd),
       connectionShouldClose(false),
       bytesSent(0),
       server(server) {}
-
-Client::~Client() { closeClientSocket(); }
 
 void Client::closeClientSocket() {
   if (client_fd != -1) {
@@ -36,18 +36,6 @@ void Client::setConnectionShouldClose(bool shouldClose) {
   connectionShouldClose = shouldClose;
 }
 
-void Client::appendToRequestBuffer(const std::string& data) {
-  requestBuffer += data;
-  if (isRequestComplete()) {
-    processRequest();
-    requestBuffer.clear();
-  }
-}
-
-bool Client::isRequestComplete() const {
-  return requestBuffer.find(REQUEST_TERMINATOR) != std::string::npos;
-}
-
 void Client::processRequest() {
   parseRequest();
   handleResponse();
@@ -58,6 +46,10 @@ void Client::parseRequest() {
   ParseRequest parser(requestBuffer);
   request = parser.getParsedRequest();
   connectionShouldClose = false;
+  determineStatusCode();
+}
+
+void Client::determineStatusCode() {
   HttpStatusCodeDeterminer determiner(server);
   determiner.determineStatusCode(request);
 }
@@ -71,6 +63,18 @@ void Client::handleResponse() {
 void Client::prepareForSending() {
   bytesSent = 0;
   checkConnectionPersistence();
+}
+
+void Client::appendToRequestBuffer(const std::string& data) {
+  requestBuffer += data;
+  if (isRequestComplete()) {
+    processRequest();
+    requestBuffer.clear();
+  }
+}
+
+bool Client::isRequestComplete() const {
+  return requestBuffer.find(REQUEST_TERMINATOR) != std::string::npos;
 }
 
 void Client::setResponse(const std::string& response) {
