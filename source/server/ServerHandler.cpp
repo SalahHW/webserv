@@ -221,6 +221,8 @@ void ServerHandler::handleClientRead(int clientFd) {
       } else {
         std::cerr << "[ERROR] Client not found for FD: " << clientFd
                   << std::endl;
+        closeClientConnection(clientFd);
+        break;
       }
     } else if (bytesRead == 0) {
       std::cout << "[INFO] Client " << clientFd << " closed the connection."
@@ -232,7 +234,8 @@ void ServerHandler::handleClientRead(int clientFd) {
         // No more data to read
         break;
       } else {
-        std::cerr << "[ERROR] recv" << std::endl;
+        std::cerr << "[ERROR] recv failed for FD " << clientFd << ": "
+                  << strerror(errno) << std::endl;
         closeClientConnection(clientFd);
         break;
       }
@@ -245,34 +248,41 @@ void ServerHandler::handleClientWrite(int clientFd) {
   std::cout << "[INFO] Handling write for client FD: " << clientFd << std::endl;
   Client* client = findClientByFd(clientFd);
   if (client && client->hasDataToWrite()) {
-    ssize_t result = client->sendData();
-    if (result > 0) {
-      if (!client->hasDataToWrite()) {
-        std::cout << "[DEBUG] All data sent to client " << clientFd
-                  << std::endl;
-        if (client->shouldCloseConnection()) {
-          std::cout << "[INFO] Closing connection for client " << clientFd
+    while (client->hasDataToWrite()) {
+      ssize_t result = client->sendData();
+      if (result > 0) {
+        if (!client->hasDataToWrite()) {
+          std::cout << "[DEBUG] All data sent to client " << clientFd
                     << std::endl;
-          closeClientConnection(clientFd);
-        } else {
-          modifyEpollEvent(clientFd, EPOLLIN | EPOLLET);
-          std::cout << "[DEBUG] Modified epoll events for client " << clientFd
-                    << " to EPOLLIN | EPOLLET." << std::endl;
+          if (client->shouldCloseConnection()) {
+            std::cout << "[INFO] Closing connection for client " << clientFd
+                      << std::endl;
+            closeClientConnection(clientFd);
+            break;
+          } else {
+            modifyEpollEvent(clientFd, EPOLLIN | EPOLLET);
+            std::cout << "[DEBUG] Modified epoll events for client " << clientFd
+                      << " to EPOLLIN | EPOLLET." << std::endl;
+            break;
+          }
         }
-      }
-    } else if (result == 0) {
-      std::cout << "[INFO] Client " << clientFd
-                << " closed the connection during write." << std::endl;
-      closeClientConnection(clientFd);
-    } else {
-      if (errno == EAGAIN || errno == EWOULDBLOCK) {
-        std::cout
-            << "[DEBUG] Non-blocking socket and send would block for client "
-            << clientFd << std::endl;
-      } else {
-        std::cerr << "[ERROR] Error sending data to client " << clientFd << ": "
-                  << strerror(errno) << std::endl;
+      } else if (result == 0) {
+        std::cout << "[INFO] Client " << clientFd
+                  << " closed the connection during write." << std::endl;
         closeClientConnection(clientFd);
+        break;
+      } else {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+          std::cout
+              << "[DEBUG] Non-blocking socket and send would block for client "
+              << clientFd << std::endl;
+          break;  // Cannot send more data now
+        } else {
+          std::cerr << "[ERROR] Error sending data to client " << clientFd
+                    << ": " << strerror(errno) << std::endl;
+          closeClientConnection(clientFd);
+          break;
+        }
       }
     }
   } else {
