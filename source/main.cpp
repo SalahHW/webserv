@@ -20,6 +20,5 @@ int main(int argc, char **argv) {
     return (1);
   }
   ServerHandler serverHandler(server_configuration);
-  serverHandler.displayServerHandlerInfo();
   return (0);
 }
