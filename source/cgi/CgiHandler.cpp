@@ -57,7 +57,7 @@ const std::string CgiHandler::genQueryString() {
         std::string queryString = request.uri.substr(pos + 1).c_str();
         return ("QUERY_STRING=" + queryString);
     }
-    return ("");
+    return ("QUERY_STRING=");
 }
 
 const std::string CgiHandler::genRequestMethod() {
@@ -82,9 +82,136 @@ const std::string CgiHandler::genHttpUserAgent()
 
     for (; mapIt != request.headers.end(); ++mapIt)
     {
-        if (mapIt->first == "")
+        if (mapIt->first == "User-Agent") {
+            std::string userAgent = mapIt->second.c_str();
+            return ("HTTP_USER_AGENT=" + userAgent);
+        }
     }
-    return ("");
+    return ("HTTP_USER_AGENT=");
+}
+
+const std::string CgiHandler::genHttpAccept()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt)
+    {
+        if (mapIt->first == "Accept") {
+            std::string accept = mapIt->second.c_str();
+            return ("HTTP_ACCEPT=" + accept);
+        }
+    }
+    return ("HTTP_ACCEPT=");
+}
+
+const std::string CgiHandler::genHttpAcceptLanguage()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt)
+    {
+        if (mapIt->first == "Accept-Language") {
+            std::string acceptLanguage = mapIt->second.c_str();
+            return ("HTTP_ACCEPT_LANGUAGE=" + acceptLanguage);
+        }
+    }
+    return ("HTTP_ACCEPT_LANGUAGE=");
+}
+
+const std::string CgiHandler::genHttpAcceptEncoding()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt)
+    {
+        if (mapIt->first == "Accept-Encoding") {
+            std::string acceptEncoding = mapIt->second.c_str();
+            return ("HTTP_ACCEPT_ENCODING=" + acceptEncoding);
+        }
+    }
+    return ("HTTP_ACCEPT_ENCODING=");
+}
+
+const std::string CgiHandler::genHttpConnexion()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt) {
+        if (mapIt->first == "Connection") {
+            std::string connection = mapIt->second.c_str();
+            return ("HTTP_CONNECTION=" + connection);
+        }
+    }
+    return ("HTTP_CONNECTION=");
+}
+
+const std::string CgiHandler::genHttpHost()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt)
+    {
+        if (mapIt->first == "Host") {
+            std::string host = mapIt->second.c_str();
+            return ("HTTP_HOST=" + host);
+        }
+    }
+    return ("HTTP_HOST=");
+}
+
+const std::string CgiHandler::genHttpUpgradeInsecureRequests()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt) {
+        if (mapIt->first == "Upgrade-Insecure-Requests") {
+            std::string upgradeInsecureRequests = mapIt->second.c_str();
+            return ("HTTP_UPGRADE_INSECURE_REQUESTS=" + upgradeInsecureRequests);
+        }
+    }
+    return ("HTTP_UPGRADE_INSECURE_REQUESTS=");
+}
+
+const std::string CgiHandler::genHttpSecFetchDest()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt) {
+        if (mapIt->first == "Sec-Fetch-Dest") {
+            std::string secFetchDest = mapIt->second.c_str();
+            return ("HTTP_SEC_FETCH_DEST=" + secFetchDest);
+        }
+    }
+    return ("HTTP_SEC_FETCH_DEST=");
+}
+
+const std::string CgiHandler::genHttpSecFetchMode()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt) {
+        if (mapIt->first == "Sec-Fetch-Mode") {
+            std::string secFetchMode = mapIt->second.c_str();
+            return ("HTTP_SEC_FETCH_MODE=" + secFetchMode);
+        }
+    }
+    return ("HTTP_SEC_FETCH_MODE=");
+}
+
+const std::string CgiHandler::genHttpSecFetchSite()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt) {
+        if (mapIt->first == "Sec-Fetch-Site") {
+            std::string secFetchSite = mapIt->second.c_str();
+            return ("HTTP_SEC_FETCH_SITE=" + secFetchSite);
+        }
+    }
+    return ("HTTP_SEC_FETCH_SITE=");
+}
+
+const std::string CgiHandler::genHttpPriority()
+{
+    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
+    for (; mapIt != request.headers.end(); ++mapIt) {
+        if (mapIt->first == "Priority") {
+            std::string priority = mapIt->second.c_str();
+            return ("HTTP_PRIORITY=" + priority);
+        }
+    }
+    return ("HTTP_PRIORITY=");
 }
 
 const std::string CgiHandler::genPathInfo(const std::string &input)
@@ -120,15 +247,24 @@ const std::string CgiHandler::genContentLenght()
 std::vector<std::string> CgiHandler::buildEnv() {
     // NOT DONE, NEED MORE DETAILS NIGGA
     std::vector<std::string> env;
-    std::string query = this->genQueryString();
 
     env.push_back(this->genRequestMethod());
     // NOT CLEAN
     env.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
     env.push_back(this->genContentLenght());
     env.push_back(this->genServerProtocol());
-    if (!query.empty())
-        env.push_back(query);
+    env.push_back(this->genQueryString());
+    env.push_back(this->genHttpUserAgent());
+    env.push_back(this->genHttpAccept());
+    env.push_back(this->genHttpHost());
+    env.push_back(this->genHttpAcceptLanguage());
+    env.push_back(this->genHttpAcceptEncoding());
+    env.push_back(this->genHttpConnexion());
+    env.push_back(this->genHttpUpgradeInsecureRequests());
+    env.push_back(this->genHttpSecFetchDest());
+    env.push_back(this->genHttpSecFetchMode());
+    env.push_back(this->genHttpSecFetchSite());
+    env.push_back(this->genHttpPriority());
 
     // !!! Try using putenv () --> cstdlib
     return (env);
