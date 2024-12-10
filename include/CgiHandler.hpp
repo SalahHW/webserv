@@ -24,9 +24,9 @@ class CgiHandler
 		const std::string genScriptPath();
 		const std::string genPathInfo(const std::string &input);
 		const std::string convertSizetToString(size_t value);
+		const std::string genHttpUserAgent();
 
 		std::vector<std::string> buildEnv();
-		void	cgiHandler();
 		void printEnv(std::vector<std::string> &env);
 	private:
 		RequestParsed request;

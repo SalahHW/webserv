@@ -248,10 +248,6 @@ void ServerHandler::startToListen() {
 
   // CGI TEST BEGIN //
 
-  CgiHandler testing;
-
-  std::vector<std::string> genEnv = testing.buildEnv();
-  testing.printEnv(genEnv);
 
   // CGI TEST ENDING //
 
