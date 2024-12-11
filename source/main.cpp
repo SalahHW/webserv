@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
     return (1);
   }
   ServerHandler serverHandler(server_configuration);
+  serverHandler.startListening();
   serverHandler.displayServerHandlerInfo();
   return (0);
 }

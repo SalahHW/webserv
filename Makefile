@@ -10,6 +10,8 @@ SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
 							parser/ConfigExtractor.cpp							\
 							server/Client.cpp									\
+							server/Response.cpp									\
+							server/Request.cpp									\
 							server/Server.cpp									\
 							server/ServerHandler.cpp							\
 							server/ParseRequest.cpp								\

@@ -1,17 +1,22 @@
 #include "ResponseHandler.hpp"
 
-#include "HttpStatusCodeDeterminer.hpp"
-#include "ResponseBuilder.hpp"
+#include "Client.hpp"
 
-ResponseHandler::ResponseHandler(RequestParsed &requestParsed,
-                                 const Server &server)
-    : requestParsed(requestParsed), server(server) {}
+ResponseHandler::ResponseHandler(Client& client, const Server& server)
+    : client(client), server(server) {
+  std::cout << "[DEBUG] ResponseHandler initialized for client FD "
+            << client.getClientFd() << std::endl;
+}
 
 ResponseHandler::~ResponseHandler() {}
 
-void ResponseHandler::handleResponse() {
-  ResponseBuilder responseBuilder(requestParsed, server);
-  fullResponse = responseBuilder.buildResponse();
-}
+void ResponseHandler::handleResponse(Request& request, int requestId) {
+  ResponseBuilder responseBuilder(request, server);
+  Response response = responseBuilder.buildResponse();
 
-std::string ResponseHandler::getResponse() const { return fullResponse; }
+  client.getResponseMap()[requestId] = std::make_pair(request, response);
+  client.enqueueResponse(response);
+
+  std::cout << "[DEBUG] Response for request ID " << requestId
+            << " enqueued for client FD " << client.getClientFd() << std::endl;
+}

@@ -1,37 +1,28 @@
-#pragma once
+#ifndef PARSEREQUEST_HPP
+#define PARSEREQUEST_HPP
 
+#include <cstdlib>
 #include <iostream>
-#include <map>
+#include <sstream>
 #include <string>
 
-#include "HttpStatusCode.hpp"
-
-struct RequestParsed {
-  std::string method;
-  std::string uri;
-  std::string version;
-  std::map<std::string, std::string> headers;
-  std::string body;
-  HttpStatusCode statusCode;
-  bool keepAlive;
-};
+#include "Request.hpp"
 
 class ParseRequest {
  public:
-  explicit ParseRequest(const std::string& request);
+  ParseRequest(const std::string& request);
   ~ParseRequest();
 
-  RequestParsed& getParsedRequest();
+  Request getParsedRequest() const;
 
  private:
   std::string request;
-  RequestParsed requestParsed;
+  Request parsedRequest;
 
-  void parseHttpRequest();
-  void findAndParseRequestLine(std::string::size_type& headersStartPos);
-  void findAndParseHeaders(std::string::size_type headersStartPos,
-                           std::string::size_type& bodyStartPos);
-  void parseRequestBody(std::string::size_type bodyStartPos);
+  void parseRequestLine();
+  void parseHeaders();
+  void parseBody();
   std::string trim(const std::string& str) const;
-  void showHttpRequest() const;
 };
+
+#endif  // PARSEREQUEST_HPP

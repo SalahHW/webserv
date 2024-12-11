@@ -1,9 +1,20 @@
-#pragma once
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
 
+#include <errno.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#include <cstring>
+#include <deque>
+#include <iostream>
+#include <map>
 #include <string>
 
-#include "HttpStatusCodeDeterminer.hpp"
 #include "ParseRequest.hpp"
+#include "Request.hpp"
+#include "Response.hpp"
+#include "ResponseHandler.hpp"
 #include "Server.hpp"
 
 class Client {
@@ -12,33 +23,30 @@ class Client {
   ~Client();
 
   int getClientFd() const;
+  size_t getBytesSent() const;
   bool shouldCloseConnection() const;
   void setConnectionShouldClose(bool shouldClose);
 
   void appendToRequestBuffer(const std::string& data);
-  bool hasDataToWrite() const;
-  ssize_t sendData();
+  void processRequests();
+  std::deque<Response> getResponseQueue() const;
+  void sendResponses();
+  bool hasPendingRequests() const;
+  void enqueueResponse(const Response& response);
+
+  std::map<int, std::pair<Request, Response> > getResponseMap() const;
 
  private:
-  Client(const Client& other);
-  Client& operator=(const Client& other);
-
-  int client_fd;
-  RequestParsed request;
-  std::string requestBuffer;
-  std::string responseBuffer;
-  bool connectionShouldClose;
-  size_t bytesSent;
-  const Server& server;
-
-  void processRequest();
-  void setResponse(const std::string& response);
   void closeClientSocket();
-  bool isRequestComplete() const;
-  void parseRequest();
-  void handleResponse();
-  void prepareForSending();
-  void checkConnectionPersistence();
-  void handleError(const std::string& functionName);
-  void determineStatusCode();
+
+  size_t bytesSent;
+  int client_fd;
+  bool connectionShouldClose;
+  int currentRequestId;
+  std::map<int, std::pair<Request, Response> > pendingRequests;
+  std::deque<Response> responseQueue;
+  ResponseHandler* responseHandler;
+  std::string requestBuffer;
 };
+
+#endif  // CLIENT_HPP

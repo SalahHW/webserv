@@ -1,4 +1,3 @@
-// Server.cpp
 #include "Server.hpp"
 
 #include "Location.hpp"

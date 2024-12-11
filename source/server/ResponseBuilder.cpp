@@ -1,190 +1,117 @@
-// ResponseBuilder.cpp
 #include "ResponseBuilder.hpp"
 
-ResponseBuilder::ResponseBuilder(RequestParsed& requestParsed,
-                                 const Server& server)
-    : requestParsed(requestParsed), server(server) {
-  std::cout << "[DEBUG] ResponseBuilder initialized for client." << std::endl;
-}
-
+ResponseBuilder::ResponseBuilder(Request& request, const Server& server)
+    : request(request), server(server), response() {}
 ResponseBuilder::~ResponseBuilder() {}
 
-// ResponseBuilder.cpp
-
-#include <iostream>
-
-#include "ResponseBuilder.hpp"
-
-// Supposons que vous avez une méthode buildResponse dans votre classe
-// ResponseBuilder
-std::string ResponseBuilder::buildResponse() {
-  prepareResponse();  // Prépare les en-têtes et le corps de la réponse
-
-  // Construction des lignes de statut et des en-têtes
-  std::string statusLine =
-      headerBuilder.buildStatusLine();  // Ex: "HTTP/1.1 200 OK\r\n"
-  std::string headers =
-      headerBuilder
-          .buildHeaders();  // Ex: "Content-Length: 5996\r\nContent-Type:
-                            // text/html\r\nConnection: keep-alive\r\n"
-
-  // Détermination de la taille du corps
-  std::size_t bodySize = body.size();
-  headerBuilder.setContentLength(bodySize);  // "Content-Length: 5996\r\n"
-
-  // Reconstruction des en-têtes avec Content-Length mis à jour
-  headers = headerBuilder.buildHeaders();
-
-  // Construction complète de la réponse avec séparation correcte entre en-têtes
-  // et corps
-  std::string response = statusLine + headers + "\r\n" + body;
-
-  // Calcul des tailles pour vérification
-  std::size_t totalResponseSize = response.size();
-  std::size_t expectedTotalSize =
-      statusLine.size() + headers.size() + 2 + body.size();  // 2 pour "\r\n"
-
-  // Vérification de la correspondance des tailles
-  if (totalResponseSize != expectedTotalSize) {
-    std::cerr << "[ERROR] Mismatch in response size: expected "
-              << expectedTotalSize << " bytes, but got " << totalResponseSize
-              << " bytes." << std::endl;
+Response ResponseBuilder::buildResponse() {
+  if (request.getStatusCode() == 0) {
+    prepareSuccessResponse();
+  } else if (request.getStatusCode() == 301 || request.getStatusCode() == 302) {
+    prepareRedirectionResponse();
+  } else if (request.getStatusCode() >= 400 && request.getStatusCode() < 500) {
+    prepareClientErrorResponse();
+  } else if (request.getStatusCode() >= 500) {
+    prepareServerErrorResponse();
+  } else {
+    prepareServerErrorResponse();
   }
-
-  // Log pour débogage
-  std::cout << "[DEBUG] Building response. Status Line: " << statusLine
-            << "Headers:\n"
-            << headers << "Body size: " << body.size() << " bytes."
-            << std::endl;
-
   return response;
 }
 
-// Prepare the response based on the status code
-void ResponseBuilder::prepareResponse() {
-  HttpStatusCode statusCode = requestParsed.statusCode;
-
-  if (statusCode == OK) {
-    prepareSuccessResponse();
-  } else if (statusCode == MOVED_PERMANENTLY || statusCode == FOUND) {
-    prepareRedirectionResponse();
-  } else if (statusCode >= BAD_REQUEST && statusCode < INTERNAL_SERVER_ERROR) {
-    prepareClientErrorResponse();
-  } else if (statusCode >= INTERNAL_SERVER_ERROR) {
-    prepareServerErrorResponse();
-  } else {
-    // Undefined status code, treat as internal server error
-    prepareServerErrorResponse();
-  }
-}
-
-// Prepare a successful (200 OK) response
 void ResponseBuilder::prepareSuccessResponse() {
-  if (!findMatchingLocation(requestParsed.uri, matchingLocation)) {
-    requestParsed.statusCode = PAGE_NOT_FOUND;
+  Location matchingLocation;
+  if (!findMatchingLocation(request.getUri(), matchingLocation)) {
+    request.setStatusCode(404);
     prepareClientErrorResponse();
     return;
   }
 
   std::string relativeUri =
-      requestParsed.uri.substr(matchingLocation.getPath().length());
+      request.getUri().substr(matchingLocation.getPath().length());
   if ((relativeUri.empty() || relativeUri == "/") &&
       !matchingLocation.getIndexFile().empty()) {
     relativeUri = "/" + matchingLocation.getIndexFile();
   }
 
   std::string filePath = matchingLocation.getRootDirectory() + relativeUri;
+  filePath = normalizePath(filePath);
 
   if (!fileExists(filePath)) {
-    requestParsed.statusCode = PAGE_NOT_FOUND;
+    request.setStatusCode(404);
     prepareClientErrorResponse();
     return;
   }
 
   if (isDirectory(filePath)) {
     if (matchingLocation.getAutoIndex()) {
-      body = generateDirectoryListing(filePath, requestParsed.uri);
-      headerBuilder.setContentType("text/html");
+      std::string dirListing =
+          generateDirectoryListing(filePath, request.getUri());
+      response.setBody(dirListing);
+      response.setContentType("text/html");
     } else {
       filePath += "/" + matchingLocation.getIndexFile();
-      serveFile(filePath);
-      return;
+      filePath = normalizePath(filePath);
+      if (!fileExists(filePath)) {
+        request.setStatusCode(404);
+        prepareClientErrorResponse();
+        return;
+      }
+      std::string fileContent = readFile(filePath);
+      response.setBody(fileContent);
+      response.setContentType(getContentType(filePath));
     }
   } else {
-    serveFile(filePath);
+    std::string fileContent = readFile(filePath);
+    response.setBody(fileContent);
+    response.setContentType(getContentType(filePath));
   }
 
-  headerBuilder.setContentLength(body.size());
-  std::cout << "[DEBUG] Set Content-Length to " << body.size() << " bytes."
-            << std::endl;
+  response.setStatusCode(200);
 }
 
-// Serve a static file
-void ResponseBuilder::serveFile(const std::string& filePath) {
-  body = readFile(filePath);
-  headerBuilder.setContentType(getContentType(filePath));
-  headerBuilder.setContentLength(body.size());
-  headerBuilder.setStatusCode(OK);
-  std::cout << "[DEBUG] Serving file: " << filePath
-            << " with size: " << body.size() << " bytes." << std::endl;
-}
-
-// Prepare a redirection response (e.g., 301, 302)
 void ResponseBuilder::prepareRedirectionResponse() {
-  if (!findMatchingLocation(requestParsed.uri, matchingLocation)) {
-    requestParsed.statusCode = INTERNAL_SERVER_ERROR;
+  Location matchingLocation;
+  if (!findMatchingLocation(request.getUri(), matchingLocation)) {
+    request.setStatusCode(500);
     prepareServerErrorResponse();
     return;
   }
 
-  headerBuilder.setStatusCode(requestParsed.statusCode);
-  headerBuilder.addHeader("Location", matchingLocation.getRedirectionPath());
-  body = "<html><body><h1>Redirecting...</h1></body></html>";
-  headerBuilder.setContentLength(body.size());
-  headerBuilder.setContentType("text/html");
-  std::cout << "[DEBUG] Prepared redirection response with status code "
-            << requestParsed.statusCode << " to "
-            << matchingLocation.getRedirectionPath() << std::endl;
+  response.setStatusCode(request.getStatusCode());
+  response.addHeader("Location", matchingLocation.getRedirectionPath());
+  response.setBody("<html><body><h1>Redirecting...</h1></body></html>");
+  response.setContentType("text/html");
 }
 
-// Prepare a client error response (e.g., 404 Not Found)
 void ResponseBuilder::prepareClientErrorResponse() {
-  headerBuilder.setStatusCode(requestParsed.statusCode);
+  response.setStatusCode(request.getStatusCode());
 
-  const std::map<int, std::string>& errorPages = server.getErrorPages();
-  std::map<int, std::string>::const_iterator it =
-      errorPages.find(requestParsed.statusCode);
+  std::map<int, std::string> errorPages = server.getErrorPages();
+  std::map<int, std::string>::iterator it =
+      errorPages.find(request.getStatusCode());
   if (it != errorPages.end()) {
-    const std::string& errorPagePath = it->second;
-    body = readFile(errorPagePath);
-    if (body.empty()) {
-      body = generateDefaultErrorPage(requestParsed.statusCode);
-      headerBuilder.setContentType("text/html");
+    std::string errorContent = readFile(it->second);
+    if (!errorContent.empty()) {
+      response.setBody(errorContent);
+      response.setContentType("text/html");
     } else {
-      headerBuilder.setContentType(getContentType(errorPagePath));
+      response.setBody(generateDefaultErrorPage(request.getStatusCode()));
+      response.setContentType("text/html");
     }
   } else {
-    body = generateDefaultErrorPage(requestParsed.statusCode);
-    headerBuilder.setContentType("text/html");
+    response.setBody(generateDefaultErrorPage(request.getStatusCode()));
+    response.setContentType("text/html");
   }
-
-  headerBuilder.setContentLength(body.size());
-  std::cout << "[DEBUG] Prepared client error response with status code "
-            << requestParsed.statusCode << std::endl;
 }
 
-// Prepare a server error response (e.g., 500 Internal Server Error)
 void ResponseBuilder::prepareServerErrorResponse() {
-  headerBuilder.setStatusCode(INTERNAL_SERVER_ERROR);
-  body = "<html><body><h1>500 Internal Server Error</h1></body></html>";
-  headerBuilder.setContentLength(body.size());
-  headerBuilder.setContentType("text/html");
-  std::cout
-      << "[DEBUG] Prepared server error response (500 Internal Server Error)."
-      << std::endl;
+  response.setStatusCode(500);
+  response.setBody(
+      "<html><body><h1>500 Internal Server Error</h1></body></html>");
+  response.setContentType("text/html");
 }
 
-// Find the best matching location based on URI
 bool ResponseBuilder::findMatchingLocation(const std::string& uri,
                                            Location& matchingLocation) {
   const std::map<std::string, Location>& locations = server.getLocations();
@@ -205,7 +132,6 @@ bool ResponseBuilder::findMatchingLocation(const std::string& uri,
   return found;
 }
 
-// Check if a path is a directory
 bool ResponseBuilder::isDirectory(const std::string& path) const {
   struct stat s;
   if (stat(path.c_str(), &s) == 0) {
@@ -214,7 +140,6 @@ bool ResponseBuilder::isDirectory(const std::string& path) const {
   return false;
 }
 
-// Generate a directory listing in HTML format
 std::string ResponseBuilder::generateDirectoryListing(
     const std::string& directoryPath, const std::string& uri) const {
   std::ostringstream html;
@@ -222,15 +147,13 @@ std::string ResponseBuilder::generateDirectoryListing(
 
   DIR* dir = opendir(directoryPath.c_str());
   if (!dir) {
-    std::cerr << "[ERROR] Failed to open directory: " << directoryPath
-              << std::endl;
     return "<html><body><h1>403 Forbidden</h1></body></html>";
   }
 
   struct dirent* entry;
   while ((entry = readdir(dir)) != NULL) {
     std::string name = entry->d_name;
-    if (name == ".") continue;  // Skip current directory
+    if (name == ".") continue;
     std::string link = uri;
     if (!link.empty() && link[link.size() - 1] != '/') {
       link += '/';
@@ -241,17 +164,13 @@ std::string ResponseBuilder::generateDirectoryListing(
 
   closedir(dir);
   html << "</ul></body></html>";
-  std::cout << "[DEBUG] Generated directory listing for " << directoryPath
-            << std::endl;
   return html.str();
 }
 
-// Read the content of a file into a string
 std::string ResponseBuilder::readFile(const std::string& filePath) const {
   std::ifstream file(filePath.c_str(),
                      std::ios::in | std::ios::binary | std::ios::ate);
   if (!file.is_open()) {
-    std::cerr << "[ERROR] Failed to open file: " << filePath << std::endl;
     return "";
   }
 
@@ -264,7 +183,6 @@ std::string ResponseBuilder::readFile(const std::string& filePath) const {
   return result;
 }
 
-// Determine the Content-Type based on file extension
 std::string ResponseBuilder::getContentType(const std::string& filePath) const {
   size_t dotPos = filePath.find_last_of('.');
   if (dotPos == std::string::npos) {
@@ -287,22 +205,45 @@ std::string ResponseBuilder::getContentType(const std::string& filePath) const {
   } else if (extension == "txt") {
     return "text/plain";
   }
-  // Add more as needed
   return "application/octet-stream";
 }
 
-// Generate a default error page in HTML
 std::string ResponseBuilder::generateDefaultErrorPage(int statusCode) const {
   std::ostringstream oss;
-  oss << "<html><body><h1>" << statusCode << " "
-      << headerBuilder.getReasonPhrase(statusCode) << "</h1></body></html>";
-  std::cout << "[DEBUG] Generated default error page for status code "
-            << statusCode << std::endl;
+  oss << "<html><body><h1>" << statusCode << " ";
+
+  std::string reasonPhrase;
+  switch (statusCode) {
+    case 400:
+      reasonPhrase = "Bad Request";
+      break;
+    case 403:
+      reasonPhrase = "Forbidden";
+      break;
+    case 404:
+      reasonPhrase = "Not Found";
+      break;
+    case 500:
+      reasonPhrase = "Internal Server Error";
+      break;
+    default:
+      reasonPhrase = "Error";
+      break;
+  }
+  oss << reasonPhrase << "</h1></body></html>";
   return oss.str();
 }
 
-// Check if a file exists
 bool ResponseBuilder::fileExists(const std::string& filePath) const {
   struct stat buffer;
   return (stat(filePath.c_str(), &buffer) == 0);
+}
+
+std::string ResponseBuilder::normalizePath(const std::string& path) const {
+  std::string normalizedPath = path;
+  size_t pos;
+  while ((pos = normalizedPath.find("//")) != std::string::npos) {
+    normalizedPath.replace(pos, 2, "/");
+  }
+  return normalizedPath;
 }

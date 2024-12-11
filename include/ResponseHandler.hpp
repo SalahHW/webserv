@@ -1,21 +1,23 @@
-#pragma once
+#ifndef RESPONSEHANDLER_HPP
+#define RESPONSEHANDLER_HPP
 
-#include "HeaderBuilder.hpp"
-#include "HttpStatusCode.hpp"
-#include "Location.hpp"
-#include "ParseRequest.hpp"
-#include "Server.hpp"
+#include <iostream>
+
+#include "Request.hpp"
+#include "Response.hpp"
+#include "ResponseBuilder.hpp"
 
 class ResponseHandler {
  public:
-  ResponseHandler(RequestParsed& requestParsed, const Server& server);
+  ResponseHandler(Client& client, const Server& server);
   ~ResponseHandler();
 
-  void handleResponse();
-  std::string getResponse() const;
+  void handleResponse(Request& request, int requestId);
 
  private:
-  RequestParsed& requestParsed;
+  Client& client;
   const Server& server;
-  std::string fullResponse;
 };
+
+#endif  // RESPONSEHANDLER_HPP
+#

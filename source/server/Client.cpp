@@ -1,135 +1,122 @@
 #include "Client.hpp"
 
-#include <sys/socket.h>
-#include <unistd.h>
-
-#include <cerrno>
-#include <cstring>
-#include <iostream>
-
-#include "ParseRequest.hpp"
 #include "ResponseHandler.hpp"
-
-static const std::string REQUEST_TERMINATOR = "\r\n\r\n";
-static const std::string CONNECTION_HEADER = "Connection";
-static const std::string KEEP_ALIVE = "keep-alive";
-static const std::string HTTP_VERSION = "HTTP/1.1";
-
-Client::~Client() { closeClientSocket(); }
+#include "Server.hpp"
 
 Client::Client(int client_fd, const Server& server)
-    : client_fd(client_fd),
+    : bytesSent(0),
+      client_fd(client_fd),
       connectionShouldClose(false),
-      bytesSent(0),
-      server(server) {}
+      currentRequestId(0),
+      pendingRequests(),
+      responseQueue(),
+      responseHandler(new ResponseHandler(*this, server)),
+      requestBuffer("") {
+  std::cout << "[DEBUG] Client initialized with FD: " << client_fd << std::endl;
+}
+
+Client::~Client() {
+  delete responseHandler;
+  closeClientSocket();
+}
 
 void Client::closeClientSocket() {
   if (client_fd != -1) {
     close(client_fd);
+    std::cout << "[DEBUG] Client FD " << client_fd << " closed." << std::endl;
     client_fd = -1;
   }
 }
 
 int Client::getClientFd() const { return client_fd; }
-bool Client::shouldCloseConnection() const { return !request.keepAlive; }
+
+size_t Client::getBytesSent() const { return bytesSent; }
+
+bool Client::shouldCloseConnection() const { return connectionShouldClose; }
+
 void Client::setConnectionShouldClose(bool shouldClose) {
   connectionShouldClose = shouldClose;
-}
-
-void Client::processRequest() {
-  parseRequest();
-  handleResponse();
-  prepareForSending();
-}
-
-void Client::parseRequest() {
-  ParseRequest parser(requestBuffer);
-  request = parser.getParsedRequest();
-  connectionShouldClose = false;
-  determineStatusCode();
-}
-
-void Client::determineStatusCode() {
-  HttpStatusCodeDeterminer determiner(server);
-  determiner.determineStatusCode(request);
-}
-
-void Client::handleResponse() {
-  ResponseHandler responseHandler(request, server);
-  responseHandler.handleResponse();
-  setResponse(responseHandler.getResponse());
-}
-
-void Client::prepareForSending() {
-  bytesSent = 0;
-  checkConnectionPersistence();
+  std::cout << "[DEBUG] Set connection close: " << shouldClose
+            << " for client FD " << client_fd << std::endl;
 }
 
 void Client::appendToRequestBuffer(const std::string& data) {
   requestBuffer += data;
   std::cout << "[DEBUG] Appended " << data.size()
             << " bytes to request buffer for client " << client_fd << std::endl;
-  if (isRequestComplete()) {
-    std::cout << "[INFO] Complete request received from client " << client_fd
-              << ". Processing request." << std::endl;
-    processRequest();
-    requestBuffer.clear();
+  processRequests();
+}
+
+void Client::processRequests() {
+  size_t pos;
+  while ((pos = requestBuffer.find("\r\n\r\n")) != std::string::npos) {
+    std::string singleRequest = requestBuffer.substr(0, pos + 4);
+    requestBuffer.erase(0, pos + 4);
+    std::cout << "[DEBUG] Processing request for client FD " << client_fd
+              << std::endl;
+    ParseRequest parser(singleRequest);
+    Request request = parser.getParsedRequest();
+    pendingRequests[++currentRequestId] = std::make_pair(request, Response());
+    responseHandler->handleResponse(request, currentRequestId);
   }
 }
 
-bool Client::isRequestComplete() const {
-  return requestBuffer.find(REQUEST_TERMINATOR) != std::string::npos;
+std::deque<Response> Client::getResponseQueue() const { return responseQueue; }
+
+std::map<int, std::pair<Request, Response> > Client::getResponseMap() const {
+  return pendingRequests;
 }
 
-void Client::setResponse(const std::string& response) {
-  responseBuffer = response;
-}
+void Client::sendResponses() {
+  while (!responseQueue.empty()) {
+    Response& response = responseQueue.front();
+    std::string responseStr = response.toString();
+    const char* responseData = responseStr.c_str();
+    size_t totalSize = responseStr.size();
 
-void Client::checkConnectionPersistence() {
-  std::map<std::string, std::string>::const_iterator it =
-      request.headers.find(CONNECTION_HEADER);
-  if (it != request.headers.end() && it->second == KEEP_ALIVE &&
-      request.version == HTTP_VERSION) {
-    setConnectionShouldClose(false);
-  } else {
-    setConnectionShouldClose(true);
-  }
-}
+    std::cout << "[DEBUG] Preparing to send " << totalSize
+              << " bytes to client " << client_fd << std::endl;
 
-bool Client::hasDataToWrite() const {
-  return bytesSent < responseBuffer.size();
-}
-
-ssize_t Client::sendData() {
-  ssize_t result = send(client_fd, responseBuffer.c_str() + bytesSent,
-                        responseBuffer.size() - bytesSent, 0);
-  if (result > 0) {
-    bytesSent += result;
-    std::cout << "[DEBUG] Sent " << result << " bytes to client " << client_fd
-              << ". Total sent: " << bytesSent << "/" << responseBuffer.size()
-              << " bytes." << std::endl;
-    if (bytesSent > responseBuffer.size()) {
-      std::cerr << "[ERROR] bytesSent (" << bytesSent
-                << ") exceeds responseBuffer size (" << responseBuffer.size()
-                << ") for client " << client_fd << std::endl;
-      connectionShouldClose = true;
+    while (bytesSent < totalSize) {
+      ssize_t result =
+          send(client_fd, responseData + bytesSent, totalSize - bytesSent, 0);
+      if (result > 0) {
+        bytesSent += result;
+        std::cout << "[DEBUG] Sent " << result << " bytes to client "
+                  << client_fd << ". Total sent: " << bytesSent << "/"
+                  << totalSize << " bytes." << std::endl;
+      } else if (result == -1) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+          std::cout
+              << "[DEBUG] Socket not ready for sending more data for client "
+              << client_fd << std::endl;
+          return;
+        } else {
+          std::cout << "[DEBUG] send failed for FD " << client_fd << ": "
+                    << strerror(errno) << std::endl;
+          setConnectionShouldClose(true);
+          return;
+        }
+      }
     }
-  } else if (result == -1) {
-    if (errno != EAGAIN && errno != EWOULDBLOCK) {
-      std::cerr << "[ERROR] send failed for FD " << client_fd << ": "
-                << strerror(errno) << std::endl;
-      connectionShouldClose = true;
+
+    if (bytesSent >= totalSize) {
+      responseQueue.pop_front();
+      bytesSent = 0;
+      std::cout << "[DEBUG] Completed sending response to client " << client_fd
+                << std::endl;
+      if (shouldCloseConnection()) {
+        closeClientSocket();
+        return;
+      }
     }
-  } else {
-    // result == 0, connection closed by client
-    std::cout << "[INFO] Client " << client_fd
-              << " closed the connection during send." << std::endl;
-    connectionShouldClose = true;
   }
-  return result;
 }
 
-void Client::handleError(const std::string& functionName) {
-  std::cerr << "Error in " << functionName << ": " << strerror(errno)
+bool Client::hasPendingRequests() const { return !pendingRequests.empty(); }
+
+void Client::enqueueResponse(const Response& response) {
+  responseQueue.push_back(response);
+  std::cout << "[DEBUG] Response enqueued for client FD " << client_fd
             << std::endl;
 }

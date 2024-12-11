@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef SERVER_HPP
+#define SERVER_HPP
 #include <fcntl.h>       // Pour fcntl
 #include <netdb.h>       // Pour getaddrinfo, freeaddrinfo, gai_strerror
 #include <netinet/in.h>  // Pour sockaddr_in, INADDR_ANY
@@ -11,9 +11,12 @@
 #include <cstdio>    // pour sprintf
 #include <iostream>  // Pour std::cerr
 #include <map>
+#include <string>
 #include <vector>
 
-class Location;
+#include "Location.hpp"
+
+// Forward declaration of Client class
 class Client;
 
 class Server {
@@ -42,6 +45,7 @@ class Server {
 
   void paramFd();
   void addClientToServer(Client* clientToAdd);
+  void addClient(Client* client);
 
   std::map<int, Client*>& getClientsList();
   std::map<std::string, Location> getLocations() const;
@@ -54,9 +58,12 @@ class Server {
   std::map<int, std::string> errorPages;
   std::map<std::string, Location> locations;
   std::map<int, Client*> clientsList;
+  std::vector<Client*> clients;
   struct sockaddr_in addr;
   void resolveHostName();
   void bindSocket() const;
   void setToListen() const;
   void makeSocketNonBlocking() const;
 };
+
+#endif  // SERVER_HPP
