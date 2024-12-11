@@ -29,6 +29,8 @@
     //SERVER_PROTOCOL
     //SERVER_SOFTWARE
 
+    //  [virtual path][extra path information]?[query string]
+
 #include "CgiHandler.hpp"
 
 CgiHandler::CgiHandler() {
@@ -224,9 +226,10 @@ const std::string CgiHandler::genPathInfo(const std::string &input)
         std::string::size_type nextSlashPos = input.find('/', markerPos + marker.length());
         if (nextSlashPos != std::string::npos) {
             pathInfo = input.substr(nextSlashPos + 1);
+            return ("PATH_INFO=" + pathInfo);
         }
     }
-    return ("PATH_INFO=" + pathInfo);
+    return ("PATH_INFO=");
 }
 
 const std::string CgiHandler::genContentLenght()
@@ -244,12 +247,11 @@ const std::string CgiHandler::genContentLenght()
     return ("CONTENT_LENGHT=" + this->convertSizetToString(static_cast<size_t>(size)));
 }
 
-std::vector<std::string> CgiHandler::buildEnv() {
-    // NOT DONE, NEED MORE DETAILS NIGGA
+std::vector<std::string> CgiHandler::buildEnv()
+{
     std::vector<std::string> env;
 
     env.push_back(this->genRequestMethod());
-    // NOT CLEAN
     env.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
     env.push_back(this->genContentLenght());
     env.push_back(this->genServerProtocol());
@@ -266,8 +268,27 @@ std::vector<std::string> CgiHandler::buildEnv() {
     env.push_back(this->genHttpSecFetchSite());
     env.push_back(this->genHttpPriority());
 
-    // !!! Try using putenv () --> cstdlib
     return (env);
+}
+
+void CgiHandler::CgiExecution()
+{
+    std::vector<std::string> env = this->buildEnv();
+    char **envArray = new char*[env.size() + 1];
+    envArray[env.size()] = nullptr;
+    const char *scriptPath = "/path/to/cgi.py";
+    char *const args[] = {const_cast<char *>(scriptPath), nullptr};
+
+    for (int i = 0; i < env.size(); i++)
+    {
+        envArray[i] = new char[env[i].size() + 1];
+        std::strcpy(envArray[i], env[i].c_str());
+    }
+
+    for (std::size_t i = 0; i < env.size(); i++)
+        delete[] envArray[i];
+    delete[] envArray;
+
 }
 
 void CgiHandler::printEnv(std::vector<std::string> &env)
@@ -275,6 +296,6 @@ void CgiHandler::printEnv(std::vector<std::string> &env)
     // FOR DEBUG, DELETE LATER
     std::vector<std::string>::iterator vec_it;
     for (vec_it = env.begin(); vec_it != env.end(); vec_it++) {
-        std::cout << *vec_it << std::endl;
+        std::cout << "[DEBUG] : " << *vec_it << std::endl;
     }
 }

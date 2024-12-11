@@ -37,6 +37,7 @@ class CgiHandler
 		const std::string genHttpPriority();
 
 		std::vector<std::string> buildEnv();
+		void CgiExecution();
 		void printEnv(std::vector<std::string> &env);
 	private:
 		RequestParsed request;
