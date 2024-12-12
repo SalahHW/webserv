@@ -1,5 +1,6 @@
 #include "Server.hpp"
 
+#include "Client.hpp"
 #include "Location.hpp"
 #include "ServerHandler.hpp"
 

@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include <cstring>
+#include <ctime>
 #include <deque>
 #include <iostream>
 #include <map>
@@ -17,13 +18,15 @@
 #include "ResponseHandler.hpp"
 #include "Server.hpp"
 
+class ServerHandler;
+
 class Client {
  public:
-  Client(int client_fd, const Server& server);
+  Client(int client_fd, const Server& server, ServerHandler* handler);
   ~Client();
 
   int getClientFd() const;
-  size_t getBytesSent() const;
+  std::string getHeader(const std::string& header) const;
   bool shouldCloseConnection() const;
   void setConnectionShouldClose(bool shouldClose);
 
@@ -36,17 +39,29 @@ class Client {
 
   std::map<int, std::pair<Request, Response> > getResponseMap() const;
 
- private:
+  bool isTimedOut(time_t currentTime, int timeoutDuration) const;
+
+  void updateLastActivity();
   void closeClientSocket();
 
-  size_t bytesSent;
+  void notifyAndDelete();
+
+ private:
   int client_fd;
   bool connectionShouldClose;
+  bool pendingClose;
   int currentRequestId;
   std::map<int, std::pair<Request, Response> > pendingRequests;
   std::deque<Response> responseQueue;
   ResponseHandler* responseHandler;
   std::string requestBuffer;
+
+  time_t lastActivity;
+
+  ServerHandler* serverHandler;
+
+  Client(const Client&);
+  Client& operator=(const Client&);
 };
 
 #endif  // CLIENT_HPP

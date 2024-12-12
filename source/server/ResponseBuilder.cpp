@@ -16,6 +16,7 @@ Response ResponseBuilder::buildResponse() {
   } else {
     prepareServerErrorResponse();
   }
+  response.initialize();
   return response;
 }
 

@@ -32,6 +32,11 @@ const std::map<std::string, std::string>& Request::getHeaders() const {
   return headers;
 }
 
+const std::string& Request::getHeader(const std::string& header) const {
+  std::map<std::string, std::string>::const_iterator it = headers.find(header);
+  return it->second;
+}
+
 const std::string& Request::getBody() const { return body; }
 
 bool Request::isKeepAlive() const { return keepAlive; }

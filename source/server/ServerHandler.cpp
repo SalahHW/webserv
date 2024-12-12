@@ -1,5 +1,7 @@
 #include "ServerHandler.hpp"
 
+#include "Client.hpp"
+
 ServerHandler::ServerHandler(const ConfigFile& configFile) {
   std::cout << "[DEBUG] Initializing ServerHandler" << std::endl;
   serversList = ConfigExtractor::extractServers(configFile);
@@ -59,33 +61,42 @@ void ServerHandler::startListening() {
   struct epoll_event events[MAX_EVENTS];
   std::cout << "[DEBUG] Starting to listen for events..." << std::endl;
 
-  while (1) {  // Boucle infinie pour écouter les événements
-    nbEvents = epoll_wait(epollFd, events, MAX_EVENTS, -1);
+  while (1) {
+    checkClientTimeouts();
+
+    nbEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
     if (nbEvents == -1) {
       if (errno == EINTR) {
-        continue;  // Interruption par un signal, on relance l'attente
+        std::cout << "[DEBUG] epoll_wait interrupted by signal." << std::endl;
+        continue;
       }
-      std::cerr << "[DEBUG] epoll_wait failed: " << strerror(errno)
+      std::cerr << "[ERROR] epoll_wait failed: " << strerror(errno)
                 << std::endl;
       break;
     }
 
     for (int i = 0; i < nbEvents; ++i) {
-      int currentFd = events[i].data.fd;
-      uint32_t eventFlags = events[i].events;
+      int eventFd = events[i].data.fd;
+      if (serversList.find(eventFd) != serversList.end()) {
+        handleNewConnection(serversList[eventFd]);
+      } else {
+        Client* client = findClientByFd(eventFd);
+        if (!client) {
+          std::cout << "[DEBUG] Client pointer is NULL for FD "
+                    << events[i].data.fd << std::endl;
+          continue;
+        }
+        uint32_t eventFlags = events[i].events;
 
-      if (serversList.find(currentFd) != serversList.end()) {
-        // Nouvelle connexion sur un FD de serveur
-        handleNewConnection(serversList[currentFd]);
-      } else if (eventFlags & EPOLLIN) {
-        // Lecture possible
-        handleClientRead(currentFd);
-      } else if (eventFlags & EPOLLOUT) {
-        // Écriture possible
-        handleClientWrite(currentFd);
-      } else if (eventFlags & (EPOLLHUP | EPOLLERR)) {
-        // Erreur ou fermeture
-        closeClientConnection(currentFd);
+        if (eventFlags & EPOLLIN) {
+          handleClientRead(client);
+        }
+        if (eventFlags & EPOLLOUT) {
+          handleClientWrite(client);
+        }
+        if (eventFlags & (EPOLLHUP | EPOLLERR)) {
+          client->notifyAndDelete();
+        }
       }
     }
   }
@@ -133,34 +144,33 @@ void ServerHandler::handleNewConnection(Server& server) {
     return;
   }
 
-  Client* client = new Client(clientFd, server);
+  Client* client = new Client(clientFd, server, this);
   server.addClientToServer(client);
   std::cout << "[DEBUG] New client connected with FD: " << clientFd
             << std::endl;
 
+  addClientToEpoll(client, server);
+}
+
+void ServerHandler::addClientToEpoll(Client* client, Server& server) {
   struct epoll_event event;
   event.events = EPOLLIN | EPOLLET;
-  event.data.fd = clientFd;
-  if (epoll_ctl(epollFd, EPOLL_CTL_ADD, clientFd, &event) == -1) {
-    std::cout << "[DEBUG] epoll_ctl ADD client failed for FD " << clientFd
-              << ": " << strerror(errno) << std::endl;
-    close(clientFd);
-    server.getClientsList().erase(clientFd);
+  event.data.fd = client->getClientFd();
+  if (epoll_ctl(epollFd, EPOLL_CTL_ADD, client->getClientFd(), &event) == -1) {
+    std::cout << "[DEBUG] epoll_ctl ADD client failed for FD "
+              << client->getClientFd() << ": " << strerror(errno) << std::endl;
+    close(client->getClientFd());
+    server.getClientsList().erase(client->getClientFd());
     delete client;
     return;
   }
-  std::cout << "[DEBUG] Client FD " << clientFd
+  std::cout << "[DEBUG] Client FD " << client->getClientFd()
             << " ajouté à epoll avec EPOLLIN | EPOLLET." << std::endl;
 }
 
-void ServerHandler::handleClientRead(int clientFd) {
+void ServerHandler::handleClientRead(Client* client) {
+  int clientFd = client->getClientFd();
   std::cout << "[DEBUG] Handling read for client FD: " << clientFd << std::endl;
-  Client* client = findClientByFd(clientFd);
-  if (!client) {
-    std::cout << "[DEBUG] Client not found for FD: " << clientFd << std::endl;
-    closeClientConnection(clientFd);
-    return;
-  }
 
   char buffer[2048];
   while (true) {
@@ -173,7 +183,7 @@ void ServerHandler::handleClientRead(int clientFd) {
     } else if (bytesRead == 0) {
       std::cout << "[DEBUG] Client " << clientFd << " closed the connection."
                 << std::endl;
-      closeClientConnection(clientFd);
+      client->setConnectionShouldClose(true);
       break;
     } else if (bytesRead == -1) {
       if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -181,67 +191,48 @@ void ServerHandler::handleClientRead(int clientFd) {
       } else {
         std::cout << "[DEBUG] recv failed for FD " << clientFd << ": "
                   << strerror(errno) << std::endl;
-        closeClientConnection(clientFd);
+        client->notifyAndDelete();
         break;
       }
     }
   }
 
   if (client->hasPendingRequests()) {
-    modifyEpollEvent(clientFd, EPOLLIN | EPOLLOUT | EPOLLET);
+    modifyEpollEvent(client, EPOLLIN | EPOLLOUT | EPOLLET);
     std::cout << "[DEBUG] Modified epoll events for client " << clientFd
               << " to include EPOLLOUT." << std::endl;
   }
 }
 
-void ServerHandler::handleClientWrite(int clientFd) {
+void ServerHandler::handleClientWrite(Client* client) {
+  int clientFd = client->getClientFd();
   std::cout << "[DEBUG] Handling write for client FD: " << clientFd
             << std::endl;
-  Client* client = findClientByFd(clientFd);
-  if (!client) {
-    std::cout << "[DEBUG] Client not found for FD: " << clientFd << std::endl;
-    closeClientConnection(clientFd);
-    return;
-  }
   client->sendResponses();
-  if (client->shouldCloseConnection()) {
-    std::cout << "[DEBUG] Closing connection for client " << clientFd
-              << std::endl;
-    closeClientConnection(clientFd);
-  } else if (!client->hasPendingRequests()) {
-    modifyEpollEvent(clientFd, EPOLLIN | EPOLLET);
+  if (client->getResponseQueue().empty()) {
+    modifyEpollEvent(client, EPOLLIN | EPOLLET);
+    std::cout << "[DEBUG] Modified epoll events for client " << clientFd
+              << " to include EPOLLIN." << std::endl;
   }
 }
 
-void ServerHandler::closeClientConnection(int clientFd) {
-  std::cout << "[DEBUG] Closing connection for client FD: " << clientFd
-            << std::endl;
-
-  if (epoll_ctl(epollFd, EPOLL_CTL_DEL, clientFd, NULL) == -1) {
-    std::cout << "[DEBUG] epoll_ctl DEL failed for FD " << clientFd << ": "
+void ServerHandler::removeClient(int fd) {
+  if (epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, NULL) == -1) {
+    std::cout << "[DEBUG] epoll_ctl DEL failed for FD " << fd << ": "
               << strerror(errno) << std::endl;
   } else {
-    std::cout << "[DEBUG] FD " << clientFd << " removed de epoll." << std::endl;
-  }
-
-  if (close(clientFd) == -1) {
-    std::cout << "[DEBUG] Failed to close client FD " << clientFd << ": "
-              << strerror(errno) << std::endl;
-  } else {
-    std::cout << "[DEBUG] Socket for client FD " << clientFd << " closed."
-              << std::endl;
+    std::cout << "[DEBUG] FD " << fd << " removed from epoll." << std::endl;
   }
 
   for (std::map<int, Server>::iterator serverIt = serversList.begin();
        serverIt != serversList.end(); ++serverIt) {
     Server& server = serverIt->second;
     std::map<int, Client*>& clients = server.getClientsList();
-    std::map<int, Client*>::iterator clientIt = clients.find(clientFd);
+    std::map<int, Client*>::iterator clientIt = clients.find(fd);
     if (clientIt != clients.end()) {
-      delete clientIt->second;
       clients.erase(clientIt);
-      std::cout << "[DEBUG] Client FD " << clientFd
-                << " removed de la liste des clients du serveur." << std::endl;
+      std::cout << "[DEBUG] Client FD " << fd
+                << " removed from the server's client list." << std::endl;
       break;
     }
   }
@@ -260,15 +251,38 @@ Client* ServerHandler::findClientByFd(int clientFd) {
   return NULL;
 }
 
-void ServerHandler::modifyEpollEvent(int fd, uint32_t events) {
+void ServerHandler::modifyEpollEvent(Client* client, uint32_t events) {
   struct epoll_event event;
   event.events = events;
-  event.data.fd = fd;
-  if (epoll_ctl(epollFd, EPOLL_CTL_MOD, fd, &event) == -1) {
-    std::cout << "[DEBUG] epoll_ctl MOD failed for FD " << fd << ": "
-              << strerror(errno) << std::endl;
+  event.data.fd = client->getClientFd();
+  if (epoll_ctl(epollFd, EPOLL_CTL_MOD, client->getClientFd(), &event) == -1) {
+    std::cout << "[DEBUG] epoll_ctl MOD failed for FD " << client->getClientFd()
+              << ": " << strerror(errno) << std::endl;
   } else {
-    std::cout << "[DEBUG] Modified epoll events for FD " << fd << " to "
-              << events << std::endl;
+    std::cout << "[DEBUG] Modified epoll events for FD "
+              << client->getClientFd() << " to " << events << std::endl;
+  }
+}
+
+void ServerHandler::checkClientTimeouts() {
+  time_t currentTime = time(NULL);
+  for (std::map<int, Server>::iterator serverIt = serversList.begin();
+       serverIt != serversList.end(); ++serverIt) {
+    Server& server = serverIt->second;
+    std::map<int, Client*>& clients = server.getClientsList();
+
+    for (std::map<int, Client*>::iterator clientIt = clients.begin();
+         clientIt != clients.end();) {
+      Client* client = clientIt->second;
+      if (client->isTimedOut(currentTime, CLIENT_TIMEOUT)) {
+        std::cout << "[DEBUG] Client FD " << client->getClientFd()
+                  << " timed out." << std::endl;
+        ++clientIt;
+        client->setConnectionShouldClose(true);
+        client->notifyAndDelete();
+      } else {
+        ++clientIt;
+      }
+    }
   }
 }

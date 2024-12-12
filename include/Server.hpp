@@ -16,7 +16,6 @@
 
 #include "Location.hpp"
 
-// Forward declaration of Client class
 class Client;
 
 class Server {

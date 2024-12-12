@@ -3,10 +3,22 @@
 #include <sstream>
 
 Response::Response()
-    : statusCode(200), reasonPhrase("OK"), httpVersion("HTTP/1.1") {}
+    : fullResponse(""),
+      bytesSent(0),
+      statusCode(200),
+      reasonPhrase("OK"),
+      httpVersion("HTTP/1.1"),
+      headers(),
+      body("") {}
 
 Response::Response(int code, const std::string& phrase)
-    : statusCode(code), reasonPhrase(phrase), httpVersion("HTTP/1.1") {}
+    : fullResponse(""),
+      bytesSent(0),
+      statusCode(code),
+      reasonPhrase(phrase),
+      httpVersion("HTTP/1.1"),
+      headers(),
+      body("") {}
 
 Response::~Response() {}
 
@@ -39,7 +51,7 @@ void Response::setHttpVersion(const std::string& version) {
   httpVersion = version;
 }
 
-std::string Response::toString() const {
+void Response::buildFullResponse() {
   std::ostringstream responseStream;
   responseStream << httpVersion << " " << statusCode << " " << reasonPhrase
                  << "\r\n";
@@ -49,5 +61,20 @@ std::string Response::toString() const {
   }
   responseStream << "\r\n";
   responseStream << body;
-  return responseStream.str();
+  fullResponse = responseStream.str();
 }
+
+void Response::initialize() { buildFullResponse(); }
+
+const char* Response::getSendData(size_t length) const {
+  if (bytesSent >= fullResponse.size()) {
+    length = 0;
+    return NULL;
+  }
+  length = fullResponse.size() - bytesSent;
+  return fullResponse.c_str() + bytesSent;
+}
+
+void Response::updateBytesSent(size_t sentBytes) { bytesSent += sentBytes; }
+
+bool Response::isFullySent() const { return bytesSent >= fullResponse.size(); }

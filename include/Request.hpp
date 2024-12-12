@@ -22,6 +22,7 @@ class Request {
   const std::string& getVersion() const;
   const std::map<std::string, std::string>& getHeaders() const;
   const std::string& getBody() const;
+  const std::string& getHeader(const std::string& header) const;
   bool isKeepAlive() const;
   int getStatusCode() const;
 

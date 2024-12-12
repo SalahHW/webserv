@@ -17,6 +17,10 @@ void ResponseHandler::handleResponse(Request& request, int requestId) {
   client.getResponseMap()[requestId] = std::make_pair(request, response);
   client.enqueueResponse(response);
 
+  if (!request.isKeepAlive()) {
+    client.setConnectionShouldClose(true);
+  }
+
   std::cout << "[DEBUG] Response for request ID " << requestId
             << " enqueued for client FD " << client.getClientFd() << std::endl;
 }

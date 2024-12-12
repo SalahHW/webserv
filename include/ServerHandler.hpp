@@ -13,12 +13,14 @@
 #include <iostream>
 #include <map>
 
-#include "Client.hpp"
 #include "ConfigExtractor.hpp"
 #include "ConfigFile.hpp"
 #include "Server.hpp"
 
 #define MAX_EVENTS 1024
+#define CLIENT_TIMEOUT 45
+
+class Client;
 
 class ServerHandler {
  public:
@@ -28,16 +30,20 @@ class ServerHandler {
   void startListening();
   void displayServerHandlerInfo() const;
 
+  void removeClient(int fd);
+
  private:
   void initializeEpoll();
   void initializeServers();
   void addToEpoll(int fdToAdd) const;
   void handleNewConnection(Server& server);
-  void handleClientRead(int clientFd);
-  void handleClientWrite(int clientFd);
-  void closeClientConnection(int clientFd);
+  void handleClientRead(Client* clientFd);
+  void handleClientWrite(Client* clientFd);
   Client* findClientByFd(int clientFd);
-  void modifyEpollEvent(int fd, uint32_t events);
+  void modifyEpollEvent(Client* client, uint32_t events);
+  void addClientToEpoll(Client* client, Server& server);
+
+  void checkClientTimeouts();
 
   int epollFd;
   int nbEvents;
