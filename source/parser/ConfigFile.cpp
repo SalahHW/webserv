@@ -6,7 +6,6 @@
 #include <stack>
 #include <stdexcept>
 
-// Constructeur et destructeur
 ConfigFile::ConfigFile(const std::string &configFilePath)
     : mainBlock(NULL), isValid(true) {
   readConfigFile(configFilePath);
@@ -14,12 +13,10 @@ ConfigFile::ConfigFile(const std::string &configFilePath)
 
 ConfigFile::~ConfigFile() { delete mainBlock; }
 
-// Accesseurs
 const Block &ConfigFile::getMainBlock() const { return *mainBlock; }
 
 bool ConfigFile::good() const { return isValid; }
 
-// Méthode principale de lecture du fichier de configuration
 void ConfigFile::readConfigFile(const std::string &fileName) {
   std::ifstream file;
   utils::openFile(fileName, file);
@@ -32,11 +29,9 @@ void ConfigFile::readConfigFile(const std::string &fileName) {
 
   file.close();
 
-  // Vérification que tous les blocs ont été fermés correctement
   if (isValid && blockStack.size() > 1) {
     std::cerr << "Error: Some blocks were not closed properly." << std::endl;
-    // Afficher les blocs non fermés
-    while (blockStack.size() > 1) {  // Exclure mainBlock
+    while (blockStack.size() > 1) {
       Block *unclosedBlock = blockStack.top();
       std::cerr << "Unclosed block: \"" << unclosedBlock->getName() << "\""
                 << std::endl;
@@ -46,7 +41,6 @@ void ConfigFile::readConfigFile(const std::string &fileName) {
   }
 }
 
-// Parse le fichier ligne par ligne
 void ConfigFile::parseFile(std::ifstream &file,
                            std::stack<Block *> &blockStack) {
   std::string line;
@@ -58,37 +52,30 @@ void ConfigFile::parseFile(std::ifstream &file,
     if (!cleanedLine.empty()) {
       accumulatedLine += cleanedLine + " ";
 
-      // Vérifier si la ligne est complète
       if (lineEndsProperly(accumulatedLine)) {
         handleLine(accumulatedLine, file, blockStack);
         accumulatedLine.clear();
         if (!isValid) {
-          break;  // Arrêter l'analyse en cas d'invalidité
+          break;
         }
       }
-      // Sinon, continuer à accumuler les lignes
     }
   }
-
-  // Traiter la dernière ligne accumulée s'il y en a une
   if (!accumulatedLine.empty()) {
     handleLine(accumulatedLine, file, blockStack);
   }
 }
 
-// Vérifie si une ligne se termine correctement par ';', '{' ou '}'
 bool ConfigFile::lineEndsProperly(const std::string &line) const {
   std::string trimmedLine = utils::trimWhitespace(line);
   if (trimmedLine.empty()) {
     return false;
   }
 
-  // Vérifier si la ligne se termine par ';', '{' ou '}'
   char lastChar = trimmedLine[trimmedLine.size() - 1];
   return (lastChar == ';' || lastChar == '{' || lastChar == '}');
 }
 
-// Gère une ligne nettoyée du fichier de configuration
 void ConfigFile::handleLine(const std::string &accumulatedLine,
                             std::ifstream &file,
                             std::stack<Block *> &blockStack) {
@@ -99,7 +86,6 @@ void ConfigFile::handleLine(const std::string &accumulatedLine,
     return;
   }
   if (cleanedLine == "{") {
-    // Rien à faire
   } else if (cleanedLine == "}") {
     if (blockStack.size() > 1) {
       blockStack.pop();
@@ -136,7 +122,6 @@ void ConfigFile::handleLine(const std::string &accumulatedLine,
   }
 }
 
-// Gère une déclaration de bloc
 void ConfigFile::processBlockDeclaration(const std::string &line,
                                          std::ifstream &file,
                                          std::stack<Block *> &blockStack,
@@ -145,7 +130,6 @@ void ConfigFile::processBlockDeclaration(const std::string &line,
   std::string afterBlockName;
   bool braceFoundInLine = false;
 
-  // Vérifier si la ligne contient une accolade ouvrante '{'
   std::size_t openBracePos = line.find('{');
   if (openBracePos != std::string::npos) {
     braceFoundInLine = true;
@@ -153,7 +137,6 @@ void ConfigFile::processBlockDeclaration(const std::string &line,
     afterBlockName = line.substr(openBracePos + 1);
   }
 
-  // Extraire le nom du bloc
   std::string blockName = extractBlockName(blockLine);
 
   if (blockName.empty()) {
@@ -163,8 +146,6 @@ void ConfigFile::processBlockDeclaration(const std::string &line,
     return;
   }
 
-  // Si l'accolade ouvrante n'est pas sur la même ligne, chercher dans les
-  // lignes suivantes
   if (!braceFoundInLine) {
     if (!findOpeningBrace(file, currentBlock)) {
       std::cerr << "Error: Expected '{' after block name \"" << blockName
@@ -174,7 +155,6 @@ void ConfigFile::processBlockDeclaration(const std::string &line,
       return;
     }
   } else {
-    // Vérifier s'il y a du contenu après l'accolade ouvrante '{'
     std::string restLine = cleanLine(afterBlockName);
     if (!restLine.empty()) {
       std::cerr << "Error: Unexpected content after '{' in block \""
@@ -201,17 +181,10 @@ void ConfigFile::processBlockDeclaration(const std::string &line,
     return;
   }
 
-  // Ajouter le nouveau bloc en tant qu'enfant du bloc courant
   currentBlock->addSubBlock(newBlock);
-
-  // Pousser le nouveau bloc sur la pile
   blockStack.push(newBlock);
-
-  // Appeler parseBlock pour analyser le contenu du bloc
   parseBlock(file, blockStack);
 }
-
-// Analyse récursive du contenu d'un bloc
 void ConfigFile::parseBlock(std::ifstream &file,
                             std::stack<Block *> &blockStack) {
   std::string line;
@@ -223,7 +196,6 @@ void ConfigFile::parseBlock(std::ifstream &file,
     if (!cleanedLine.empty()) {
       accumulatedLine += cleanedLine + " ";
 
-      // Vérifier si la ligne est complète
       if (lineEndsProperly(accumulatedLine)) {
         handleLine(accumulatedLine, file, blockStack);
         accumulatedLine.clear();
@@ -231,16 +203,13 @@ void ConfigFile::parseBlock(std::ifstream &file,
           return;
         }
       }
-      // Sinon, continuer à accumuler les lignes
     }
   }
 
-  // Traiter la dernière ligne accumulée s'il y en a une
   if (!accumulatedLine.empty()) {
     handleLine(accumulatedLine, file, blockStack);
   }
 
-  // Si fin de fichier atteinte sans trouver '}'
   if (blockStack.size() > 1) {
     std::cerr << "Error: Block \"" << blockStack.top()->getName()
               << "\" not closed properly (missing '}' before EOF)."
@@ -249,7 +218,6 @@ void ConfigFile::parseBlock(std::ifstream &file,
   }
 }
 
-// Traite une directive
 void ConfigFile::processDirective(const std::string &cleanedLine,
                                   Block *currentBlock) {
   if (cleanedLine.empty()) {
@@ -268,7 +236,7 @@ void ConfigFile::processDirective(const std::string &cleanedLine,
   }
 
   std::string directiveLine =
-      cleanedLine.substr(0, cleanedLine.size() - 1);  // Enlever le ';'
+      cleanedLine.substr(0, cleanedLine.size() - 1);
   std::string directiveName = extractDirectiveName(directiveLine);
 
   Directive *directive =
@@ -287,8 +255,6 @@ void ConfigFile::processDirective(const std::string &cleanedLine,
   currentBlock->addDirective(directive);
 }
 
-// Vérifie si une ligne est une directive (se termine par ';' et pas de '{'
-// avant ';')
 bool ConfigFile::isDirective(const std::string &line) const {
   std::string trimmedLine = utils::trimWhitespace(line);
   if (trimmedLine.empty()) {
@@ -309,7 +275,6 @@ bool ConfigFile::isDirective(const std::string &line) const {
   return true;
 }
 
-// Recherche une accolade ouvrante '{' dans le fichier
 bool ConfigFile::findOpeningBrace(std::ifstream &file, Block *currentBlock) {
   std::string line;
   while (std::getline(file, line)) {
@@ -332,14 +297,12 @@ bool ConfigFile::findOpeningBrace(std::ifstream &file, Block *currentBlock) {
   return false;
 }
 
-// Nettoie une ligne des commentaires et des espaces
 std::string ConfigFile::cleanLine(const std::string &originalLine) const {
   std::string cleanedLine = utils::removeComments(originalLine);
   cleanedLine = utils::trimWhitespace(cleanedLine);
   return cleanedLine;
 }
 
-// Extrait le nom du bloc d'une ligne
 std::string ConfigFile::extractBlockName(const std::string &line) const {
   std::stringstream ss(line);
   std::string blockName;
@@ -347,7 +310,6 @@ std::string ConfigFile::extractBlockName(const std::string &line) const {
   return blockName;
 }
 
-// Extrait le nom de la directive d'une ligne
 std::string ConfigFile::extractDirectiveName(const std::string &line) const {
   std::stringstream ss(line);
   std::string directiveName;
