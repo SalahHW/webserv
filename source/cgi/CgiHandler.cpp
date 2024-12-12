@@ -46,48 +46,97 @@ CgiHandler::CgiHandler(const CgiHandler &other) {
 	(void)other;
 }
 
-void CgiHandler::cgiExecution()
-{
-    // will need to start exec this with a try / catch for GET (or POST, dont remember..)
+// need to chdir into script dir before exec
+// in child proc (QUERY STR PARSE -> if '?querystring=4' -> error !!!!)
+// modify scriptPath to python interpreter path
+// return (the pair you made)
+// ! GET/POST -> content body (size/write) -> execve
+// try / catch for exec -> malloc protec + wcs handling
+// if POST request -> FD_IN body_html
+// handle delete[] on CgiHandler class destruction
+
+std::pair<int, pid_t> CgiHandler::cgiExecution() {
     std::vector<std::string> env = this->buildEnv();
-    char **envArray = new char*[env.size() + 1];
+    char **envArray = new char *[env.size() + 1];
     envArray[env.size()] = NULL;
+
+    const char *pythonInterpreter = "/usr/bin/python3";
     this->setScriptPath("/home/sickest_one/Travail/webserv/www/cgi-bin/cgi.py");
     const char *scriptPath = this->genScriptPath().c_str();
-    std::cout << "[DEBUG] : " << scriptPath << std::endl;
-    char *const args[] = {const_cast<char *>(scriptPath), NULL};
+    char *const args[] = {const_cast<char *>(pythonInterpreter), const_cast<char *>(scriptPath), NULL};
 
-    for (size_t i = 0; i < env.size(); i++)
-    {
+    for (size_t i = 0; i < env.size(); i++) {
         envArray[i] = new char[env[i].size() + 1];
         std::strcpy(envArray[i], env[i].c_str());
     }
-
+    int pipefd[2];
+    if (pipe(pipefd) == -1) {
+        std::perror("pipe");
+        for (size_t i = 0; i < env.size(); ++i)
+            delete[] envArray[i];
+        delete[] envArray;
+        return std::make_pair(-1, -1);
+    }
     pid_t pid = fork();
     if (pid < 0) {
         std::cerr << "Error: Fork failed." << std::endl;
-    } else if (pid == 0) {
-        if (execve(scriptPath, args, envArray) == -1) {
-            std::perror("execve");
-            _exit(EXIT_FAILURE);
+        close(pipefd[0]);
+        close(pipefd[1]);
+        for (size_t i = 0; i < env.size(); ++i)
+            delete[] envArray[i];
+        delete[] envArray;
+        return std::make_pair(-1, -1);
+    }
+    else if (pid == 0) {
+        try {
+            std::string scriptDir = "/home/sickest_one/Travail/webserv/www/cgi-bin";
+            if (chdir(scriptDir.c_str()) == -1)
+            {
+                std::perror("chdir");
+                std::exit(EXIT_FAILURE);
+            }
+            if (this->checkQueryStringPresence(request.uri)) {
+                std::cerr << "Error : Invalid QUERY_STRING" << std::endl;
+                // maybe need to close fd's
+            }
+            close(pipefd[0]);
+            dup2(pipefd[1], STDOUT_FILENO);
+            close(pipefd[1]);
+            if (request.method == "POST") {
+                std::string contentBody = this->getContentBody();
+                int bodyPipe[2];
+                if (pipe(bodyPipe) == -1)
+                {
+                    std::perror("pipe");
+                }
+                write(bodyPipe[1], contentBody.c_str(), contentBody.size());
+                close(bodyPipe[1]);
+                dup2(bodyPipe[0], STDIN_FILENO);
+                close(bodyPipe[0]);
+            }
+            if (execve(pythonInterpreter, args, envArray) == -1) {
+                std::perror("execve");
+            }
         }
-    } else {
-        int status;
-        if (waitpid(pid, &status, 0) == -1) {
-            std::perror("waitpid");
-        } else if (WIFEXITED(status)) {
-            std::cout << "CGI script exited with status: " << WEXITSTATUS(status) << std::endl;
-        } else if (WIFSIGNALED(status)) {
-            std::cerr << "CGI script was terminated by signal: " << WTERMSIG(status) << std::endl;
+        catch (const std::exception &e) {
+            std::cerr << "Exception in child process: " << e.what() << std::endl;
+            std::exit(EXIT_FAILURE);
         }
     }
-
-
-    for (std::size_t i = 0; i < env.size(); i++)
+    else {
+        close(pipefd[1]);
+        for (size_t i = 0; i < env.size(); ++i)
+            delete[] envArray[i];
+        delete[] envArray;
+        return std::make_pair(pipefd[0], pid);
+    }
+    for (size_t i = 0; i < env.size(); ++i) {
         delete[] envArray[i];
+    }
     delete[] envArray;
-
+    return std::make_pair(-1, -1); // Should not reach here
 }
+
 
 void CgiHandler::printEnv(std::vector<std::string> &env)
 {

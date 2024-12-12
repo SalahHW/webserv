@@ -218,6 +218,14 @@ const std::string CgiHandler::genContentLenght()
     return ("CONTENT_LENGHT=" + this->convertSizetToString(static_cast<size_t>(size)));
 }
 
+int CgiHandler::checkQueryStringPresence(std::string &uri)
+{
+    if (uri.find('?') != std::string::npos) {
+        return (1);
+    }
+    return (0);
+}
+
 std::vector<std::string> CgiHandler::buildEnv()
 {
     std::vector<std::string> env;

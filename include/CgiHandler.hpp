@@ -40,9 +40,11 @@ class CgiHandler
 		const std::string genHttpPriority();
 
 		std::vector<std::string> buildEnv();
-		void cgiExecution();
+		std::pair<int, pid_t> cgiExecution();
+		//////////FD,  pid_t
 		void printEnv(std::vector<std::string> &env);
 		void setScriptPath(const std::string &originScriptPath);
+		int	checkQueryStringPresence(std::string &uri);
 	private:
 		RequestParsed request;
 		std::string scriptPath;
