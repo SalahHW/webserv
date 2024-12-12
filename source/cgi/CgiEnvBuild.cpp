@@ -226,25 +226,27 @@ int CgiHandler::checkQueryStringPresence(std::string &uri)
     return (0);
 }
 
-std::vector<std::string> CgiHandler::buildEnv()
+void CgiHandler::buildEnv()
 {
-    std::vector<std::string> env;
+    envVec.push_back(this->genRequestMethod());
+    envVec.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
+    //envVec.push_back(this->genContentLenght());
+    envVec.push_back(this->genServerProtocol());
+    envVec.push_back(this->genQueryString());
+    envVec.push_back(this->genHttpUserAgent());
+    envVec.push_back(this->genHttpAccept());
+    envVec.push_back(this->genHttpHost());
+    envVec.push_back(this->genHttpAcceptLanguage());
+    envVec.push_back(this->genHttpAcceptEncoding());
+    envVec.push_back(this->genHttpConnexion());
+    envVec.push_back(this->genHttpUpgradeInsecureRequests());
+    envVec.push_back(this->genHttpSecFetchDest());
+    envVec.push_back(this->genHttpSecFetchMode());
+    envVec.push_back(this->genHttpSecFetchSite());
+    envVec.push_back(this->genHttpPriority());
+}
 
-    env.push_back(this->genRequestMethod());
-    env.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
-    //env.push_back(this->genContentLenght());
-    env.push_back(this->genServerProtocol());
-    env.push_back(this->genQueryString());
-    env.push_back(this->genHttpUserAgent());
-    env.push_back(this->genHttpAccept());
-    env.push_back(this->genHttpHost());
-    env.push_back(this->genHttpAcceptLanguage());
-    env.push_back(this->genHttpAcceptEncoding());
-    env.push_back(this->genHttpConnexion());
-    env.push_back(this->genHttpUpgradeInsecureRequests());
-    env.push_back(this->genHttpSecFetchDest());
-    env.push_back(this->genHttpSecFetchMode());
-    env.push_back(this->genHttpSecFetchSite());
-    env.push_back(this->genHttpPriority());
-    return (env);
+const std::vector<std::string>& CgiHandler::getEnvVec() const
+{
+    return (envVec);
 }

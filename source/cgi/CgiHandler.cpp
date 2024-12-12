@@ -54,9 +54,10 @@ CgiHandler::CgiHandler(const CgiHandler &other) {
 // try / catch for exec -> malloc protec + wcs handling
 // if POST request -> FD_IN body_html
 // handle delete[] on CgiHandler class destruction
-
+//  chier guele chemin physique parse dans requete / truc de salah ????? uri no during search
 std::pair<int, pid_t> CgiHandler::cgiExecution() {
-    std::vector<std::string> env = this->buildEnv();
+    this->buildEnv();
+    std::vector<std::string> env = this->getEnvVec();
     char **envArray = new char *[env.size() + 1];
     envArray[env.size()] = NULL;
 
@@ -97,17 +98,18 @@ std::pair<int, pid_t> CgiHandler::cgiExecution() {
             }
             if (this->checkQueryStringPresence(request.uri)) {
                 std::cerr << "Error : Invalid QUERY_STRING" << std::endl;
-                // maybe need to close fd's
+                // close fd's
             }
             close(pipefd[0]);
             dup2(pipefd[1], STDOUT_FILENO);
             close(pipefd[1]);
             if (request.method == "POST") {
-                std::string contentBody = this->getContentBody();
+                std::string contentBody = this->getContentBody(); // need to implement
                 int bodyPipe[2];
                 if (pipe(bodyPipe) == -1)
                 {
                     std::perror("pipe");
+                    std::exit(EXIT_FAILURE);
                 }
                 write(bodyPipe[1], contentBody.c_str(), contentBody.size());
                 close(bodyPipe[1]);
@@ -116,6 +118,7 @@ std::pair<int, pid_t> CgiHandler::cgiExecution() {
             }
             if (execve(pythonInterpreter, args, envArray) == -1) {
                 std::perror("execve");
+                std::exit(EXIT_FAILURE);
             }
         }
         catch (const std::exception &e) {

@@ -39,15 +39,17 @@ class CgiHandler
 		const std::string genHttpSecFetchSite();
 		const std::string genHttpPriority();
 
-		std::vector<std::string> buildEnv();
 		std::pair<int, pid_t> cgiExecution();
 		//////////FD,  pid_t
+		void buildEnv();
+		const std::vector<std::string>& getEnvVec() const;
 		void printEnv(std::vector<std::string> &env);
 		void setScriptPath(const std::string &originScriptPath);
 		int	checkQueryStringPresence(std::string &uri);
 	private:
 		RequestParsed request;
 		std::string scriptPath;
+		std::vector<std::string> envVec;
 };
 
 #endif /*CGI_HANDLER_HPP*/
