@@ -9,6 +9,9 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <sys/wait.h>
+#include <cstring>
+#include <unistd.h>
 
 class CgiHandler
 {
@@ -22,7 +25,7 @@ class CgiHandler
 		const std::string genQueryString();
 		const std::string genRequestMethod();
 		const std::string genServerProtocol();
-		const std::string genScriptPath();
+		const std::string &genScriptPath() const ;
 		const std::string genPathInfo(const std::string &input);
 		const std::string genHttpUserAgent();
 		const std::string genHttpAccept();
@@ -37,10 +40,12 @@ class CgiHandler
 		const std::string genHttpPriority();
 
 		std::vector<std::string> buildEnv();
-		void CgiExecution();
+		void cgiExecution();
 		void printEnv(std::vector<std::string> &env);
+		void setScriptPath(const std::string &originScriptPath);
 	private:
 		RequestParsed request;
+		std::string scriptPath;
 };
 
 #endif /*CGI_HANDLER_HPP*/

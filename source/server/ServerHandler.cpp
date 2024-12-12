@@ -248,6 +248,8 @@ void ServerHandler::startToListen() {
 
   // CGI TEST BEGIN //
 
+  CgiHandler test_cgi;
+  test_cgi.cgiExecution
 
   // CGI TEST ENDING //
 
