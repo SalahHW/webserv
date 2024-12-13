@@ -37,6 +37,18 @@ class Location {
   int getReturnCode() const;
   const std::vector<std::string>& getPaths() const;
 
+  bool isPathDefined() const { return hasPath; }
+  bool isRootDirectoryDefined() const { return hasRootDirectory; }
+  bool isIndexFileDefined() const { return hasIndexFile; }
+  bool isRedirectionPathDefined() const { return hasRedirectionPath; }
+  bool isAutoIndexDefined() const { return hasAutoIndex; }
+  bool isGetAcceptedDefined() const { return hasGetAccepted; }
+  bool isPostAcceptedDefined() const { return hasPostAccepted; }
+  bool isDeleteAcceptedDefined() const { return hasDeleteAccepted; }
+  bool isClientMaxBodySizeDefined() const { return hasClientMaxBodySize; }
+  bool isReturnCodeDefined() const { return hasReturnCode; }
+  bool isPathsDefined() const { return hasPaths; }
+
   void displayLocationInfo() const;
 
  private:
@@ -51,4 +63,16 @@ class Location {
   int clientMaxBodySize;
   int returnCode;
   std::vector<std::string> paths;
+
+  bool hasPath;
+  bool hasRootDirectory;
+  bool hasIndexFile;
+  bool hasRedirectionPath;
+  bool hasAutoIndex;
+  bool hasGetAccepted;
+  bool hasPostAccepted;
+  bool hasDeleteAccepted;
+  bool hasClientMaxBodySize;
+  bool hasReturnCode;
+  bool hasPaths;
 };
