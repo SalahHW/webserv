@@ -12,17 +12,17 @@ class Location {
   Location& operator=(const Location& src);
 
   // Setters
-  void setPath(const std::string& path);
-  void setRootDirectory(const std::string& rootDirectory);
-  void setIndexFile(const std::string& indexFile);
-  void setRedirectionPath(const std::string& redirectionPath);
-  void setAutoIndex(bool autoIndex);
-  void setGetAccepted(bool getAccepted);
-  void setPostAccepted(bool postAccepted);
-  void setDeleteAccepted(bool deleteAccepted);
+  void setPath(const std::string& pathValue);
+  void setRootDirectory(const std::string& rootDirectoryValue);
+  void setIndexFile(const std::string& indexFileValue);
+  void setRedirectionPath(const std::string& redirectionPathValue);
+  void setAutoIndex(bool autoIndexValue);
+  void setGetAccepted(bool getAcceptedValue);
+  void setPostAccepted(bool postAcceptedValue);
+  void setDeleteAccepted(bool deleteAcceptedValue);
   void setClientMaxBodySize(int size);
-  void setReturnCode(int returnCode);
-  void addPath(const std::string& path);
+  void setReturnCode(int returnCodeValue);
+  void addPath(const std::string& pathValue);
 
   // Getters
   const std::string& getPath() const;
