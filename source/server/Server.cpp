@@ -5,7 +5,14 @@
 
 Server::~Server() {}
 
-Server::Server() {}
+Server::Server() {
+  this->hasListenFd = false;
+  this->hasPort = false;
+  this->hasName = false;
+  this->hasClientMaxBodySize = false;
+  this->hasErrorPages = false;
+  this->hasLocations = false;
+}
 
 Server::Server(const Server &src) { *this = src; }
 
@@ -17,6 +24,14 @@ Server &Server::operator=(const Server &src) {
     this->clientMaxBodySize = src.clientMaxBodySize;
     this->errorPages = src.errorPages;
     this->locations = src.locations;
+    this->clientsList = src.clientsList;
+    this->addr = src.addr;
+    this->hasListenFd = src.hasListenFd;
+    this->hasPort = src.hasPort;
+    this->hasName = src.hasName;
+    this->hasClientMaxBodySize = src.hasClientMaxBodySize;
+    this->hasErrorPages = src.hasErrorPages;
+    this->hasLocations = src.hasLocations;
   }
   return *this;
 }
@@ -35,22 +50,34 @@ void Server::setListenFd() {
   this->addr.sin_addr.s_addr = INADDR_ANY;
 }
 
-void Server::setPort(int port) { this->port = port; }
+void Server::setPort(int port) {
+  this->port = port;
+  this->hasPort = true;
+}
 
-void Server::setClientMaxBodySize(int size) { this->clientMaxBodySize = size; }
+void Server::setClientMaxBodySize(int size) {
+  this->clientMaxBodySize = size;
+  this->hasClientMaxBodySize = true;
+}
 
-void Server::setName(const std::string &name) { this->name = name; }
+void Server::setName(const std::string &name) {
+  this->name = name;
+  this->hasName = true;
+}
 
 void Server::setErrorPages(std::map<int, std::string> errorPages) {
   this->errorPages = errorPages;
+  this->hasErrorPages = true;
 }
 
 void Server::addLocation(const Location &location) {
   this->locations[location.getPath()] = location;
+  this->hasLocations = true;
 }
 
 void Server::addErrorPage(int errorCode, std::string errorPath) {
   errorPages[errorCode] = errorPath;
+  this->hasErrorPages = true;
 }
 
 int Server::getListenFd() const { return this->listenFd; }
@@ -73,24 +100,31 @@ std::map<std::string, Location> Server::getLocations() const {
 
 void Server::displayServerInfo() const {
   std::cout << "Server Information:" << std::endl;
-  std::cout << "- Listen File Descriptor: " << listenFd << std::endl;
-  std::cout << "- Port: " << port << std::endl;
-  std::cout << "- Name: " << name << std::endl;
-  std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes"
-            << std::endl;
-
-  std::map<int, std::string>::const_iterator errorPages_it = errorPages.begin();
-  std::cout << "- Error Pages: " << std::endl;
-  while (errorPages_it != errorPages.end())
-  {
-    std::cout << "  * " << errorPages_it->first << " " << errorPages_it->second << std::endl;
-    errorPages_it++;
+  if (this->hasListenFd)
+    std::cout << "- Listen File Descriptor: " << listenFd << std::endl;
+  if (this->hasPort) std::cout << "- Port: " << port << std::endl;
+  if (this->hasName) std::cout << "- Name: " << name << std::endl;
+  if (this->hasClientMaxBodySize)
+    std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes"
+              << std::endl;
+  if (this->hasErrorPages) {
+    std::map<int, std::string>::const_iterator errorPages_it =
+        errorPages.begin();
+    std::cout << "- Error Pages: " << std::endl;
+    while (errorPages_it != errorPages.end()) {
+      std::cout << "  * " << errorPages_it->first << " "
+                << errorPages_it->second << std::endl;
+      errorPages_it++;
+    }
   }
-
-  std::map<std::string, Location>::const_iterator it = this->locations.begin();
-  std::cout << "- Locations: " << std::endl;
-  for (; it != this->locations.end(); ++it) {
-    it->second.displayLocationInfo();
+  if (this->hasLocations) {
+    std::map<std::string, Location>::const_iterator locations_it =
+        locations.begin();
+    std::cout << "- Locations: " << std::endl;
+    while (locations_it != locations.end()) {
+      locations_it->second.displayLocationInfo();
+      locations_it++;
+    }
   }
 }
 
@@ -116,7 +150,7 @@ void Server::resolveHostName() {
 
 void Server::bindSocket() const {
   if (bind(this->listenFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-  //TODO: fix uncaught exception
+    // TODO: fix uncaught exception
     throw SocketException("bind");
 }
 

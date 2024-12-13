@@ -40,6 +40,13 @@ class Server {
   const std::string& getName() const;
   const std::map<int, std::string>& getErrorPages() const;
 
+  bool isListenFdDefined() const { return hasListenFd; }
+  bool isPortDefined() const { return hasPort; }
+  bool isNameDefined() const { return hasName; }
+  bool isClientMaxBodySizeDefined() const { return hasClientMaxBodySize; }
+  bool isErrorPagesDefined() const { return hasErrorPages; }
+  bool isLocationsDefined() const { return hasLocations; }
+
   void displayServerInfo() const;
 
   void paramFd();
@@ -57,6 +64,14 @@ class Server {
   std::map<std::string, Location> locations;
   std::map<int, Client*> clientsList;
   struct sockaddr_in addr;
+
+  bool hasListenFd;
+  bool hasPort;
+  bool hasName;
+  bool hasClientMaxBodySize;
+  bool hasErrorPages;
+  bool hasLocations;
+
   void resolveHostName();
   void bindSocket() const;
   void setToListen() const;
