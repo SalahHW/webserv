@@ -1,6 +1,8 @@
 #ifndef CGI_HANDLER_HPP
 #define CGI_HANDLER_HPP
 
+#define PY_INTERP "/usr/bin/python3"
+
 #include <iostream>
 #include <cstdlib>
 #include "ParseRequest.hpp"

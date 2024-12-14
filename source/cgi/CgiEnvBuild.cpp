@@ -45,7 +45,6 @@ void CgiHandler::setScriptPath(const std::string &originScriptPath)
 
 const std::string &CgiHandler::genScriptPath() const
 {
-    std::cout << "[DEBUG_IN_SCOPE] : " << scriptPath << std::endl;
     return (this->scriptPath);
 }
 
