@@ -2,6 +2,10 @@
 #define CGI_HANDLER_HPP
 
 #define PY_INTERP "/usr/bin/python3"
+#define CGI_DIR_ERR "Error : Could not open cgi directory"
+#define FORK_ERR "Error : Fork() failed"
+#define	EXECVE_ERR "Error : execve shat himself"
+#define WAITPID_ERR "Error : waitpid"
 
 #include <iostream>
 #include <cstdlib>

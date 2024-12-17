@@ -45,6 +45,7 @@
 #include "CgiHandler.hpp"
 
 CgiHandler::CgiHandler() {
+    this->setScriptPath("/home/sickest_one/Travail/webserv/www/cgi-bin/"); // modif to getCgiLocation (isCgiLocation ?)
 	request.method = "GET";
 	request.uri = "http://example.com/cgi-bin/script.cgi?num1=2&num2=4";
 	request.version = "HTTP/1.1";
@@ -63,26 +64,62 @@ std::pair<int, pid_t> CgiHandler::cgiExecution()
     std::vector<std::string> env = this->getEnvVec();
     char **envArray = new char *[env.size() + 1];
     envArray[env.size()] = NULL;
-
-    // Modify scriptPath to Python interpreter path
-    const char *pythonInterpreter = "/usr/bin/python3";
-    this->setScriptPath("/home/sickest_one/Travail/webserv/www/cgi-bin/cgi.py");
-    const char *scriptPath = this->genScriptPath().c_str();
-    char *const args[] = {const_cast<char *>(pythonInterpreter), const_cast<char *>(scriptPath), NULL};
-
-    for (size_t i = 0; i < env.size(); i++)
+    for (size_t i = 0; i < env.size(); ++i)
     {
         envArray[i] = new char[env[i].size() + 1];
         std::strcpy(envArray[i], env[i].c_str());
+    }
+    const char *pythonInterpreter = PY_INTERP;
+    const char *scriptDir = this->genScriptPath().c_str();
+    const char *scriptName = "cgi.py";
+    char *const args[] = {const_cast<char *>(pythonInterpreter), \
+    const_cast<char *>(scriptName), NULL};
+    pid_t pid;
+    int status;
+
+    try
+    {
+        pid = fork();
+        if (pid < 0)
+        {
+            std::cerr << FORK_ERR << std::endl;
+            return (std::make_pair(-1, pid));
+        }
+        else if (pid == 0)
+        {
+            if (chdir(scriptDir) < 0)
+            {
+                std::cerr << CGI_DIR_ERR << std::endl;
+                return (std::make_pair(-1, pid));
+            }
+            // implement POST fd redirection
+            if (execve(pythonInterpreter, args, envArray) < 0)
+            {
+                std::cerr << EXECVE_ERR << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
+        }
+        else
+        {
+            if (waitpid(pid, &status, 0) < 0)
+            {
+                std::cerr << WAITPID_ERR << std::endl;
+                return (std::make_pair(-1, pid));
+            }
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Nah uuuuh" << std::endl;
+        return (std::make_pair(-1, pid));
     }
 
     for (size_t i = 0; i < env.size(); ++i)
         delete[] envArray[i];
     delete[] envArray;
 
-    return std::make_pair(-1, -1); // Should not reach here
+    return std::make_pair(-1, pid);
 }
-
 void CgiHandler::printEnv(std::vector<std::string> &env)
 {
     // FOR DEBUG, DELETE LATER
