@@ -249,3 +249,26 @@ const std::vector<std::string>& CgiHandler::getEnvVec() const
 {
     return (envVec);
 }
+
+void CgiHandler::cleanupEnvArray(const std::vector<std::string> &env, char **envArray)
+{
+    if (!envArray) {
+        std::cerr << ENVARRAY_MALLOC_FAIL << std::endl;
+        return;
+    }
+    for (size_t i = 0; i < env.size(); ++i)
+        delete[] envArray[i];
+    delete[] envArray;
+}
+
+char **CgiHandler::allocateEnvArray(const std::vector<std::string> &env)
+{
+    char **envArray = new char *[env.size() + 1];
+    envArray[env.size()] = NULL;
+    for (size_t i = 0; i < env.size(); ++i)
+    {
+        envArray[i] = new char[env[i].size() + 1];
+        std::strcpy(envArray[i], env[i].c_str());
+    }
+    return (envArray);
+}

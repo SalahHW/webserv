@@ -6,6 +6,8 @@
 #define FORK_ERR "Error : Fork() failed"
 #define	EXECVE_ERR "Error : execve shat himself"
 #define WAITPID_ERR "Error : waitpid"
+#define QUERY_ERR "Error : Tryed to give query string in child process"
+#define ENVARRAY_MALLOC_FAIL "Error : Memory allocation for envArray failed."
 
 #include <iostream>
 #include <cstdlib>
@@ -48,6 +50,8 @@ class CgiHandler
 		std::pair<int, pid_t> cgiExecution();
 		//////////FD,  pid_t
 		void buildEnv();
+		char **allocateEnvArray(const std::vector<std::string> &env);
+		void cleanupEnvArray(const std::vector<std::string> &env, char **envArray);
 		const std::vector<std::string>& getEnvVec() const;
 		void printEnv(std::vector<std::string> &env);
 		void setScriptPath(const std::string &originScriptPath);
