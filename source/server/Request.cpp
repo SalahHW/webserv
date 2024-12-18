@@ -1,15 +1,22 @@
 #include "Request.hpp"
 
-Request::Request() : keepAlive(false), statusCode(0) {}
-
+Request::Request() {}
 Request::~Request() {}
 
-void Request::setMethod(const std::string& method) { this->method = method; }
+const std::string& Request::getMethod() const { return method; }
+const std::string& Request::getUri() const { return uri; }
+const std::string& Request::getVersion() const { return version; }
+const std::map<std::string, std::string>& Request::getHeaders() const {
+  return headers;
+}
+const std::string& Request::getBody() const { return body; }
 
-void Request::setUri(const std::string& uri) { this->uri = uri; }
-
-void Request::setVersion(const std::string& version) {
-  this->version = version;
+void Request::setMethod(const std::string& methodValue) {
+  method = methodValue;
+}
+void Request::setUri(const std::string& uriValue) { uri = uriValue; }
+void Request::setVersion(const std::string& versionValue) {
+  version = versionValue;
 }
 
 void Request::addHeader(const std::string& key, const std::string& value) {
@@ -18,27 +25,11 @@ void Request::addHeader(const std::string& key, const std::string& value) {
 
 void Request::setBody(const std::string& bodyContent) { body = bodyContent; }
 
-void Request::setKeepAlive(bool keepAlive) { this->keepAlive = keepAlive; }
-
-void Request::setStatusCode(int code) { this->statusCode = code; }
-
-const std::string& Request::getMethod() const { return method; }
-
-const std::string& Request::getUri() const { return uri; }
-
-const std::string& Request::getVersion() const { return version; }
-
-const std::map<std::string, std::string>& Request::getHeaders() const {
-  return headers;
+bool Request::isKeepAlive() const {
+  std::map<std::string, std::string>::const_iterator it =
+      headers.find("Connection");
+  if (it != headers.end() && it->second == "keep-alive") {
+    return true;
+  }
+  return false;
 }
-
-const std::string& Request::getHeader(const std::string& header) const {
-  std::map<std::string, std::string>::const_iterator it = headers.find(header);
-  return it->second;
-}
-
-const std::string& Request::getBody() const { return body; }
-
-bool Request::isKeepAlive() const { return keepAlive; }
-
-int Request::getStatusCode() const { return statusCode; }

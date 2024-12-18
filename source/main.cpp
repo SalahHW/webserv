@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include "ConfigExtractor.hpp"
 #include "webserv.hpp"
 
 using namespace std;
@@ -19,8 +20,8 @@ int main(int argc, char **argv) {
     cerr << "Error: Invalid configuration file" << endl;
     return (1);
   }
-  ServerHandler serverHandler(server_configuration);
+  ConfigExtractor extractor;
+  ServerHandler serverHandler(extractor.extractServers(server_configuration));
   serverHandler.startListening();
-  serverHandler.displayServerHandlerInfo();
   return (0);
 }

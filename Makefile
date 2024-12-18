@@ -14,12 +14,16 @@ SRCS					=	main.cpp											\
 							server/Request.cpp									\
 							server/Server.cpp									\
 							server/ServerHandler.cpp							\
-							server/ParseRequest.cpp								\
+							server/RequestHandler.cpp							\
 							server/ResponseBuilder.cpp							\
-							server/HttpStatusCodeDeterminer.cpp					\
 							server/Location.cpp									\
 							server/ResponseHandler.cpp							\
-							server/HeaderBuilder.cpp							\
+							server/ClientManager.cpp							\
+							server/FileHandler.cpp								\
+							server/LocationMatcher.cpp							\
+							server/RequestParser.cpp							\
+							server/RequestValidator.cpp							\
+							server/ResponseSender.cpp							\
 							utils/utils.cpp										\
 							block/Block.cpp										\
 							block/BlockFactory.cpp								\

@@ -1,68 +1,54 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
-#include <fcntl.h>       // Pour fcntl
-#include <netdb.h>       // Pour getaddrinfo, freeaddrinfo, gai_strerror
-#include <netinet/in.h>  // Pour sockaddr_in, INADDR_ANY
-#include <stdlib.h>      // Pour exit
-#include <string.h>      // Pour memset, memcpy
-#include <sys/socket.h>  // Pour socket, bind, listen, accept
-#include <unistd.h>      // Pour close
 
-#include <cstdio>    // pour sprintf
-#include <iostream>  // Pour std::cerr
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <unistd.h>
+
+#include <cstring>
+#include <iostream>
 #include <map>
 #include <string>
-#include <vector>
 
 #include "Location.hpp"
 
-class Client;
-
 class Server {
  public:
-  ~Server();
   Server();
-  Server(const Server& src);
-  Server& operator=(const Server& src);
+  ~Server();
+  Server(const Server &src);
+  Server &operator=(const Server &src);
 
-  void setListenFd();
   void setPort(int port);
   void setClientMaxBodySize(int size);
-  void setName(const std::string& name);
-  void setErrorPages(std::map<int, std::string> errorPages);
-
-  void addLocation(const Location& location);
-  void addErrorPage(int errorCode, std::string errorPath);
+  void setName(const std::string &name);
+  void setErrorPages(const std::map<int, std::string> &errorPages);
+  void addErrorPage(int errorCode, const std::string &errorPath);
+  void addLocation(const Location &location);
 
   int getListenFd() const;
   int getPort() const;
   int getClientMaxBodySize() const;
-  const std::string& getName() const;
-  const std::map<int, std::string>& getErrorPages() const;
-
-  void displayServerInfo() const;
+  const std::string &getName() const;
+  const std::map<int, std::string> &getErrorPages() const;
+  const std::map<std::string, Location> &getLocations() const;
 
   void paramFd();
-  void addClientToServer(Client* clientToAdd);
-  void addClient(Client* client);
-
-  std::map<int, Client*>& getClientsList();
-  std::map<std::string, Location> getLocations() const;
+  void displayServerInfo() const;
 
  private:
+  void setListenFd();
+  void bindSocket() const;
+  void setToListen() const;
+  void makeSocketNonBlocking() const;
+
   int listenFd;
   int port;
   std::string name;
   int clientMaxBodySize;
   std::map<int, std::string> errorPages;
   std::map<std::string, Location> locations;
-  std::map<int, Client*> clientsList;
-  std::vector<Client*> clients;
   struct sockaddr_in addr;
-  void resolveHostName();
-  void bindSocket() const;
-  void setToListen() const;
-  void makeSocketNonBlocking() const;
 };
 
-#endif  // SERVER_HPP
+#endif

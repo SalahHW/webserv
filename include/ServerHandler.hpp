@@ -1,53 +1,38 @@
-// ServerHandler.hpp
-
 #ifndef SERVERHANDLER_HPP
 #define SERVERHANDLER_HPP
 
-#include <errno.h>
 #include <fcntl.h>
-#include <stdint.h>
 #include <sys/epoll.h>
 #include <unistd.h>
 
+#include <cerrno>
 #include <cstring>
 #include <iostream>
 #include <map>
+#include <string>
 
-#include "ConfigExtractor.hpp"
-#include "ConfigFile.hpp"
+#include "ClientManager.hpp"
 #include "Server.hpp"
 
-#define MAX_EVENTS 1024
-#define CLIENT_TIMEOUT 45
-
-class Client;
+#ifndef MAX_EVENTS
+#define MAX_EVENTS 64
+#endif
 
 class ServerHandler {
  public:
-  ServerHandler(const ConfigFile& configFile);
+  ServerHandler(std::map<int, Server> inputServers);
   ~ServerHandler();
 
   void startListening();
-  void displayServerHandlerInfo() const;
-
-  void removeClient(int fd);
 
  private:
-  void initializeEpoll();
-  void initializeServers();
-  void addToEpoll(int fdToAdd) const;
-  void handleNewConnection(Server& server);
-  void handleClientRead(Client* clientFd);
-  void handleClientWrite(Client* clientFd);
-  Client* findClientByFd(int clientFd);
-  void modifyEpollEvent(Client* client, uint32_t events);
-  void addClientToEpoll(Client* client, Server& server);
-
-  void checkClientTimeouts();
-
   int epollFd;
-  int nbEvents;
-  std::map<int, Server> serversList;
+  std::map<int, Server> servers;
+  ClientManager clientManager;
+
+  void initializeEpoll();
+  void addServerToEpoll(int fd);
+  void handleNewConnection(int listenFd);
 };
 
-#endif  // SERVERHANDLER_HPP
+#endif
