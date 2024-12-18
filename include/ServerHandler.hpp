@@ -12,6 +12,8 @@
 #include <string>
 
 #include "ClientManager.hpp"
+#include "ConfigExtractor.hpp"
+#include "ConfigFile.hpp"
 #include "Server.hpp"
 
 #ifndef MAX_EVENTS
@@ -20,7 +22,7 @@
 
 class ServerHandler {
  public:
-  ServerHandler(std::map<int, Server> inputServers);
+  ServerHandler(const ConfigFile &configFile);
   ~ServerHandler();
 
   void startListening();
@@ -31,6 +33,7 @@ class ServerHandler {
   ClientManager clientManager;
 
   void initializeEpoll();
+  void initializeServers();
   void addServerToEpoll(int fd);
   void handleNewConnection(int listenFd);
 };

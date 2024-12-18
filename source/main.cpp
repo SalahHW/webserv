@@ -20,8 +20,6 @@ int main(int argc, char **argv) {
     cerr << "Error: Invalid configuration file" << endl;
     return (1);
   }
-  ConfigExtractor extractor;
-  ServerHandler serverHandler(extractor.extractServers(server_configuration));
-  serverHandler.startListening();
+  ServerHandler serverHandler(server_configuration);
   return (0);
 }

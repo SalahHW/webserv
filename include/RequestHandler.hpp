@@ -12,6 +12,7 @@
 
 class RequestHandler {
  public:
+  RequestHandler();
   Response handleRequest(const Request &request);
 
  private:

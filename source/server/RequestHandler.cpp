@@ -1,5 +1,7 @@
 #include "RequestHandler.hpp"
 
+RequestHandler::RequestHandler() {}
+
 Response RequestHandler::handleRequest(const Request &request) {
   if (request.getMethod() == "GET") {
     return handleGet(request);

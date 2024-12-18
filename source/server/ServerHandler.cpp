@@ -1,26 +1,22 @@
 #include "ServerHandler.hpp"
 
-ServerHandler::ServerHandler(std::map<int, Server> inputServers)
-    : servers(inputServers) {
+ServerHandler::ServerHandler(const ConfigFile &configFile) {
+  servers = ConfigExtractor::extractServers(configFile);
   initializeEpoll();
+  initializeServers();
+  startListening();
+}
 
-  std::map<int, Server>::iterator it = inputServers.begin();
-  for (; it != inputServers.end(); ++it) {
-    it->second.paramFd();
+void ServerHandler::initializeServers() {
+  std::map<int, Server>::iterator it;
+  for (it = servers.begin(); it != servers.end(); ++it) {
     int listenFd = it->second.getListenFd();
-
     if (listenFd == -1) {
       std::cerr << "Erreur : Impossible de configurer le serveur sur le port "
                 << it->second.getPort() << std::endl;
       continue;
     }
-
     addServerToEpoll(listenFd);
-    servers[listenFd] = it->second;
-
-    it->second.displayServerInfo();
-    std::cout << "Serveur configuré sur le port : " << it->second.getPort()
-              << " (FD " << listenFd << ")" << std::endl;
   }
 }
 
@@ -33,7 +29,7 @@ ServerHandler::~ServerHandler() {
 }
 
 void ServerHandler::initializeEpoll() {
-  epollFd = epoll_create1(0);
+  this->epollFd = epoll_create1(0);
   if (epollFd == -1) {
     std::cerr << "Erreur epoll_create1 : " << strerror(errno) << std::endl;
   }
@@ -41,9 +37,9 @@ void ServerHandler::initializeEpoll() {
 
 void ServerHandler::addServerToEpoll(int fd) {
   struct epoll_event event;
-  event.data.fd = fd;
   event.events = EPOLLIN;
-  if (epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event) == -1) {
+  event.data.fd = fd;
+  if (epoll_ctl(this->epollFd, EPOLL_CTL_ADD, fd, &event) == -1) {
     std::cerr << "Erreur epoll_ctl (FD " << fd << ") : " << strerror(errno)
               << std::endl;
   } else {
@@ -56,7 +52,7 @@ void ServerHandler::handleNewConnection(int listenFd) {
   socklen_t clientAddrLen = sizeof(clientAddr);
 
   int clientFd =
-      accept(listenFd, (struct sockaddr*)&clientAddr, &clientAddrLen);
+      accept(listenFd, (struct sockaddr *)&clientAddr, &clientAddrLen);
   if (clientFd == -1) {
     std::cerr << "Erreur accept (FD " << listenFd << ") : " << strerror(errno)
               << std::endl;
@@ -86,8 +82,9 @@ void ServerHandler::startListening() {
       continue;
     }
 
-    for (int i = 0; i < numEvents; ++i) {
+    for (int i = 0; i < numEvents; i++) {
       int fd = events[i].data.fd;
+      // uint32_t eventFlags = events[i].events;
 
       if (servers.find(fd) != servers.end()) {
         handleNewConnection(fd);

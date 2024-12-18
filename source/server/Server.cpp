@@ -3,12 +3,10 @@
 #include <stdio.h>
 
 Server::Server() : listenFd(-1), port(0), clientMaxBodySize(0) {}
-Server::~Server() {
-  if (listenFd != -1) {
-    close(listenFd);
-  }
-}
+
+Server::~Server() {}
 Server::Server(const Server &src) { *this = src; }
+
 Server &Server::operator=(const Server &src) {
   if (this != &src) {
     this->listenFd = src.listenFd;
@@ -45,7 +43,27 @@ const std::map<std::string, Location> &Server::getLocations() const {
   return locations;
 }
 
+void Server::resolveHostName() {
+  struct addrinfo hints, *res;
+  int status;
+
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_flags = AI_PASSIVE;
+
+  char port_str[6];
+  sprintf(port_str, "%d", this->port);
+  status = getaddrinfo(this->name.c_str(), port_str, &hints, &res);
+  if (status != 0) {
+    std::cerr << "Erreur getaddrinfo" << std::endl;
+  }
+  memcpy(&this->addr, res->ai_addr, res->ai_addrlen);
+  freeaddrinfo(res);
+}
+
 void Server::setListenFd() {
+  resolveHostName();
   this->listenFd = socket(AF_INET, SOCK_STREAM, 0);
   if (this->listenFd == -1) {
     std::cerr << "Erreur socket" << std::endl;
@@ -89,7 +107,6 @@ void Server::makeSocketNonBlocking() const {
 }
 
 void Server::paramFd() {
-  std::cout << "Server paramFd" << std::endl;
   setListenFd();
   bindSocket();
   makeSocketNonBlocking();

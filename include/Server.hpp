@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #include <fcntl.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <unistd.h>
 
@@ -41,6 +42,7 @@ class Server {
   void bindSocket() const;
   void setToListen() const;
   void makeSocketNonBlocking() const;
+  void resolveHostName();
 
   int listenFd;
   int port;
