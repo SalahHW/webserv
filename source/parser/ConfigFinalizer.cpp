@@ -32,30 +32,16 @@ ConfigFinalizer &ConfigFinalizer::operator=(const ConfigFinalizer &other) {
 void ConfigFinalizer::finalizeConfig(std::map<int, Server> &serversList) {
   assignDefaultServers(serversList);
 
-  for (std::map<int, Server>::iterator serverIt = serversList.begin(); serverIt != serversList.end(); ++serverIt) {
+  for (std::map<int, Server>::iterator serverIt = serversList.begin();
+       serverIt != serversList.end(); ++serverIt) {
     finalizeServerConfig(serverIt->second);
-    std::map<std::string, Location> &locations = serverIt->second.getLocations();
+    std::map<std::string, Location> &locations =
+        serverIt->second.getLocations();
 
-    for (std::map<std::string, Location>::iterator locationIt = locations.begin(); locationIt != locations.end(); ++locationIt) {
+    for (std::map<std::string, Location>::iterator locationIt =
+             locations.begin();
+         locationIt != locations.end(); ++locationIt) {
       finalizeLocationConfig(locationIt->second, serverIt->second);
-    }
-  }
-}
-
-void ConfigFinalizer::assignDefaultServers(std::map<int, Server>& serversList) {
-  for (std::map<int, Server>::iterator it = serversList.begin(); it != serversList.end(); ++it) {
-    Server& server = it->second;
-    int port = server.getPort();
-
-    // Assign first server on this port as the default if not already set
-    if (defaultServers.find(port) == defaultServers.end()) {
-      defaultServers[port] = &server;
-    //   server.setAsDefault(); // Mark this server as the default
-    }
-
-    // Check for explicit default server
-    if (server.isExplicitlyDefault()) {
-      defaultServers[port] = &server;
     }
   }
 }
@@ -72,12 +58,43 @@ void ConfigFinalizer::finalizeServerConfig(Server &server) {
   }
 }
 
-void ConfigFinalizer::finalizeLocationConfig(Location &location, const Server &parentServer) {
+void ConfigFinalizer::finalizeLocationConfig(Location &location,
+                                             const Server &parentServer) {
   (void)parentServer;
   if (!location.isPathDefined()) {
     location.setPath(defaultLocationPath);
   }
   if (!location.isRootDirectoryDefined()) {
     location.setRootDirectory(defaultLocationRoot);
+  }
+}
+
+bool ConfigFinalizer::good() const { return isValid; }
+
+void ConfigFinalizer::assignDefaultServers(std::map<int, Server>& serversList) {
+  for (std::map<int, Server>::iterator it = serversList.begin(); it != serversList.end(); ++it) {
+    Server& server = it->second;
+    int port = server.getPort();
+
+    if (server.isExplicitlyDefault()) {
+      processExplicitDefault(server, port);
+    } else {
+      assignImplicitDefault(server, port);
+    }
+  }
+}
+
+void ConfigFinalizer::processExplicitDefault(Server& server, int port) {
+  if (defaultServers.find(port) != defaultServers.end()) {
+    std::cerr << "Error: Multiple servers defined as default for port " << port << "." << std::endl;
+    isValid = false;
+  } else {
+    defaultServers[port] = &server;
+  }
+}
+
+void ConfigFinalizer::assignImplicitDefault(Server& server, int port) {
+  if (defaultServers.find(port) == defaultServers.end()) {
+    defaultServers[port] = &server;
   }
 }

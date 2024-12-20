@@ -18,8 +18,11 @@ class ConfigFinalizer {
   void finalizeServerConfig(Server &server);
   void finalizeLocationConfig(Location &location, const Server &parentServer);
 
+  bool good() const;
+
  private:
   // Default Server Values
+  bool isValid;
   std::string defaultServerName;
   std::string defaultServerRoot;
   std::string defaultServerIndex;
