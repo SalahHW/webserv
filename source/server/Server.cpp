@@ -5,14 +5,18 @@
 
 Server::~Server() {}
 
-Server::Server() {
-  this->hasListenFd = false;
-  this->hasPort = false;
-  this->hasName = false;
-  this->hasClientMaxBodySize = false;
-  this->hasErrorPages = false;
-  this->hasLocations = false;
-}
+Server::Server()
+    : port(0),
+      name(""),
+      clientMaxBodySize(0),
+      isDefault(false),
+      explicitlyDefault(false),
+      hasListenFd(false),
+      hasPort(false),
+      hasName(false),
+      hasClientMaxBodySize(false),
+      hasErrorPages(false),
+      hasLocations(false) {}
 
 Server::Server(const Server &src) { *this = src; }
 
@@ -22,6 +26,8 @@ Server &Server::operator=(const Server &src) {
     this->port = src.port;
     this->name = src.name;
     this->clientMaxBodySize = src.clientMaxBodySize;
+    this->isDefault = src.isDefault;
+    this->explicitlyDefault = src.explicitlyDefault;
     this->errorPages = src.errorPages;
     this->locations = src.locations;
     this->clientsList = src.clientsList;
@@ -70,6 +76,12 @@ void Server::setErrorPages(std::map<int, std::string> errorPages) {
   this->hasErrorPages = true;
 }
 
+void Server::setDefault(bool isDefault) { this->isDefault = isDefault; }
+
+void Server::setExplicitlyDefault(bool isExplicitlyDefault) {
+  this->explicitlyDefault = isExplicitlyDefault;
+}
+
 void Server::addLocation(const Location &location) {
   this->locations[location.getPath()] = location;
   this->hasLocations = true;
@@ -102,6 +114,10 @@ const std::map<std::string, Location> &Server::getLocations() const {
   return this->locations;
 }
 
+bool Server::isDefaultServer() const { return this->isDefault; }
+
+bool Server::isExplicitlyDefault() const { return this->explicitlyDefault; }
+
 void Server::displayServerInfo() const {
   std::cout << "Server Information:" << std::endl;
   if (this->hasListenFd)
@@ -111,6 +127,9 @@ void Server::displayServerInfo() const {
   if (this->hasClientMaxBodySize)
     std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes"
               << std::endl;
+  std::cout << "- Default Server: " << (isDefault ? "true" : "false")
+            << std::endl;
+  std::cout << "- Explicitly Default: " << (explicitlyDefault ? "true" : "false") << std::endl;
   if (this->hasErrorPages) {
     std::map<int, std::string>::const_iterator errorPages_it =
         errorPages.begin();

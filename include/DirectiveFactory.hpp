@@ -5,6 +5,7 @@
 
 #include "AutoIndexDirective.hpp"
 #include "ClientMaxBodySizeDirective.hpp"
+#include "DefaultServerDirective.hpp"
 #include "DenyDirective.hpp"
 #include "Directive.hpp"
 #include "ErrorPageDirective.hpp"

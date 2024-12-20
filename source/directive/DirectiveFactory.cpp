@@ -12,6 +12,7 @@ DirectiveFactory::DirectiveFactory() {
   registerDirective<AutoIndexDirective>("autoindex");
   registerDirective<ReturnDirective>("return");
   registerDirective<DenyDirective>("deny");
+  registerDirective<DefaultServerDirective>("default_server");
 }
 
 Directive *DirectiveFactory::create(
