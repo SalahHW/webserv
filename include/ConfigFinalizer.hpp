@@ -36,5 +36,8 @@ class ConfigFinalizer {
   // Default server mapping (key: port, value: server pointer)
   std::map<int, Server *> defaultServers;
 
+
   void assignDefaultServers(std::map<int, Server> &serversList);
+  void processExplicitDefault(Server& server, int port);
+  void assignImplicitDefault(Server& server, int port);
 };
