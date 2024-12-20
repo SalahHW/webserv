@@ -94,7 +94,11 @@ const std::map<int, std::string> &Server::getErrorPages() const {
 
 std::map<int, Client *> &Server::getClientsList() { return this->clientsList; }
 
-std::map<std::string, Location> Server::getLocations() const {
+std::map<std::string, Location> &Server::getLocations() {
+  return this->locations;
+}
+
+const std::map<std::string, Location> &Server::getLocations() const {
   return this->locations;
 }
 

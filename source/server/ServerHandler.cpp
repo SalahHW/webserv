@@ -11,7 +11,11 @@ ServerHandler::ServerHandler(const ConfigFile &configFile) {
   std::cout << "Initialisation de ServerHandler" << std::endl;
   serversList = ConfigExtractor::extractServers(configFile);
   displayServerHandlerInfo();
-  startToListen();
+  std::cout << "//////////////////////////////////////////" << std::endl;
+  ConfigFinalizer configFinalizer;
+  configFinalizer.finalizeConfig(serversList);
+  displayServerHandlerInfo();
+  // startToListen();
 }
 
 ServerHandler::ServerHandler(const ServerHandler &other)

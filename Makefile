@@ -9,6 +9,7 @@ OBJ_DIR					=	obj
 SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
 							parser/ConfigExtractor.cpp							\
+							parser/ConfigFinalizer.cpp							\
 							server/Client.cpp									\
 							server/Server.cpp									\
 							server/ServerHandler.cpp							\

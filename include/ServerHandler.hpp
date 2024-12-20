@@ -9,6 +9,7 @@
 #include "Block.hpp"
 #include "Client.hpp"
 #include "ConfigExtractor.hpp"
+#include "ConfigFinalizer.hpp"
 #include "ConfigFile.hpp"
 #include "EpollException.hpp"
 #include "Location.hpp"

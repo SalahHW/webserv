@@ -53,7 +53,8 @@ class Server {
   void addClientToServer(Client* clientToAdd);
 
   std::map<int, Client*>& getClientsList();
-  std::map<std::string, Location> getLocations() const;
+  std::map<std::string, Location>& getLocations();
+  const std::map<std::string, Location>& getLocations() const;
 
  private:
   int listenFd;
