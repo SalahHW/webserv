@@ -30,6 +30,8 @@ class Server {
   void setClientMaxBodySize(int size);
   void setName(const std::string& name);
   void setErrorPages(std::map<int, std::string> errorPages);
+  void setDefault(bool isDefault);
+  void setExplicitlyDefault(bool isExplicitlyDefault);
 
   void addLocation(const Location& location);
   void addErrorPage(int errorCode, std::string errorPath);
@@ -39,6 +41,8 @@ class Server {
   int getClientMaxBodySize() const;
   const std::string& getName() const;
   const std::map<int, std::string>& getErrorPages() const;
+  bool isDefaultServer() const;
+  bool isExplicitlyDefault() const;
 
   bool isListenFdDefined() const { return hasListenFd; }
   bool isPortDefined() const { return hasPort; }
@@ -61,6 +65,8 @@ class Server {
   int port;
   std::string name;
   int clientMaxBodySize;
+  bool isDefault;
+  bool explicitlyDefault;
   std::map<int, std::string> errorPages;
   std::map<std::string, Location> locations;
   std::map<int, Client*> clientsList;
