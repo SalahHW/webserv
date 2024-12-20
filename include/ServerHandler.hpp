@@ -22,7 +22,7 @@ class Client;
 class ServerHandler {
  public:
   ~ServerHandler();
-  ServerHandler(const ConfigFile& configFile);
+  ServerHandler(const std::vector<Server>& servers);
   ServerHandler(const ServerHandler& src);
   ServerHandler& operator=(const ServerHandler& src);
   void addToEpoll(int fdToAdd) const;
@@ -42,6 +42,7 @@ class ServerHandler {
   Client* findClientByFd(int clientFd);
   void modifyEpollEvent(int fd, uint32_t events);
 
+  std::vector<Server> servers;
   std::map<int, Server> serversList;
   int epollFd;
   int nbEvents;

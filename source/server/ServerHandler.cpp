@@ -7,14 +7,15 @@ ServerHandler::~ServerHandler() {
   close(epollFd);
 }
 
-ServerHandler::ServerHandler(const ConfigFile &configFile) {
+ServerHandler::ServerHandler(const std::vector<Server> &servers)
+    : servers(servers) {
   std::cout << "Initialisation de ServerHandler" << std::endl;
-  serversList = ConfigExtractor::extractServers(configFile);
-  displayServerHandlerInfo();
-  std::cout << "//////////////////////////////////////////" << std::endl;
-  ConfigFinalizer configFinalizer;
-  configFinalizer.finalizeConfig(serversList);
-  displayServerHandlerInfo();
+  // TODO: Create map of servers with listen file descriptors as keys
+  // serversList = ConfigExtractor::extractServers(configFile);
+  // displayServerHandlerInfo();
+  // ConfigFinalizer configFinalizer;
+  // configFinalizer.finalizeConfig(serversList);
+  // displayServerHandlerInfo();
   // startToListen();
 }
 

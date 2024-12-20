@@ -10,15 +10,9 @@ SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
 							parser/ConfigExtractor.cpp							\
 							parser/ConfigFinalizer.cpp							\
-							server/Client.cpp									\
 							server/Server.cpp									\
-							server/ServerHandler.cpp							\
-							server/ParseRequest.cpp								\
-							server/ResponseBuilder.cpp							\
-							server/HttpStatusCodeDeterminer.cpp					\
 							server/Location.cpp									\
-							server/ResponseHandler.cpp							\
-							server/HeaderBuilder.cpp							\
+							server/Port.cpp										\
 							utils/utils.cpp										\
 							block/Block.cpp										\
 							block/BlockFactory.cpp								\

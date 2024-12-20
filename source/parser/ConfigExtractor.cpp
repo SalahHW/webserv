@@ -1,8 +1,8 @@
 #include "ConfigExtractor.hpp"
 
-std::map<int, Server> ConfigExtractor::extractServers(
+std::vector<Server> ConfigExtractor::extractServers(
     const ConfigFile &configFile) {
-  std::map<int, Server> servers;
+  std::vector<Server> servers;
   const Block &mainBlock = configFile.getMainBlock();
   const std::vector<Block *> subBlocks = mainBlock.getSubBlocks();
 
@@ -12,7 +12,7 @@ std::map<int, Server> ConfigExtractor::extractServers(
       Server server;
       extractServerDirectives(block, server);
       extractLocationBlocks(block, server);
-      servers[server.getListenFd()] = server;
+      servers.push_back(server);
     }
   }
   return servers;
@@ -24,7 +24,6 @@ void ConfigExtractor::extractServerDirectives(const Block &block,
   for (size_t i = 0; i < directives.size(); ++i) {
     directives[i]->apply(server);
   }
-  server.paramFd();
 }
 
 void ConfigExtractor::extractLocationBlocks(const Block &block,
