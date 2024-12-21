@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     // ConfigFinalizer ==> Liste de port
     ConfigFinalizer configFinalizer;
     configFinalizer.finalizeConfig(servers);
-    // std::vector<Port> ports = server_configuration.getPorts();
+    std::map<int, Port> ports = configFinalizer.getPorts();
 
     // ServerHandler serverHandler(ports);
     return (0);
