@@ -19,13 +19,21 @@ public:
     ConfigFinalizer& operator=(const ConfigFinalizer& other);
 
     bool good() const;
+    const std::map<int, Port>& getPorts() const;
+
+
     void finalizeConfig(std::vector<Server>& servers);
     void finalizeServer(Server &server);
+    void finalizeLocations(Server &server);
     void addUsedPort(int port);
+    void createPorts();
+    void assignServersToPorts(const std::vector<Server>& servers);
 
 private:
-    // Default Server Values
+    // Flags
     bool isValid;
+
+    // Default Server Values
     std::string defaultServerName;
     std::string defaultServerRoot;
     std::string defaultServerIndex;
@@ -38,5 +46,5 @@ private:
 
     std::list<int> usedPorts;
 
-    std::vector<Port> ports;
+    std::map<int, Port> ports;
 };
