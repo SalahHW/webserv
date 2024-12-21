@@ -21,14 +21,14 @@ public:
     void makeSocketNonBlocking();
     void startListening();
 
-    void addServer(const Server& server);
+    void addVirtualHost(const Server& server);
+
+    bool good() const;
+    int getPort() const;
+    int getListenFd() const;
 
     void setPort(int port);
     void setListenFd(int fd);
-
-    int getPort() const;
-    int getListenFd() const;
-    bool good() const;
 
 private:
     bool isValid;
