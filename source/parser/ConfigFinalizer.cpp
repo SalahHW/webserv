@@ -42,20 +42,17 @@ bool ConfigFinalizer::good() const
 
 void ConfigFinalizer::finalizeConfig(std::vector<Server>& servers)
 {
-    std::vector<Server>::const_iterator itServer;
+    std::vector<Server>::iterator itServer;
     for (itServer = servers.begin(); itServer != servers.end(); ++itServer) {
-        int port = itServer->getPort();
-        if (std::find(usedPorts.begin(), usedPorts.end(), port) == usedPorts.end()) {
-            usedPorts.push_back(port);
-        }
-    }
+        finalizeServer(*itServer);
+        addUsedPort(itServer->getPort());
 
-    // Debug
-    // std::cout << "Used Ports : ";
-    // for (std::list<int>::const_iterator it = usedPorts.begin(); it != usedPorts.end(); ++it) {
-    //     std::cout << *it << " ";
-    // }
-    // std::cout << std::endl;
+    }
 }
 
-void ConfigFinalizer::
+void ConfigFinalizer::addUsedPort(int port)
+{
+    if (std::find(usedPorts.begin(), usedPorts.end(), port) == usedPorts.end()) {
+        usedPorts.push_back(port);
+    }
+}
