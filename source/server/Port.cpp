@@ -1,6 +1,8 @@
 #include "Port.hpp"
 
-Port::~Port() { }
+Port::~Port()
+{
+}
 
 Port::Port()
     : isValid(true)
@@ -21,6 +23,8 @@ Port& Port::operator=(const Port& src)
         this->isValid = src.isValid;
         this->port = src.port;
         this->listenFd = src.listenFd;
+        this->virtualHosts = src.virtualHosts;
+        this->addr = src.addr;
     }
     return *this;
 }
@@ -73,13 +77,53 @@ void Port::startListening()
     }
 }
 
-void Port::addVirtualHost(const Server& server) { virtualHosts[server.getName()] = server; }
+void Port::addVirtualHost(const Server& server)
+{
+    const std::string& serverName = server.getName();
+
+    if (virtualHosts.find(serverName) != virtualHosts.end()) {
+        std::cerr << "Warning: VirtualHost \"" << serverName
+                  << "\" already exists on port " << port << std::endl;
+    }
+
+    VirtualHost newHost = createVirtualHost(server);
+    virtualHosts[serverName] = newHost;
+}
+
+VirtualHost Port::createVirtualHost(const Server& server)
+{
+    VirtualHost newHost;
+
+    newHost.setName(server.getName());
+    newHost.setClientMaxBodySize(server.getClientMaxBodySize());
+    newHost.setErrorPages(server.getErrorPages());
+    newHost.setLocations(server.getLocations());
+
+    return newHost;
+}
 
 bool Port::good() const { return this->isValid; }
+
+void Port::displayHosts() const
+{
+    std::cout << "Printing virtual Hosts on port " << port << ":" << std::endl;
+    std::map<std::string, VirtualHost>::const_iterator itHost;
+
+    for (itHost = virtualHosts.begin(); itHost != virtualHosts.end(); ++itHost) {
+        const VirtualHost host = itHost->second;
+
+        std::cout << "Host Name: " << host.getName() << std::endl;
+        std::cout << "Client Max Body Size: " << host.getClientMaxBodySize() << std::endl;
+        std::cout << "Number of locations: " << host.getLocations().size() << std::endl
+                  << std::endl;
+    }
+}
 
 int Port::getPort() const { return this->port; }
 
 int Port::getListenFd() const { return this->listenFd; }
+
+const std::map<std::string, VirtualHost>& Port::getVirtualHosts() const { return this->virtualHosts; }
 
 void Port::setPort(int port) { this->port = port; }
 
