@@ -3,7 +3,7 @@
 
 #include "ConfigExtractor.hpp"
 #include "ConfigFile.hpp"
-// #include "Port.hpp"
+#include "Port.hpp"
 #include "ServerHandler.hpp"
 
 std::string loadConfiguration(int argc, char** argv)
@@ -32,6 +32,11 @@ int main(int argc, char** argv)
     ConfigFinalizer configFinalizer;
     configFinalizer.finalizeConfig(servers);
     std::map<int, Port> ports = configFinalizer.getPorts();
+    std::map<int, Port>::const_iterator itPort;
+
+    for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
+        itPort->second.displayHosts();
+    }
 
     // ServerHandler serverHandler(ports);
     return (0);
