@@ -10,9 +10,6 @@ Port::Port()
     , listenFd(-1)
 {
     memset(&addr, 0, sizeof(addr));
-    setupSocket();
-    bindSocket();
-    makeSocketNonBlocking();
 }
 
 Port::Port(const Port& src) { *this = src; }
@@ -27,6 +24,13 @@ Port& Port::operator=(const Port& src)
         this->addr = src.addr;
     }
     return *this;
+}
+
+void Port::initialize() {
+    setupSocket();
+    bindSocket();
+    makeSocketNonBlocking();
+    // startListening();
 }
 
 void Port::setupSocket()
@@ -112,6 +116,7 @@ void Port::displayHosts() const
     for (itHost = virtualHosts.begin(); itHost != virtualHosts.end(); ++itHost) {
         const VirtualHost host = itHost->second;
 
+        std::cout << "File Descriptor: " << this->getListenFd() << std::endl;
         std::cout << "Host Name: " << host.getName() << std::endl;
         std::cout << "Client Max Body Size: " << host.getClientMaxBodySize() << std::endl;
         std::cout << "Number of locations: " << host.getLocations().size() << std::endl

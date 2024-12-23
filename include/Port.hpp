@@ -17,9 +17,7 @@ public:
     Port(const Port& src);
     Port& operator=(const Port& src);
 
-    void setupSocket();
-    void bindSocket();
-    void makeSocketNonBlocking();
+    void initialize();
     void startListening();
 
     void addVirtualHost(const Server& server);
@@ -41,5 +39,9 @@ private:
     std::map<std::string, VirtualHost> virtualHosts;
     struct sockaddr_in addr;
 
+    void setupSocket();
+    void bindSocket();
+    void makeSocketNonBlocking();
     VirtualHost createVirtualHost(const Server& server);
+
 };
