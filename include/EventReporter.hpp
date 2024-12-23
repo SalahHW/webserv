@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cerrno>
 #include <iostream>
 #include <sys/epoll.h>
 #include <unistd.h>
@@ -12,6 +13,7 @@ public:
     bool good() const;
 
     bool addFD(int fd);
+    void run(void (*eventHandler)(int fd, uint32_t events));
 
 private:
     bool isValid;

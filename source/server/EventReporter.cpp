@@ -30,9 +30,28 @@ bool EventReporter::addFD(int fd)
     return true;
 }
 
+void EventReporter::run(void (*eventHandler)(int fd, uint32_t events))
+{
+    struct epoll_event events[10];
+
+    while (isValid) {
+        int numEvents = epoll_wait(epollFd, events, 10, -1);
+
+        if (numEvents == -1) {
+            if (errno == EINTR) continue;
+            std::cerr << "Error: epoll_wait failed" << std::endl;
+            isValid = false;
+            break;
+        }
+
+        for (int i = 0; i < numEvents; ++i) {
+            eventHandler(events[i].data.fd, events[i].events);
+        }
+    }
+}
+
 void EventReporter::initializeEpoll()
 {
-    // TODO: check if EPOLL_CLOEXEX don't close fd's in the main process
     epollFd = epoll_create1(EPOLL_CLOEXEC);
     if (epollFd == -1) {
         std::cerr << "Error: Failed to initialize epoll" << std::endl;
