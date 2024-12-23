@@ -35,7 +35,7 @@ void EventReporter::initializeEpoll()
     // TODO: check if EPOLL_CLOEXEX don't close fd's in the main process
     epollFd = epoll_create1(EPOLL_CLOEXEC);
     if (epollFd == -1) {
-        std::cerr << "Error: Epoll initialization failed" << std::endl;
+        std::cerr << "Error: Failed to initialize epoll" << std::endl;
         isValid = false;
     }
 }
