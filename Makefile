@@ -11,6 +11,8 @@ SRCS					=	main.cpp											\
 							parser/ConfigExtractor.cpp							\
 							parser/ConfigFinalizer.cpp							\
 							server/Server.cpp									\
+							server/ServerManager.cpp							\
+							server/EventReporter.cpp							\
 							server/Location.cpp									\
 							server/Port.cpp										\
 							server/VirtualHost.cpp								\
