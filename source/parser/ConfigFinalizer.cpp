@@ -103,6 +103,7 @@ void ConfigFinalizer::createPorts()
     for (itUsedPorts = usedPorts.begin(); itUsedPorts != usedPorts.end(); ++itUsedPorts) {
         Port port;
         port.setPort(*itUsedPorts);
+        port.initialize();
         ports[*itUsedPorts] = port;
     }
 }
