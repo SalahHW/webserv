@@ -3,7 +3,7 @@
 
 #include "ConfigFile.hpp"
 #include "Port.hpp"
-#include "ServerHandler.hpp"
+#include "ServerManager.hpp"
 
 int main(int argc, char** argv)
 {
@@ -21,7 +21,7 @@ int main(int argc, char** argv)
         return (1);
     }
 
-    //TODO: Update Configuration to setup  a default server for a port
+    // TODO: Update Configuration to setup  a default server for a port
 
     std::map<int, Port> ports = server_configuration.getPortMap();
     std::map<int, Port>::const_iterator itPort;
@@ -29,7 +29,9 @@ int main(int argc, char** argv)
     for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
         itPort->second.displayHosts();
     }
-    
+
+    ServerManager serverManager(server_configuration.getPortMap());
+    serverManager.start();
     // ServerHandler serverHandler(ports);
     return (0);
 }
