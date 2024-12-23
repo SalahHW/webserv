@@ -30,7 +30,7 @@ bool EventReporter::addFD(int fd)
     return true;
 }
 
-void EventReporter::run(void (*eventHandler)(int fd, uint32_t events))
+void EventReporter::run(void (ServerManager::*eventHandler)(int fd, uint32_t events), ServerManager* instance)
 {
     struct epoll_event events[10];
 
@@ -45,7 +45,7 @@ void EventReporter::run(void (*eventHandler)(int fd, uint32_t events))
         }
 
         for (int i = 0; i < numEvents; ++i) {
-            eventHandler(events[i].data.fd, events[i].events);
+            (instance->*eventHandler)(events[i].data.fd, events[i].events);
         }
     }
 }

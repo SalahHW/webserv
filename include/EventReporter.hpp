@@ -5,6 +5,8 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 
+class ServerManager;
+
 class EventReporter {
 public:
     ~EventReporter();
@@ -13,7 +15,7 @@ public:
     bool good() const;
 
     bool addFD(int fd);
-    void run(void (*eventHandler)(int fd, uint32_t events));
+    void run(void (ServerManager::*eventHandler)(int fd, uint32_t events), ServerManager* instance);
 
 private:
     bool isValid;
