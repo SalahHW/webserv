@@ -11,12 +11,21 @@ ConfigFile::ConfigFile(const std::string& configFilePath)
     , isValid(true)
 {
     readConfigFile(configFilePath);
-    ports = ConfigExtractor::getPortMap(*this);
+    servers = ConfigExtractor::extractServers(*this);
+    finalizeConfig();
 }
 
-ConfigFile::~ConfigFile() { delete mainBlock; }
+ConfigFile::~ConfigFile()
+{
+    delete mainBlock;
+    std::map<int, Port*>::iterator itPort;
 
-std::map<int, Port> ConfigFile::getPortMap() const
+    for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
+        delete itPort->second;
+    }
+}
+
+std::map<int, Port*> ConfigFile::getPortMap() const
 {
     return this->ports;
 }
@@ -324,4 +333,15 @@ std::string ConfigFile::extractDirectiveName(const std::string& line) const
     std::string directiveName;
     ss >> directiveName;
     return directiveName;
+}
+
+void ConfigFile::finalizeConfig()
+{
+    finalizer.finalizeConfig(servers);
+    if (!finalizer.good()) {
+        std::cerr << "Invalid port configuration" << std::endl;
+        isValid = false;
+        return;
+    }
+    ports = finalizer.getPorts();
 }
