@@ -14,8 +14,6 @@ class Port {
 public:
     ~Port();
     Port();
-    Port(const Port& src);
-    Port& operator=(const Port& src);
 
     void initialize();
     void startListening();
@@ -44,4 +42,6 @@ private:
     void makeSocketNonBlocking();
     VirtualHost createVirtualHost(const Server& server);
 
+    Port(const Port& src);
+    Port& operator=(const Port& src);
 };

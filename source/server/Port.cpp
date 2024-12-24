@@ -9,24 +9,24 @@ Port::Port()
     , port(-1)
     , listenFd(-1)
 {
-    memset(&addr, 0, sizeof(addr));
 }
 
-Port::Port(const Port& src) { *this = src; }
+// Port::Port(const Port& src) { *this = src; }
 
-Port& Port::operator=(const Port& src)
-{
-    if (this != &src) {
-        this->isValid = src.isValid;
-        this->port = src.port;
-        this->listenFd = src.listenFd;
-        this->virtualHosts = src.virtualHosts;
-        this->addr = src.addr;
-    }
-    return *this;
-}
+// Port& Port::operator=(const Port& src)
+// {
+//     if (this != &src) {
+//         this->isValid = src.isValid;
+//         this->port = src.port;
+//         this->listenFd = src.listenFd;
+//         this->virtualHosts = src.virtualHosts;
+//         this->addr = src.addr;
+//     }
+//     return *this;
+// }
 
 void Port::initialize() {
+    memset(&addr, 0, sizeof(addr));
     setupSocket();
     bindSocket();
     makeSocketNonBlocking();
@@ -54,7 +54,7 @@ void Port::bindSocket()
     addr.sin_addr.s_addr = INADDR_ANY;
     int bindResult = bind(this->listenFd, (struct sockaddr*)&addr, sizeof(addr));
     if (bindResult == -1) {
-        std::cerr << "Error: Port binding failed" << std::endl;
+        std::cerr << "Error: Port binding failed on port " << this->port << std::endl;
         this->isValid = false;
     }
 }
