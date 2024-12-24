@@ -8,20 +8,23 @@
 class ServerManager {
 public:
     ~ServerManager();
-    ServerManager(std::map<int, Port> ports);
+    ServerManager(std::map<int, Port*> ports);
     ServerManager(const ServerManager& other);
     ServerManager& operator=(const ServerManager& other);
 
+    bool good() const;
     void start();
     void handleEvent(int fd, uint32_t events);
 
 private:
     ServerManager();
 
-    std::map<int, Port> ports;
+    bool isValid;
+    std::map<int, Port*> ports;
     EventReporter eventReporter;
     bool isRunning;
 
+    bool initializePorts();
     void makePortsListening();
     void addPortsToEventReporter();
 };

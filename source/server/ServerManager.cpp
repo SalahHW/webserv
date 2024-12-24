@@ -8,12 +8,17 @@ ServerManager::ServerManager()
 {
 }
 
-ServerManager::ServerManager(std::map<int, Port> ports)
-    : ports(ports)
+ServerManager::ServerManager(std::map<int, Port*> ports)
+    : isValid(true)
+    , ports(ports)
     , isRunning(false)
 {
     if (ports.empty()) {
         std::cerr << "Error: No ports provided for server manager." << std::endl;
+        return;
+    }
+    if (!initializePorts()) {
+        isValid = false;
         return;
     }
     makePortsListening();
@@ -34,24 +39,44 @@ ServerManager& ServerManager::operator=(const ServerManager& other)
     return *this;
 }
 
-void ServerManager::start() {
+bool ServerManager::good() const {
+    return this->isValid;
+}
+
+void ServerManager::start()
+{
     eventReporter.run(&ServerManager::handleEvent, this);
 }
 
-void ServerManager::makePortsListening() {
-    std::map<int, Port>::iterator itPort;
+bool ServerManager::initializePorts()
+{
+    std::map<int, Port*>::iterator itPort;
 
     for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
-        itPort->second.startListening();
+        itPort->second->initialize();
+        if (!itPort->second->good()) {
+            std::cerr << "Ports initialization failed." << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+void ServerManager::makePortsListening()
+{
+    std::map<int, Port*>::iterator itPort;
+
+    for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
+        itPort->second->startListening();
     }
 }
 
 void ServerManager::addPortsToEventReporter()
 {
-    std::map<int, Port>::iterator itPort;
+    std::map<int, Port*>::iterator itPort;
 
     for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
-        int portFd = itPort->second.getListenFd();
+        int portFd = itPort->second->getListenFd();
         if (!eventReporter.addFD(portFd)) {
             return;
         }
