@@ -23,15 +23,8 @@ int main(int argc, char** argv)
 
     // TODO: Update Configuration to setup  a default server for a port
 
-    std::map<int, Port> ports = server_configuration.getPortMap();
-    std::map<int, Port>::const_iterator itPort;
-
-    for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
-        itPort->second.displayHosts();
-    }
-
     ServerManager serverManager(server_configuration.getPortMap());
-    serverManager.start();
-    // ServerHandler serverHandler(ports);
+    if (serverManager.good())
+        serverManager.start();
     return (0);
 }
