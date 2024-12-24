@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Client.hpp"
 #include "EventReporter.hpp"
 #include "Port.hpp"
 #include <iostream>
 #include <map>
+#include <set>
 
 class ServerManager {
 public:
@@ -15,16 +17,22 @@ public:
     bool good() const;
     void start();
     void handleEvent(int fd, uint32_t events);
+    bool isListeningSocket(int fd) const;
 
 private:
     ServerManager();
 
     bool isValid;
     std::map<int, Port*> ports;
+    std::map<int, Client*> clients;
+    std::set<int> listeningSockets;
     EventReporter eventReporter;
     bool isRunning;
 
     bool initializePorts();
     void makePortsListening();
     void addPortsToEventReporter();
+    void acceptConnection(int listenFd);
+    void closeConnection(int clientFd);
+    void readFromClient(int clientFd);
 };
