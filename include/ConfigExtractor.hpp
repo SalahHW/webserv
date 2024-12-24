@@ -16,5 +16,4 @@ public:
     static void extractServerDirectives(const Block& block, Server& server);
     static void extractLocationBlocks(const Block& block, Server& server);
     static void extractLocationDirectives(const Block& block, Location& location);
-    static std::map<int, Port> getPortMap(const ConfigFile& configFile);
 };

@@ -1,7 +1,6 @@
 #include "ConfigExtractor.hpp"
 
-std::vector<Server> ConfigExtractor::extractServers(
-    const ConfigFile& configFile)
+std::vector<Server> ConfigExtractor::extractServers(const ConfigFile& configFile)
 {
     std::vector<Server> servers;
     const Block& mainBlock = configFile.getMainBlock();
@@ -50,13 +49,4 @@ void ConfigExtractor::extractLocationDirectives(const Block& block,
     for (size_t i = 0; i < directives.size(); ++i) {
         directives[i]->apply(location);
     }
-}
-
-std::map<int, Port> ConfigExtractor::getPortMap(const ConfigFile& configFile)
-{
-    ConfigFinalizer finalizer;
-    std::vector<Server> servers = extractServers(configFile);
-    finalizer.finalizeConfig(servers);
-
-    return finalizer.getPorts();
 }
