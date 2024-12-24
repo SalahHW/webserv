@@ -37,7 +37,7 @@ ConfigFinalizer& ConfigFinalizer::operator=(const ConfigFinalizer& other)
 
 bool ConfigFinalizer::good() const { return this->isValid; }
 
-const std::map<int, Port>& ConfigFinalizer::getPorts() const { return ports; }
+const std::map<int, Port*>& ConfigFinalizer::getPorts() const { return ports; }
 
 void ConfigFinalizer::finalizeConfig(std::vector<Server>& servers)
 {
@@ -101,9 +101,8 @@ void ConfigFinalizer::createPorts()
     std::list<int>::const_iterator itUsedPorts;
 
     for (itUsedPorts = usedPorts.begin(); itUsedPorts != usedPorts.end(); ++itUsedPorts) {
-        Port port;
-        port.setPort(*itUsedPorts);
-        port.initialize();
+        Port* port = new Port();
+        port->setPort(*itUsedPorts);
         ports[*itUsedPorts] = port;
     }
 }
@@ -113,6 +112,6 @@ void ConfigFinalizer::assignServersToPorts(const std::vector<Server>& servers)
     std::vector<Server>::const_iterator itServers;
 
     for (itServers = servers.begin(); itServers != servers.end(); ++itServers) {
-        ports[itServers->getPort()].addVirtualHost(*itServers);
+        ports[itServers->getPort()]->addVirtualHost(*itServers);
     }
 }

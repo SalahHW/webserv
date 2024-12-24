@@ -19,7 +19,7 @@ public:
     ConfigFinalizer& operator=(const ConfigFinalizer& other);
 
     bool good() const;
-    const std::map<int, Port>& getPorts() const;
+    const std::map<int, Port*>& getPorts() const;
 
 
     void finalizeConfig(std::vector<Server>& servers);
@@ -46,5 +46,5 @@ private:
 
     std::list<int> usedPorts;
 
-    std::map<int, Port> ports;
+    std::map<int, Port*> ports;
 };
