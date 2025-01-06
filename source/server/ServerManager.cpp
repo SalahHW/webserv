@@ -25,8 +25,6 @@ ServerManager::ServerManager(std::map<int, Port*> ports)
         isValid = false;
         return;
     }
-    makePortsListening();
-    addPortsToEventReporter();
 }
 
 ServerManager::ServerManager(const ServerManager& other)
@@ -50,6 +48,7 @@ bool ServerManager::good() const
 
 void ServerManager::start()
 {
+    addPortsToEventReporter();
     eventReporter.run(&ServerManager::handleEvent, this);
 }
 
@@ -67,20 +66,15 @@ bool ServerManager::initializePorts()
     return true;
 }
 
-void ServerManager::makePortsListening()
-{
-    std::map<int, Port*>::iterator itPort;
-
-    for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
-        itPort->second->startListening();
-    }
-}
-
 void ServerManager::addPortsToEventReporter()
 {
     std::map<int, Port*>::iterator itPort;
 
     for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
+        itPort->second->startListening();
+        if (!itPort->second->good()) {
+            return;
+        }
         int portFd = itPort->second->getListenFd();
         if (!eventReporter.addFD(portFd)) {
             return;

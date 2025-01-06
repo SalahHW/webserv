@@ -30,7 +30,6 @@ private:
     bool isRunning;
 
     bool initializePorts();
-    void makePortsListening();
     void addPortsToEventReporter();
     void acceptConnection(int listenFd);
     void closeConnection(int clientFd);

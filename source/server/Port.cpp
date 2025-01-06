@@ -30,7 +30,6 @@ void Port::initialize() {
     setupSocket();
     bindSocket();
     makeSocketNonBlocking();
-    // startListening();
 }
 
 void Port::setupSocket()
