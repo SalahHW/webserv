@@ -6,23 +6,37 @@ Client::~Client()
 
 Client::Client(int fd)
     : fd(fd)
+    , destinationFd(-1)
 {
 }
 
-std::string& Client::getBuffer() {
-	return buffer;
+void Client::setDestinationFd(int destinationFd)
+{
+    this->destinationFd = destinationFd;
 }
 
-void Client::closeConnection() {
-	close(fd);
-	clearBuffer();
+std::string& Client::getBuffer()
+{
+    return buffer;
 }
 
-void Client::appendToBuffer(const char* data, size_t len) {
-	buffer.append(data, len);
+int Client::getDestinationFd() const
+{
+    return this->destinationFd;
+}
+
+void Client::closeConnection()
+{
+    close(fd);
+    clearBuffer();
+}
+
+void Client::appendToBuffer(const char* data, size_t len)
+{
+    buffer.append(data, len);
 }
 
 void Client::clearBuffer()
 {
-	buffer.clear();
+    buffer.clear();
 }

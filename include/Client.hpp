@@ -14,7 +14,10 @@ public:
     ~Client();
     Client(int fd);
 
+    void setDestinationFd(int destinationFd);
+
     std::string& getBuffer();
+    int getDestinationFd() const;
 
     void closeConnection();
     void appendToBuffer(const char* data, size_t len);
@@ -22,6 +25,7 @@ public:
 
 private:
     int fd;
+    int destinationFd;
     std::string buffer;
 
     Client();
