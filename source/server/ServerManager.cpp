@@ -86,18 +86,33 @@ void ServerManager::addPortsToEventReporter()
 void ServerManager::handleEvent(int fd, uint32_t events)
 {
     if (events & EPOLLIN) {
-        if (isListeningSocket(fd)) {
-            acceptConnection(fd);
-        } else {
-            readFromClient(fd);
-        }
+        handleEpollIn(fd);
     }
     if (events & EPOLLOUT) {
-        std::cout << "Socket " << fd << ": Ready to write" << std::endl;
+        handleEpollOut(fd);
     }
     if (events & EPOLLERR) {
-        std::cerr << "Socket " << fd << ": Error occurred" << std::endl;
+        handleEpollOut(fd);
     }
+}
+
+void ServerManager::handleEpollIn(int listenFd)
+{
+    if (isListeningSocket(listenFd)) {
+        acceptConnection(listenFd);
+    } else {
+        readFromClient(listenFd);
+    }
+}
+
+void ServerManager::handleEpollOut(int listenFd)
+{
+    std::cout << "Socket " << listenFd << ": Ready to write" << std::endl;
+}
+
+void ServerManager::handleEpollErr(int listenFd)
+{
+    std::cerr << "Socket " << listenFd << ": Error occurred" << std::endl;
 }
 
 bool ServerManager::isListeningSocket(int fd) const

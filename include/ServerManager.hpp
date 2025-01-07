@@ -32,6 +32,9 @@ private:
     bool initializePorts();
     void addPortsToEventReporter();
     void acceptConnection(int listenFd);
+    void handleEpollIn(int listenFd);
+    void handleEpollOut(int listenFd);
+    void handleEpollErr(int listenFd);
     void closeConnection(int clientFd);
     void readFromClient(int clientFd);
 };
