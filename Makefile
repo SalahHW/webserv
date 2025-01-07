@@ -17,6 +17,7 @@ SRCS					=	main.cpp											\
 							server/Port.cpp										\
 							server/VirtualHost.cpp								\
 							server/Client.cpp									\
+							server/ParseRequest.cpp								\
 							utils/utils.cpp										\
 							block/Block.cpp										\
 							block/BlockFactory.cpp								\
