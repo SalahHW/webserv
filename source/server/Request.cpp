@@ -1,0 +1,60 @@
+#include "Request.hpp"
+
+Request::Request() : method(""), uri(""), version(""), body("") {}
+
+Request::~Request() {}
+
+void Request::setMethod(const std::string& method) { this->method = method; }
+
+void Request::setUri(const std::string& uri) { this->uri = uri; }
+
+void Request::setVersion(const std::string& version) {
+  this->version = version;
+}
+
+void Request::setHeaders(const std::map<std::string, std::string>& headers) {
+  this->headers = headers;
+}
+
+void Request::setHeader(const std::string& name, const std::string& value) {
+  if (this->headers.find(name) != this->headers.end()) {
+    if (name == "Accept" || name == "Cache-Control" ||
+        name == "Content-Language") {
+      this->headers[name] += ", " + value;
+    } else {
+      this->headers[name] = value;
+    }
+  } else {
+    this->headers[name] = value;
+  }
+}
+
+void Request::setBody(const std::string& body) { this->body = body; }
+
+const std::string& Request::getMethod() const { return this->method; }
+
+const std::string& Request::getUri() const { return this->uri; }
+
+const std::string& Request::getVersion() const { return this->version; }
+
+const std::map<std::string, std::string>& Request::getHeaders() const {
+  return this->headers;
+}
+
+const std::string& Request::getHeader(const std::string key) const {
+  return this->headers.at(key);
+}
+
+const std::string& Request::getBody() const { return this->body; }
+
+void Request::displayRequest() const {
+  std::cout << "Method: " << this->method << std::endl;
+  std::cout << "URI: " << this->uri << std::endl;
+  std::cout << "Version: " << this->version << std::endl;
+  std::cout << "Headers:" << std::endl;
+  for (std::map<std::string, std::string>::const_iterator it = headers.begin();
+       it != headers.end(); ++it) {
+    std::cout << it->first << ": " << it->second << std::endl;
+  }
+  std::cout << "Body: " << this->body << std::endl;
+}
