@@ -54,6 +54,7 @@ void ServerManager::start()
 
 bool ServerManager::initializePorts()
 {
+    std::map<int, Port*> newPorts;
     std::map<int, Port*>::iterator itPort;
 
     for (itPort = ports.begin(); itPort != ports.end(); ++itPort) {
@@ -62,7 +63,11 @@ bool ServerManager::initializePorts()
             std::cerr << "Ports initialization failed." << std::endl;
             return false;
         }
+        int portFd = itPort->second->getListenFd();
+        newPorts[portFd] = itPort->second;
     }
+
+    ports.swap(newPorts);
     return true;
 }
 
@@ -140,6 +145,8 @@ void ServerManager::acceptConnection(int listenFd)
 
     Client* client = new Client(clientFd);
     clients[clientFd] = client;
+    client->setDestinationFd(listenFd);
+    // clientsToPorts[clientFd] = listenFd;
 }
 
 void ServerManager::closeConnection(int clientFd)
@@ -148,6 +155,7 @@ void ServerManager::closeConnection(int clientFd)
         clients[clientFd]->closeConnection();
         delete clients[clientFd];
         clients.erase(clientFd);
+        // clientsToPorts.erase(clientFd);
         std::cout << "Client fd " << clientFd << " connection closed" << std::endl;
     }
 }
@@ -175,6 +183,8 @@ void ServerManager::readFromClient(int clientFd)
     buffer[bytesRead] = '\0';
     client->appendToBuffer(buffer, bytesRead);
 
-    std::cout << "Data received from client fd " << clientFd << ": " << std::endl
-              << buffer << std::endl;
+    // std::cout << "Data received from client fd " << clientFd << ": " << std::endl
+    //           << buffer << std::endl;
+    int destinationFd = client->getDestinationFd();
+    ports[destinationFd]->processClientData(*client);
 }

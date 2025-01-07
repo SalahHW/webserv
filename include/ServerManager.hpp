@@ -25,6 +25,7 @@ private:
     bool isValid;
     std::map<int, Port*> ports;
     std::map<int, Client*> clients;
+    // std::map<int, int> clientsToPorts;
     std::set<int> listeningSockets;
     EventReporter eventReporter;
     bool isRunning;
