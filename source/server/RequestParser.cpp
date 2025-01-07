@@ -1,17 +1,19 @@
 #include "RequestParser.hpp"
 
-RequestParser::RequestParser(const std::string& request, Request requestToFill)
+RequestParser::RequestParser(const std::string& request, Request& requestToFill)
     : request(request), requestToFill(requestToFill) {
   parseHttpRequest();
 }
 
 RequestParser::~RequestParser() {}
 
-RequestParser::RequestParser(const RequestParser& src) : request(src.request) {}
+RequestParser::RequestParser(const RequestParser& src)
+    : request(src.request), requestToFill(src.requestToFill) {}
 
 RequestParser& RequestParser::operator=(const RequestParser& src) {
   if (this != &src) {
     this->request = src.request;
+    this->requestToFill = src.requestToFill;
   }
   return *this;
 }

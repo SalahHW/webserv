@@ -12,7 +12,7 @@
 class RequestParser {
  private:
   std::string request;
-  Request requestToFill;
+  Request& requestToFill;
 
   void findAndParseRequestLine(std::string::size_type& headersStartPos);
   void findAndParseHeaders(std::string::size_type headersStartPos,
@@ -21,7 +21,7 @@ class RequestParser {
   std::string trim(const std::string& str) const;
 
  public:
-  RequestParser(const std::string& request, Request requestToFill);
+  RequestParser(const std::string& request, Request& requestToFill);
   ~RequestParser();
   RequestParser(const RequestParser& src);
   RequestParser& operator=(const RequestParser& src);
