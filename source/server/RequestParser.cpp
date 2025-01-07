@@ -76,6 +76,10 @@ void RequestParser::findAndParseHeaders(std::string::size_type headersStartPos,
     std::string headerValue = trim(line.substr(pos + 1));
 
     this->requestToFill.setHeader(headerName, headerValue);
+    if (headerName == "Host") {
+      this->requestToFill.setHostName(
+          headerValue.substr(0, headerValue.find(':')));
+    }
   }
   bodyStartPos = headersEnd + 4;
 }

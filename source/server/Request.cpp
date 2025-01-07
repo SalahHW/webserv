@@ -31,6 +31,10 @@ void Request::setHeader(const std::string& name, const std::string& value) {
 
 void Request::setBody(const std::string& body) { this->body = body; }
 
+void Request::setHostName(const std::string& hostName) {
+  this->hostName = hostName;
+}
+
 const std::string& Request::getMethod() const { return this->method; }
 
 const std::string& Request::getUri() const { return this->uri; }
@@ -47,6 +51,8 @@ const std::string& Request::getHeader(const std::string key) const {
 
 const std::string& Request::getBody() const { return this->body; }
 
+const std::string& Request::getHostName() const { return this->hostName; }
+
 void Request::displayRequest() const {
   std::cout << "Method: " << this->method << std::endl;
   std::cout << "URI: " << this->uri << std::endl;
@@ -57,4 +63,5 @@ void Request::displayRequest() const {
     std::cout << it->first << ": " << it->second << std::endl;
   }
   std::cout << "Body: " << this->body << std::endl;
+  std::cout << "Host Name: " << this->hostName << std::endl;
 }
