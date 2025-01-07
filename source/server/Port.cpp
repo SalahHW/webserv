@@ -25,7 +25,8 @@ Port::Port()
 //     return *this;
 // }
 
-void Port::initialize() {
+void Port::initialize()
+{
     memset(&addr, 0, sizeof(addr));
     setupSocket();
     bindSocket();
@@ -78,6 +79,12 @@ void Port::startListening()
         std::cerr << "Error: Failed to listen on port " << this->port << std::endl;
         this->isValid = false;
     }
+}
+
+void Port::processClientData(Client& client)
+{
+    // ParseRequest requestParser(client.getBuffer());
+    // requestParser.showHttpRequest();
 }
 
 void Port::addVirtualHost(const Server& server)

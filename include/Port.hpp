@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Client.hpp"
+#include "ParseRequest.hpp"
 #include "Server.hpp"
 #include "VirtualHost.hpp"
 #include <arpa/inet.h>
@@ -17,6 +19,7 @@ public:
 
     void initialize();
     void startListening();
+    void processClientData(Client& client);
 
     void addVirtualHost(const Server& server);
 
