@@ -1,13 +1,13 @@
 #pragma once
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 
-#include "HttpStatusCode.hpp"
-#include "Request.hpp"
+class Request;
 
 class RequestParser {
  private:
@@ -15,9 +15,14 @@ class RequestParser {
   Request& requestToFill;
 
   void findAndParseRequestLine(std::string::size_type& headersStartPos);
-  void findAndParseHeaders(std::string::size_type headersStartPos,
-                           std::string::size_type& bodyStartPos);
-  void parseRequestBody(std::string::size_type bodyStartPos);
+  void parseHeaders(std::string::size_type& bodyStartPos);
+  void parseBody(std::string::size_type bodyStartPos);
+  void parseHost(const std::string& value);
+  void parseUserAgent(const std::string& value);
+  void parseAccept(const std::string& value);
+  void parseAcceptLanguage(const std::string& value);
+  void parseAcceptEncoding(const std::string& value);
+  void parseConnection(const std::string& value);
   std::string trim(const std::string& str) const;
 
  public:

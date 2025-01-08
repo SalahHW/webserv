@@ -10,7 +10,6 @@
 #include <iostream>
 
 #include "Client.hpp"
-#include "RequestParser.hpp"
 #include "Server.hpp"
 #include "VirtualHost.hpp"
 

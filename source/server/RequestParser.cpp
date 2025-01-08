@@ -1,5 +1,7 @@
 #include "RequestParser.hpp"
 
+#include "Request.hpp"
+
 RequestParser::RequestParser(const std::string& request, Request& requestToFill)
     : request(request), requestToFill(requestToFill) {
   parseHttpRequest();
@@ -19,13 +21,13 @@ RequestParser& RequestParser::operator=(const RequestParser& src) {
 }
 
 void RequestParser::parseHttpRequest() {
-  std::string::size_type headersStartPos;
+  std::string::size_type headersStartPos = 0;
   findAndParseRequestLine(headersStartPos);
 
-  std::string::size_type bodyStartPos;
-  findAndParseHeaders(headersStartPos, bodyStartPos);
+  std::string::size_type bodyStartPos = headersStartPos;
+  parseHeaders(bodyStartPos);
 
-  parseRequestBody(bodyStartPos);
+  parseBody(bodyStartPos);
 }
 
 void RequestParser::findAndParseRequestLine(
@@ -49,67 +51,79 @@ void RequestParser::findAndParseRequestLine(
   headersStartPos = requestLineEnd + 2;
 }
 
-void RequestParser::findAndParseHeaders(std::string::size_type headersStartPos,
-                                        std::string::size_type& bodyStartPos) {
-  std::string::size_type headersEnd =
-      this->request.find("\r\n\r\n", headersStartPos);
-  if (headersEnd == std::string::npos) {
-    bodyStartPos = this->request.length();
-    return;
-  }
-  std::string headers =
-      this->request.substr(headersStartPos, headersEnd - headersStartPos);
-  std::istringstream stream(headers);
-  std::string line;
-  while (std::getline(stream, line)) {
-    if (!line.empty() && line[line.size() - 1] == '\r') {
-      line.erase(line.size() - 1);
-    }
-    if (line.empty()) {
-      continue;
-    }
-    std::string::size_type pos = line.find(':');
-    if (pos == std::string::npos) {
-      continue;
-    }
-    std::string headerName = trim(line.substr(0, pos));
-    std::string headerValue = trim(line.substr(pos + 1));
+void RequestParser::parseHeaders(std::string::size_type& bodyStartPos) {
+  std::string::size_type pos = bodyStartPos;
 
-    this->requestToFill.setHeader(headerName, headerValue);
-    if (headerName == "Host") {
-      this->requestToFill.setHostName(
-          headerValue.substr(0, headerValue.find(':')));
+  while (true) {
+    std::string::size_type lineEnd = request.find("\r\n", pos);
+    if (lineEnd == std::string::npos) {
+      break;
     }
+
+    if (lineEnd == pos) {
+      bodyStartPos = lineEnd + 2;
+      break;
+    }
+
+    std::string headerLine = request.substr(pos, lineEnd - pos);
+
+    std::string::size_type colonPos = headerLine.find(":");
+    if (colonPos != std::string::npos) {
+      std::string key = trim(headerLine.substr(0, colonPos));
+      std::string value = trim(headerLine.substr(colonPos + 1));
+
+      std::string lowerKey = key;
+      std::transform(lowerKey.begin(), lowerKey.end(), lowerKey.begin(),
+                     static_cast<int (*)(int)>(std::tolower));
+
+      if (lowerKey == "host") {
+        parseHost(value);
+      } else if (lowerKey == "user-agent") {
+        parseUserAgent(value);
+      } else if (lowerKey == "accept") {
+        parseAccept(value);
+      } else if (lowerKey == "accept-language") {
+        parseAcceptLanguage(value);
+      } else if (lowerKey == "accept-encoding") {
+        parseAcceptEncoding(value);
+      } else if (lowerKey == "connection") {
+        parseConnection(value);
+      }
+    }
+
+    pos = lineEnd + 2;
   }
-  bodyStartPos = headersEnd + 4;
 }
 
-void RequestParser::parseRequestBody(std::string::size_type bodyStartPos) {
-  if (this->requestToFill.getMethod() == "POST" ||
-      this->requestToFill.getMethod() == "PUT") {
-    const std::map<std::string, std::string>& headers =
-        this->requestToFill.getHeaders();
-    std::map<std::string, std::string>::const_iterator it =
-        headers.find("Content-Length");
-
-    if (it != headers.end()) {
-      std::istringstream iss(it->second);
-      size_t contentLength = 0;
-      iss >> contentLength;
-
-      if (contentLength > 0 &&
-          this->request.size() >= bodyStartPos + contentLength) {
-        this->requestToFill.setBody(
-            this->request.substr(bodyStartPos, contentLength));
-      } else {
-        this->requestToFill.setBody("");
-      }
-    } else {
-      this->requestToFill.setBody("");
-    }
-  } else {
-    this->requestToFill.setBody("");
+void RequestParser::parseBody(std::string::size_type bodyStartPos) {
+  if (bodyStartPos < request.size()) {
+    std::string body = request.substr(bodyStartPos);
+    requestToFill.setBody(body);
   }
+}
+
+void RequestParser::parseHost(const std::string& value) {
+  requestToFill.setHost(value);
+}
+
+void RequestParser::parseUserAgent(const std::string& value) {
+  requestToFill.setUserAgent(value);
+}
+
+void RequestParser::parseAccept(const std::string& value) {
+  requestToFill.setAccept(value);
+}
+
+void RequestParser::parseAcceptLanguage(const std::string& value) {
+  requestToFill.setAcceptLanguage(value);
+}
+
+void RequestParser::parseAcceptEncoding(const std::string& value) {
+  requestToFill.setAcceptEncoding(value);
+}
+
+void RequestParser::parseConnection(const std::string& value) {
+  requestToFill.setConnection(value);
 }
 
 std::string RequestParser::trim(const std::string& str) const {

@@ -1,5 +1,7 @@
 #include "Port.hpp"
 
+#include "Request.hpp"
+
 Port::~Port() {}
 
 Port::Port() : isValid(true), port(-1), listenFd(-1) {}
@@ -72,8 +74,7 @@ void Port::startListening() {
 }
 
 void Port::processClientData(Client& client) {
-  Request request;  // add as an attribute of each client
-  RequestParser requestParser(client.getBuffer(), request);
+  Request request(client.getBuffer());  // add as an attribute of each client
   request.displayRequest();
 }
 

@@ -1,15 +1,21 @@
 #include "RequestValidator.hpp"
 
+#include "Request.hpp"
+
 bool RequestValidator::validateRequest(const Request& request) {
-  return validateMethod(request.getMethod()) && validateUri(request.getUri()) &&
-         validateVersion(request.getVersion()) &&
-         validateHeaders(request.getHeaders()) &&
-         validateBody(request.getBody()) &&
-         validateHostName(request.getHostName()) &&
-         validateMethodGood(request.getMethodGood()) &&
-         validateUriGood(request.getUriGood()) &&
-         validateVersionGood(request.getVersionGood()) &&
-         validateHeadersGood(request.getHeadersGood());
+  if (request.getHostGood() && request.getMethodGood() &&
+      request.getUriGood() && request.getVersionGood() &&
+      request.getUserAgentGood() && request.getAcceptGood() &&
+      request.getAcceptLanguageGood() && request.getAcceptEncodingGood() &&
+      request.getConnectionGood()) {
+    // test
+    std::cout << "Request is valid" << std::endl;
+    return true;
+  } else {
+    // test
+    std::cout << "Request is invalid" << std::endl;
+    return false;
+  }
 }
 
 bool RequestValidator::validateMethod(const std::string& method) {
@@ -24,21 +30,30 @@ bool RequestValidator::validateVersion(const std::string& version) {
   return version == "HTTP/1.1";
 }
 
-bool RequestValidator::validateHeaders(
-    const std::map<std::string, std::string>& headers) {
-  return headers.find("Host") != headers.end() &&
-         headers.find("User-Agent") != headers.end() &&
-         headers.find("Accept") != headers.end() &&
-         headers.find("Accept-Language") != headers.end() &&
-         headers.find("Accept-Encoding") != headers.end() &&
-         headers.find("Connection") != headers.end();
+bool RequestValidator::validateHost(const std::string& host) {
+  return host.length() > 0;
 }
 
-bool RequestValidator::validateHeader(const std::string& key,
-                                      const std::string& value) {
-  return key == "Host" || key == "User-Agent" || key == "Accept" ||
-         key == "Accept-Language" || key == "Accept-Encoding" ||
-         key == "Connection";
+bool RequestValidator::validateUserAgent(const std::string& userAgent) {
+  return userAgent.length() > 0;
+}
+
+bool RequestValidator::validateAccept(const std::string& accept) {
+  return accept.length() > 0;
+}
+
+bool RequestValidator::validateAcceptLanguage(
+    const std::string& acceptLanguage) {
+  return acceptLanguage.length() > 0;
+}
+
+bool RequestValidator::validateAcceptEncoding(
+    const std::string& acceptEncoding) {
+  return acceptEncoding.length() > 0;
+}
+
+bool RequestValidator::validateConnection(const std::string& connection) {
+  return connection.length() > 0;
 }
 
 bool RequestValidator::validateBody(const std::string& body) {
@@ -47,18 +62,4 @@ bool RequestValidator::validateBody(const std::string& body) {
 
 bool RequestValidator::validateHostName(const std::string& hostName) {
   return hostName.length() > 0;
-}
-
-bool RequestValidator::validateMethodGood(const bool methodGood) {
-  return methodGood;
-}
-
-bool RequestValidator::validateUriGood(const bool uriGood) { return uriGood; }
-
-bool RequestValidator::validateVersionGood(const bool versionGood) {
-  return versionGood;
-}
-
-bool RequestValidator::validateHeadersGood(const bool headersGood) {
-  return headersGood;
 }
