@@ -35,6 +35,18 @@ void Request::setHostName(const std::string& hostName) {
   this->hostName = hostName;
 }
 
+void Request::setMethodGood(bool methodGood) { this->methodGood = methodGood; }
+
+void Request::setUriGood(bool uriGood) { this->uriGood = uriGood; }
+
+void Request::setVersionGood(bool versionGood) {
+  this->versionGood = versionGood;
+}
+
+void Request::setHeadersGood(bool headersGood) {
+  this->headersGood = headersGood;
+}
+
 const std::string& Request::getMethod() const { return this->method; }
 
 const std::string& Request::getUri() const { return this->uri; }
@@ -52,6 +64,14 @@ const std::string& Request::getHeader(const std::string key) const {
 const std::string& Request::getBody() const { return this->body; }
 
 const std::string& Request::getHostName() const { return this->hostName; }
+
+const bool Request::getMethodGood() const { return this->methodGood; }
+
+const bool Request::getUriGood() const { return this->uriGood; }
+
+const bool Request::getVersionGood() const { return this->versionGood; }
+
+const bool Request::getHeadersGood() const { return this->headersGood; }
 
 void Request::displayRequest() const {
   std::cout << "Method: " << this->method << std::endl;
