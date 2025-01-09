@@ -15,10 +15,13 @@ class ResponseBuilder {
 
   const Request& request;
   Response& response;
-  VirtualHost virtualHost;
+  const VirtualHost& virtualHost;
+  size_t statusCode;
 
-  void findMatchingVirtualHost(
+  const VirtualHost& findMatchingVirtualHost(
       const std::map<std::string, VirtualHost>& virtualHosts);
+  void determineStatusCode();
+
   void buildStatusLine();
   void buildDate();
   void buildContentLength();

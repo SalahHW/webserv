@@ -7,9 +7,9 @@ ResponseBuilder::ResponseBuilder(
     const std::map<std::string, VirtualHost>& virtualHosts)
     : request(request),
       response(response),
+      statusCode(0),
       virtualHost(findMatchingVirtualHost(virtualHosts)) {
   buildStatusLine();
-  buildDate();
   buildTransferEncoding();
   buildContentType();
   buildBody();
@@ -21,12 +21,31 @@ ResponseBuilder::ResponseBuilder(
   buildFullHeader();
   buildBytesSent();
   buildBytesTotal();
+  buildDate();
   buildFullResponse();
 }
 
 ResponseBuilder::~ResponseBuilder() {}
 
-void ResponseBuilder::findMatchingVirtualHost() {}
+const VirtualHost& ResponseBuilder::findMatchingVirtualHost(
+    const std::map<std::string, VirtualHost>& virtualHosts) {
+  std::map<std::string, VirtualHost>::const_iterator it =
+      virtualHosts.find(request.getHost());
+  if (it != virtualHosts.end()) {
+    return it->second;
+  } else {
+    return virtualHosts.begin()
+        ->second;  // I assume that the first virtual host is
+                   //  the default one but maybe it's not since each port have a
+                   //  list of virtual hosts
+  }
+}
+
+void ResponseBuilder::determineStatusCode() {
+  if (!request.getIsRequestGood()) {
+    statusCode = 400;
+  }
+}
 
 void ResponseBuilder::buildStatusLine() {}
 
@@ -39,8 +58,9 @@ void ResponseBuilder::buildDate() {
 }
 
 void ResponseBuilder::buildContentLength() {
-  response.setContentLength("Content-Length: " +
-                            to_string(response.getBody().size()));
+  response.setContentLength(
+      "Content-Length: " +
+      to_string(response.getBody().size()));  // use getFileSizeinstead
 }
 
 void ResponseBuilder::buildTransferEncoding() {
