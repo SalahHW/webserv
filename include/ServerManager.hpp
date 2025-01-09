@@ -16,6 +16,7 @@ public:
 
     bool good() const;
     void start();
+    void runRoutine();
     void handleEvent(int fd, uint32_t events);
     bool isListeningSocket(int fd) const;
 
@@ -25,7 +26,6 @@ private:
     bool isValid;
     std::map<int, Port*> ports;
     std::map<int, Client*> clients;
-    // std::map<int, int> clientsToPorts;
     std::set<int> listeningSockets;
     EventReporter eventReporter;
     bool isRunning;

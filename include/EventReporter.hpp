@@ -15,7 +15,7 @@ public:
     bool good() const;
 
     bool addFD(int fd);
-    void run(void (ServerManager::*eventHandler)(int fd, uint32_t events), ServerManager* instance);
+    int getNextEvent(uint32_t &eventFlag);
 
 private:
     bool isValid;
