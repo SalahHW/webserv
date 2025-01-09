@@ -2,26 +2,32 @@
 
 #include <string>
 
+#include "Request.hpp"
 #include "ResponseBuilder.hpp"
+#include "VirtualHost.hpp"
 
 class Response {
  private:
   std::string statusLine;
   std::string date;
   std::string contentLength;
-  std::string transferEncoding;
+  std::string transferEncoding;  // content-length or chunked this field can be
+                                 // empty if we use contentlength
   std::string contentType;
   std::string body;
   std::string location;    // for code 3xx and 201
   std::string allow;       // for code 405
   std::string retryAfter;  // for code 429 and 503
   std::string connection;
-  int bytesSent;
-  int bytesTotal;
+  size_t bytesSent;
+  size_t bytesLoad;
+  size_t bytesTotal;
+  std::string fullHeader;
   std::string fullResponse;
 
  public:
-  Response();
+  Response(const Request& request,
+           const std::map<std::string, VirtualHost>& virtualHosts);
   ~Response();
 
   void setStatusLine(const std::string& statusLine);
@@ -34,8 +40,9 @@ class Response {
   void setAllow(const std::string& allow);
   void setRetryAfter(const std::string& retryAfter);
   void setConnection(const std::string& connection);
-  void setBytesSent(int bytesSent);
-  void setBytesTotal(int bytesTotal);
+  void setBytesSent(size_t bytesSent);
+  void setBytesTotal(size_t bytesTotal);
+  void setFullHeader(const std::string& fullHeader);
   void setFullResponse(const std::string& fullResponse);
 
   const std::string& getStatusLine() const;
@@ -48,7 +55,8 @@ class Response {
   const std::string& getAllow() const;
   const std::string& getRetryAfter() const;
   const std::string& getConnection() const;
-  int getBytesSent() const;
-  int getBytesTotal() const;
+  size_t getBytesSent() const;
+  size_t getBytesTotal() const;
+  const std::string& getFullHeader() const;
   const std::string& getFullResponse() const;
 };

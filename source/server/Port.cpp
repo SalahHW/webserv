@@ -74,9 +74,7 @@ void Port::startListening() {
 void Port::processClientData(Client& client) {
   Request request(client.getBuffer());  // add as an attribute of each client
   request.displayRequest();
-  Response response;
-  send(client.getDestinationFd(), response.getFullResponse().c_str(),
-       response.getFullResponse().size(), 0);
+  Response response(request, getVirtualHosts());
 }
 
 void Port::addVirtualHost(const Server& server) {
