@@ -23,5 +23,5 @@ class ResponseBuilder {
   // ResponseBuilder(const Request& request);
   ResponseBuilder();
   ~ResponseBuilder();
-  const std::string& TEST();
+  std::string TEST();
 };

@@ -3,10 +3,7 @@
 Response::~Response() {}
 
 Response::Response()
-    : bytesSent(0),
-      bytesTotal(0),
-      fullResponse(""),
-      statusLine(""),
+    : statusLine(""),
       date(""),
       contentLength(""),
       transferEncoding(""),
@@ -15,9 +12,12 @@ Response::Response()
       location(""),
       allow(""),
       retryAfter(""),
-      connection("") {
+      connection(""),
+      bytesSent(0),
+      bytesTotal(0),
+      fullResponse("") {
   ResponseBuilder responseBuilder;
-  responseBuilder.TEST();
+  setFullResponse(responseBuilder.TEST());
 }
 
 void Response::setStatusLine(const std::string& statusLine) {

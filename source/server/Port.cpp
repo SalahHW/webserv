@@ -1,7 +1,5 @@
 #include "Port.hpp"
 
-#include "Request.hpp"
-
 Port::~Port() {}
 
 Port::Port() : isValid(true), port(-1), listenFd(-1) {}
@@ -76,6 +74,9 @@ void Port::startListening() {
 void Port::processClientData(Client& client) {
   Request request(client.getBuffer());  // add as an attribute of each client
   request.displayRequest();
+  Response response;
+  send(client.getDestinationFd(), response.getFullResponse().c_str(),
+       response.getFullResponse().size(), 0);
 }
 
 void Port::addVirtualHost(const Server& server) {

@@ -33,9 +33,11 @@ void ResponseBuilder::buildBytesTotal() {}
 
 void ResponseBuilder::buildFullResponse() {}
 
-const std::string& ResponseBuilder::TEST() {
-  return "HTTP/1.1 200 OK\r\nContent-Type: text/html; "
-         "charset=UTF-8\r\nContent-Length: 48\r\nDate: Wed, 08 Jan 2025 "
-         "12:00:00 GMT\r\nConnection: keep-alive\r\n\r\n<html><body><h1>Hello, "
-         "world!</h1></body></html>";
+std::string ResponseBuilder::TEST() {
+  std::string s =
+      "HTTP/1.1 200 OK\r\nContent-Type: text/html; "
+      "charset=UTF-8\r\nContent-Length: 48\r\nDate: Wed, 08 Jan 2025 12:00:00 "
+      "GMT\r\nConnection: keep-alive\r\n\r\n<html><body><h1>Hello, "
+      "world!</h1></body></html>";
+  return s;
 }
