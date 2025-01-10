@@ -163,7 +163,7 @@ void ServerManager::acceptConnection(int listenFd)
 
     Client* client = new Client(clientFd);
     clients[clientFd] = client;
-    client->setDestinationFd(listenFd);
+    client->setDestinationFd(clientFd);
 }
 
 void ServerManager::closeConnection(int clientFd)
@@ -191,7 +191,8 @@ void ServerManager::readFromClient(int clientFd)
         if (bytesRead == 0) {
             std::cout << "Client fd " << clientFd << " disconnected." << std::endl;
         } else {
-            std::cerr << "Read error" << std::endl;
+            std::cerr << bytesRead << std::endl;
+            std::cerr << "Read error on client fd "<< clientFd << std::endl;
         }
         closeConnection(clientFd);
         return;
