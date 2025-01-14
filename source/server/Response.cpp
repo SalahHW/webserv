@@ -18,6 +18,7 @@ Response::Response(const Request& request,
       bytesTotal(0),
       fullResponse("") {
   ResponseBuilder builder(request, *this, virtualHosts);
+  printResponseAttributes();
 }
 
 void Response::setStatusLine(const std::string& statusLine) {
@@ -56,6 +57,8 @@ void Response::setConnection(const std::string& connection) {
 
 void Response::setBytesSent(size_t bytesSent) { this->bytesSent = bytesSent; }
 
+void Response::setBytesLoad(size_t bytesLoad) { this->bytesLoad = bytesLoad; }
+
 void Response::setBytesTotal(size_t bytesTotal) {
   this->bytesTotal = bytesTotal;
 }
@@ -92,8 +95,30 @@ const std::string& Response::getConnection() const { return connection; }
 
 size_t Response::getBytesSent() const { return bytesSent; }
 
+size_t Response::getBytesLoad() const { return bytesLoad; }
+
 size_t Response::getBytesTotal() const { return bytesTotal; }
 
 const std::string& Response::getFullHeader() const { return fullHeader; }
 
 const std::string& Response::getFullResponse() const { return fullResponse; }
+
+void Response::printResponseAttributes() const {
+  std::cout << std::endl
+            << "Printing Response Attributes:" << std::endl
+            << std::endl;
+  std::cout << "Status Line: " << statusLine << std::endl;
+  std::cout << "Date: " << date << std::endl;
+  std::cout << "Content Length: " << contentLength << std::endl;
+  std::cout << "Transfer Encoding: " << transferEncoding << std::endl;
+  std::cout << "Content Type: " << contentType << std::endl;
+  std::cout << "Body: " << body << std::endl;
+  std::cout << "Location: " << location << std::endl;
+  std::cout << "Allow: " << allow << std::endl;
+  std::cout << "Retry After: " << retryAfter << std::endl;
+  std::cout << "Connection: " << connection << std::endl;
+  std::cout << "Bytes Sent: " << bytesSent << std::endl;
+  std::cout << "Bytes Total: " << bytesTotal << std::endl;
+  std::cout << "Full Header: " << fullHeader << std::endl;
+  std::cout << "Full Response: " << fullResponse << std::endl;
+}

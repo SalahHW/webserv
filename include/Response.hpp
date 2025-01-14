@@ -41,6 +41,7 @@ class Response {
   void setRetryAfter(const std::string& retryAfter);
   void setConnection(const std::string& connection);
   void setBytesSent(size_t bytesSent);
+  void setBytesLoad(size_t bytesLoad);
   void setBytesTotal(size_t bytesTotal);
   void setFullHeader(const std::string& fullHeader);
   void setFullResponse(const std::string& fullResponse);
@@ -56,7 +57,10 @@ class Response {
   const std::string& getRetryAfter() const;
   const std::string& getConnection() const;
   size_t getBytesSent() const;
+  size_t getBytesLoad() const;
   size_t getBytesTotal() const;
   const std::string& getFullHeader() const;
   const std::string& getFullResponse() const;
+
+  void printResponseAttributes() const;
 };

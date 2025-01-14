@@ -9,8 +9,12 @@ ResponseBuilder::ResponseBuilder(
       response(response),
       statusCode(0),
       virtualHost(findMatchingVirtualHost(virtualHosts)) {
+  findMatchingLocation();
+  determinePath =
+      matchingLocation.getRootDirectory() +
+      matchingLocation.getIndexFile();  // trim the point before the indexfile
+  determineStatusCode();
   buildStatusLine();
-  buildTransferEncoding();
   buildContentType();
   buildBody();
   buildContentLength();
@@ -18,10 +22,10 @@ ResponseBuilder::ResponseBuilder(
   buildAllow();
   buildRetryAfter();
   buildConnection();
-  buildFullHeader();
   buildBytesSent();
   buildBytesTotal();
   buildDate();
+  buildFullHeader();
   buildFullResponse();
 }
 
@@ -44,10 +48,101 @@ const VirtualHost& ResponseBuilder::findMatchingVirtualHost(
 void ResponseBuilder::determineStatusCode() {
   if (!request.getIsRequestGood()) {
     statusCode = 400;
+    return;
+  }
+  if (!doesVhostExist() || !doesUriExist() || !isRessourceAvailable()) {
+    statusCode = 404;
+    return;
+  }
+  if (!isMethodAccepted()) {
+    statusCode = 405;
+    return;
+  } else {
+    statusCode = 200;
+    return;
   }
 }
 
-void ResponseBuilder::buildStatusLine() {}
+bool ResponseBuilder::isRessourceAvailable() {
+  std::ifstream file(determinePath.c_str());
+  std::cout << "DETERMINE PATH= " << determinePath << std::endl;
+
+  if (file.is_open()) {
+    file.close();
+    return true;
+  }
+
+  return false;
+}
+
+bool ResponseBuilder::doesUriExist() {
+  if (matchingLocation.getPath() == "") {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+bool ResponseBuilder::doesVhostExist() {
+  if (virtualHost.getName() == "") {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+bool ResponseBuilder::isMethodAccepted() {
+  if ((request.getMethod() == "GET" && matchingLocation.getGetAccepted()) ||
+      (request.getMethod() == "POST" && matchingLocation.getPostAccepted()) ||
+      (request.getMethod() == "DELETE" &&
+       matchingLocation.getDeleteAccepted())) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool ResponseBuilder::findMatchingLocation() {
+  const std::map<std::string, Location>& locations = virtualHost.getLocations();
+  size_t longestMatch = 0;
+  bool found = false;
+
+  for (std::map<std::string, Location>::const_iterator it = locations.begin();
+       it != locations.end(); ++it) {
+    const std::string& locationPath = it->first;
+    if (request.getUri().compare(0, locationPath.length(), locationPath) == 0 &&
+        locationPath.length() > longestMatch) {
+      longestMatch = locationPath.length();
+      matchingLocation = it->second;
+      found = true;
+    }
+  }
+
+  return found;
+}
+
+void ResponseBuilder::buildStatusLine() {
+  std::string statusLine =
+      "Status Line: HTTP/1.1 " + to_string(statusCode) + " ";
+  switch (statusCode) {
+    case 200:
+      statusLine += "OK";
+      break;
+    case 400:
+      statusLine += "Bad Request";
+      break;
+    case 404:
+      statusLine += "Not Found";
+      break;
+    case 405:
+      statusLine += "Method Not Allowed";
+      break;
+    default:
+      statusLine += "Internal Server Error";
+      break;
+  }
+  response.setStatusLine(statusLine);
+}
 
 void ResponseBuilder::buildDate() {
   std::time_t currentTime = std::time(NULL);
@@ -58,9 +153,12 @@ void ResponseBuilder::buildDate() {
 }
 
 void ResponseBuilder::buildContentLength() {
-  response.setContentLength(
-      "Content-Length: " +
-      to_string(response.getBody().size()));  // use getFileSizeinstead
+  response.setContentLength("Content-Length: " +
+                            to_string(getFileSize(request.getUri())));
+  if (getFileSize(request.getUri()) > 1024) {
+    response.setContentLength("");
+    buildTransferEncoding();
+  }
 }
 
 void ResponseBuilder::buildTransferEncoding() {
@@ -114,9 +212,49 @@ const std::string ResponseBuilder::findContentType(
   } else if (extension == ".mp4") {
     return "video/mp4";
   }
+  return "application/octet-stream";
 }
 
-void ResponseBuilder::buildBody() {}
+void ResponseBuilder::buildBody() {
+  std::ifstream file(determinePath.c_str(), std::ios::binary);
+  if (!file.is_open()) {
+    response.setBody("");
+    return;
+  }
+  size_t readSize = 0;
+  std::string prefix;
+  if (response.getBytesLoad() != 0) {
+    response.setBody("");
+  }
+  if (response.getBytesLoad() == 0) {
+    prefix = "Body: ";
+    if (prefix.size() < 1024) {
+      readSize = 1024 - prefix.size();
+    } else {
+      readSize = 0;
+    }
+  }
+  char buffer[1024];
+  file.read(buffer, 1024);
+  std::streamsize bytesRead = file.gcount();
+  std::string content =
+      prefix + std::string(buffer, static_cast<size_t>(bytesRead));
+  if (bytesRead <= 0) {
+    response.setBody("");
+    file.close();
+    return;
+  }
+  if (!response.getContentLength().empty()) {
+    response.setBody(content);
+    response.setBytesLoad(response.getBytesLoad() + bytesRead);
+  } else {
+    std::ostringstream oss;
+    oss << std::hex << content.size() << "\r\n" << content << "\r\n";
+    response.setBody(oss.str());
+    response.setBytesLoad(response.getBytesLoad() + bytesRead + 2);
+  }
+  file.close();
+}
 
 void ResponseBuilder::buildLocation() {}
 
@@ -148,12 +286,12 @@ void ResponseBuilder::buildFullHeader() {
       "\r\n\r\n");
 }
 
-const std::string& ResponseBuilder::buildFullResponse() {
+void ResponseBuilder::buildFullResponse() {
   std::string fullResponse = response.getFullHeader() + response.getBody();
-  return fullResponse;
+  response.setFullResponse(fullResponse);
 }
 
-const std::string to_string(size_t value) {
+const std::string ResponseBuilder::to_string(size_t value) {
   std::ostringstream oss;
   oss << value;
   return oss.str();
