@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Our Team</title>
+    <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        p,
+        a {
+            color: #e0e2f4;
+        }
+
+        body,
+        p {
+            font: normal 20px/1.25rem 'VT323', monospace;
+        }
+
+        h1 {
+            font: normal 2.75rem/1.05em 'VT323', monospace;
+        }
+
+        h2 {
+            font: normal 2.25rem/1.25em 'VT323', monospace;
+        }
+
+        h3 {
+            font: lighter 1.5rem/1.25em 'VT323', monospace;
+            margin: 5px 0 0 0;
+            /* Reduced top margin */
+        }
+
+        h4 {
+            font: lighter 1.125rem/1.2222222em 'VT323', monospace;
+        }
+
+        body {
+            background: #0414a7;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+            max-width: 800px;
+        }
+
+        .main-content {
+            padding-top: 5%;
+            text-align: center;
+        }
+
+        .main-content .title {
+            margin-bottom: 50px;
+        }
+
+        .main-content .nav {
+            margin-top: 35px;
+        }
+
+        .main-content .nav .link {
+            text-decoration: none;
+            padding: 0 15px;
+        }
+
+        .main-content .nav .link:hover,
+        .main-content .nav .link:focus {
+            background: #aaaaaa;
+            color: #0414a7;
+        }
+
+        .team-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .team-list li {
+            margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .team-list img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .team-list a {
+            color: #e0e2f4;
+            text-decoration: none;
+            font-size: 1.25rem;
+            margin-top: 5px;
+        }
+
+        .team-list a:hover,
+        .team-list a:focus {
+            text-decoration: underline;
+        }
+
+        .bio {
+            margin-top: 15px;
+            text-align: left;
+            max-width: 600px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .team-list li {
+                padding: 15px;
+            }
+
+            .bio {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main-content">
+            <h1 class="title">Our Team</h1>
+            <ul class="team-list">
+                <li>
+                    <a href="https://github.com/SalahHW" target="_blank">
+                        <img src="images/sbouheni.jpg" alt="Photo of Salah Bouheniche">
+                    </a>
+                    <h3>Salah Bouheniche</h3>
+                    <a href="https://github.com/SalahHW" target="_blank">GitHub Profile</a>
+                    <p class="bio">Salah was a heavy truck driver for 10 years and is passionate about motorsports,
+                        particularly Formula 1. He regularly engages in e-racing simulators for his enjoyment.</p>
+                </li>
+                <li>
+                    <a href="https://github.com/SickestOne" target="_blank">
+                        <img src="images/rvan-den.jpg" alt="Photo of Richard Van Den Reysen">
+                    </a>
+                    <h3>Richard Van Den Reysen</h3>
+                    <a href="https://github.com/SickestOne" target="_blank">GitHub Profile</a>
+                    <p class="bio">Richard served several years in the French Army, where he rose to the rank of
+                        non-commissioned officer and became a shooting instructor. He is deeply interested in the
+                        technical aspects behind all types of weapons.</p>
+                </li>
+                <li>
+                    <a href="https://github.com/joel688" target="_blank">
+                        <img src="images/joakoeni.jpg" alt="Photo of Joachim Koenig">
+                    </a>
+                    <h3>Joachim Koenig</h3>
+                    <a href="https://github.com/joel688" target="_blank">GitHub Profile</a>
+                    <p class="bio">Joachim started his career as a fundraiser before transitioning into real estate.
+                        Alongside his professional journey, he developed a strong interest in technology and coding.</p>
+                </li>
+                <!-- New Team Member: École 42 -->
+                <li>
+                    <a href="https://www.42.fr/" target="_blank">
+                        <img src="images/42.jpg" alt="École 42 Logo">
+                    </a>
+                    <h3>École 42</h3>
+                    <a href="https://www.42.fr/" target="_blank">Official Website</a>
+                    <p class="bio">École 42 is an innovative, tuition-free school dedicated to teaching programming and
+                        software development. Open to everyone without any formal prerequisites, it offers a
+                        peer-to-peer learning environment based on collaborative projects. Its unique educational
+                        model fosters creativity, problem-solving, and technical skills, making it one of the best
+                        institutions for acquiring cutting-edge technical expertise.</p>
+                </li>
+            </ul>
+            <nav class="nav">
+                <a href="index.html" class="link">Home</a>
+                <a href="about.html" class="link">About Us</a>
+                <a href="contact.html" class="link">Contact</a>
+                <a href="project.html" class="link">Project</a>
+            </nav>
+        </div>
+    </div>
+</body>
+
+</html>

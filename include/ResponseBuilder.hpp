@@ -1,9 +1,12 @@
 #pragma once
 
+#include <sys/stat.h>
+
 #include <ctime>
 #include <fstream>
 #include <string>
 
+#include "HttpException.hpp"
 #include "Location.hpp"
 #include "Request.hpp"
 
@@ -19,8 +22,12 @@ class ResponseBuilder {
   size_t statusCode;
   const VirtualHost& virtualHost;
   Location matchingLocation;
-  std::string determinePath;
+  std::string determinedPath;
 
+  void checkRequest();
+  const std::string& getReasonPhraseForCode(size_t code);
+  void setStatusCode(size_t code);
+  std::string determinePath();
   const VirtualHost& findMatchingVirtualHost(
       const std::map<std::string, VirtualHost>& virtualHosts);
   void determineStatusCode();
@@ -30,6 +37,7 @@ class ResponseBuilder {
   bool doesUriExist();
   bool isRessourceAvailable();
 
+  void buildErrorPage(size_t errorCode);
   void buildStatusLine();
   void buildDate();
   void buildContentLength();

@@ -30,6 +30,7 @@ class Response {
            const std::map<std::string, VirtualHost>& virtualHosts);
   ~Response();
 
+  bool isResponseFullySend() const;
   void setStatusLine(const std::string& statusLine);
   void setDate(const std::string& date);
   void setContentLength(const std::string& contentLength);

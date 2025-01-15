@@ -21,6 +21,8 @@ Response::Response(const Request& request,
   printResponseAttributes();
 }
 
+bool Response::isResponseFullySend() const { return bytesSent == bytesTotal; }
+
 void Response::setStatusLine(const std::string& statusLine) {
   this->statusLine = statusLine;
 }
@@ -61,6 +63,7 @@ void Response::setBytesLoad(size_t bytesLoad) { this->bytesLoad = bytesLoad; }
 
 void Response::setBytesTotal(size_t bytesTotal) {
   this->bytesTotal = bytesTotal;
+  std::cout << "bytesTotal: " << bytesTotal << std::endl;
 }
 
 void Response::setFullHeader(const std::string& fullHeader) {
@@ -104,21 +107,5 @@ const std::string& Response::getFullHeader() const { return fullHeader; }
 const std::string& Response::getFullResponse() const { return fullResponse; }
 
 void Response::printResponseAttributes() const {
-  std::cout << std::endl
-            << "Printing Response Attributes:" << std::endl
-            << std::endl;
-  std::cout << "Status Line: " << statusLine << std::endl;
-  std::cout << "Date: " << date << std::endl;
-  std::cout << "Content Length: " << contentLength << std::endl;
-  std::cout << "Transfer Encoding: " << transferEncoding << std::endl;
-  std::cout << "Content Type: " << contentType << std::endl;
-  std::cout << "Body: " << body << std::endl;
-  std::cout << "Location: " << location << std::endl;
-  std::cout << "Allow: " << allow << std::endl;
-  std::cout << "Retry After: " << retryAfter << std::endl;
-  std::cout << "Connection: " << connection << std::endl;
-  std::cout << "Bytes Sent: " << bytesSent << std::endl;
-  std::cout << "Bytes Total: " << bytesTotal << std::endl;
-  std::cout << "Full Header: " << fullHeader << std::endl;
   std::cout << "Full Response: " << fullResponse << std::endl;
 }
