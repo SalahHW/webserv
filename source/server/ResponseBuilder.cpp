@@ -35,8 +35,36 @@ ResponseBuilder::ResponseBuilder(
     buildErrorPage(statusCode);
     buildStatusLine();
     buildContentType();
+    buildErrorContentLength();
+    if (!determinedPath.empty()) {
+      buildBody();
+    }
+    buildLocation();
+    buildAllow();
+    buildRetryAfter();
+    buildConnection();
+    buildBytesSent();
+    buildDate();
     buildFullHeader();
+    buildBytesTotal();
     buildFullResponse();
+  }
+}
+
+void ResponseBuilder::buildErrorContentLength() {
+  if (determinedPath.empty()) {
+    size_t bodySize = response.getBody().size();
+    response.setContentLength("Content-Length: " + to_string(bodySize));
+    response.setTransferEncoding("");
+  } else {
+    size_t fileSize = getFileSize(determinedPath);
+    if (fileSize > 1024) {
+      response.setContentLength("");
+      buildTransferEncoding();
+    } else {
+      response.setContentLength("Content-Length: " + to_string(fileSize));
+      response.setTransferEncoding("");
+    }
   }
 }
 
@@ -202,18 +230,32 @@ bool ResponseBuilder::findMatchingLocation() {
 }
 
 void ResponseBuilder::buildErrorPage(size_t errorCode) {
-  std::string errorPagePath =
-      virtualHost.getErrorPages().find(errorCode)->second;
+  {
+    std::map<size_t, std::string>::const_iterator it =
+        virtualHost.getErrorPages().find(errorCode);
 
-  if (!errorPagePath.empty()) {
-    std::ifstream file(errorPagePath.c_str(), std::ios::binary);
-    if (file.is_open()) {
-      std::ostringstream oss;
-      oss << file.rdbuf();
-      file.close();
-      response.setBody(oss.str());
-      return;
+    if (it != virtualHost.getErrorPages().end()) {
+      const std::string& errorPagePath = it->second;
+      if (!errorPagePath.empty()) {
+        struct stat info;
+        if (stat(errorPagePath.c_str(), &info) == 0 && S_ISREG(info.st_mode)) {
+          determinedPath = errorPagePath;
+        }
+      }
     }
+
+    std::ostringstream oss;
+    oss << "<html>\r\n"
+        << "<head>\r\n"
+        << "    <title>Error " << errorCode << "</title>\r\n"
+        << "</head>\r\n"
+        << "<body>\r\n"
+        << "    <h1>Error " << errorCode << "</h1>\r\n"
+        << "    <p>The requested page could not be found.</p>\r\n"
+        << "</body>\r\n"
+        << "</html>\r\n";
+
+    response.setBody(oss.str());
   }
 
   std::ostringstream oss;
@@ -390,11 +432,8 @@ void ResponseBuilder::buildConnection() {
 void ResponseBuilder::buildBytesSent() { response.setBytesSent(0); }
 
 void ResponseBuilder::buildBytesTotal() {
-  response.setBytesTotal(
-      response.getFullHeader().size() +
-      getFileSize(determinedPath));  // uri in request need to be trimmed or
-                                     // just redefine in function of location
-                                     // add this funtion in RequestParser maybe
+  response.setBytesTotal(response.getFullHeader().size() +
+                         getFileSize(determinedPath));
 }
 
 void ResponseBuilder::buildFullHeader() {

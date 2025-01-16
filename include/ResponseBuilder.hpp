@@ -37,6 +37,7 @@ class ResponseBuilder {
   bool doesUriExist();
   bool isRessourceAvailable();
 
+  void buildErrorContentLength();
   void buildErrorPage(size_t errorCode);
   void buildStatusLine();
   void buildDate();

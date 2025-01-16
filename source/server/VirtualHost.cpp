@@ -25,7 +25,8 @@ void VirtualHost::setClientMaxBodySize(int clientMaxBodySize) {
   this->clientMaxBodySize = clientMaxBodySize;
 }
 
-void VirtualHost::setErrorPages(const std::map<int, std::string>& errorPages) {
+void VirtualHost::setErrorPages(
+    const std::map<size_t, std::string>& errorPages) {
   this->errorPages = errorPages;
 }
 
@@ -38,7 +39,7 @@ const std::string& VirtualHost::getName() const { return name; }
 
 int VirtualHost::getClientMaxBodySize() const { return clientMaxBodySize; }
 
-const std::map<int, std::string>& VirtualHost::getErrorPages() const {
+const std::map<size_t, std::string>& VirtualHost::getErrorPages() const {
   return errorPages;
 }
 
