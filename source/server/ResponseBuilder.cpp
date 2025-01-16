@@ -305,8 +305,7 @@ const std::string& ResponseBuilder::getReasonPhraseForCode(size_t code) {
 }
 
 void ResponseBuilder::buildStatusLine() {
-  std::string statusLine =
-      "Status Line: HTTP/1.1 " + to_string(statusCode) + " ";
+  std::string statusLine = "HTTP/1.1 " + to_string(statusCode) + " ";
 
   statusLine += getReasonPhraseForCode(statusCode);
   response.setStatusLine(statusLine);
@@ -432,16 +431,16 @@ void ResponseBuilder::buildConnection() {
 void ResponseBuilder::buildBytesSent() { response.setBytesSent(0); }
 
 void ResponseBuilder::buildBytesTotal() {
-  response.setBytesTotal(response.getFullHeader().size() +
-                         getFileSize(determinedPath));
+  size_t total = getFileSize(determinedPath) + response.getFullHeader().size();
+  response.setBytesTotal(total);
 }
 
 void ResponseBuilder::buildFullHeader() {
-  response.setFullHeader(
-      response.getStatusLine() + "\r\n" + response.getContentType() + "\r\n" +
-      response.getContentLength() + "\r\n" + response.getTransferEncoding() +
-      "\r\n" + response.getDate() + "\r\n" + response.getConnection() +
-      "\r\n\r\n");
+  response.setFullHeader(response.getStatusLine() + "\r\n" +
+                         response.getContentType() + "\r\n" +
+                         response.getTransferEncoding() + response.getDate() +
+                         "\r\n" + response.getContentLength() + "\r\n" +
+                         response.getConnection() + "\r\n\r\n");
 }
 
 void ResponseBuilder::buildFullResponse() {
@@ -458,9 +457,15 @@ const std::string ResponseBuilder::to_string(size_t value) {
 size_t ResponseBuilder::getFileSize(const std::string& filePath) {
   std::ifstream file(filePath.c_str(), std::ios::binary);
   if (!file.is_open()) {
+    std::cout << "File not found" << std::endl;
+    if (response.getBody().size() != 0) {
+      return response.getBody().size();
+    }
     return 0;
   }
   file.seekg(0, std::ios::end);
   size_t size = static_cast<std::size_t>(file.tellg());
+  std::cout << "File sizeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: " << size
+            << std::endl;
   return size;
 }

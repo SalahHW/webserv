@@ -22,6 +22,7 @@ SRCS					=	main.cpp											\
 							server/RequestValidator.cpp							\
 							server/Response.cpp									\
 							server/ResponseBuilder.cpp							\
+							server/Sender.cpp									\
 							utils/utils.cpp										\
 							block/Block.cpp										\
 							block/BlockFactory.cpp								\

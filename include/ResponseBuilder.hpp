@@ -44,7 +44,6 @@ class ResponseBuilder {
   void buildContentLength();
   void buildTransferEncoding();
   void buildContentType();
-  void buildBody();
   void buildLocation();
   void buildAllow();
   void buildRetryAfter();
@@ -61,4 +60,5 @@ class ResponseBuilder {
   ResponseBuilder(const Request& request, Response& response,
                   const std::map<std::string, VirtualHost>& virtualHosts);
   ~ResponseBuilder();
+  void buildBody();
 };

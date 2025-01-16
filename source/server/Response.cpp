@@ -1,5 +1,7 @@
 #include "Response.hpp"
 
+#include "Sender.hpp"
+
 Response::~Response() {}
 
 Response::Response(const Request& request,
@@ -19,6 +21,14 @@ Response::Response(const Request& request,
       fullResponse("") {
   ResponseBuilder builder(request, *this, virtualHosts);
   printResponseAttributes();
+  std::cout << "SIZE HEADER= " << fullHeader.size() << std::endl;
+  std::cout << "SIZE BODY= " << body.size() << std::endl;
+  std::cout << "Bytes total: " << bytesTotal << std::endl;
+  std::cout << "Bytes sent: " << bytesSent << std::endl;
+  // while (!isResponseFullySend()) {
+  Sender sender(*this, 4);
+  // builder.buildBody();
+  // }
 }
 
 bool Response::isResponseFullySend() const { return bytesSent == bytesTotal; }
