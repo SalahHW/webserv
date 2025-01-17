@@ -12,20 +12,19 @@
 class Client {
 public:
     ~Client();
-    Client(int fd);
-
-    void setDestinationFd(int destinationFd);
+    Client(int listenFd, int connectionFd);
 
     std::string& getBuffer();
-    int getDestinationFd() const;
+    int getListenFd() const;
+    int getConnectionFd() const;
 
     void closeConnection();
     void appendToBuffer(const char* data, size_t len);
     void clearBuffer();
 
 private:
-    int fd;
-    int destinationFd;
+    int listenFd;
+    int connectionFd;
     std::string buffer;
 
     Client();

@@ -161,9 +161,9 @@ void ServerManager::acceptConnection(int listenFd)
         return;
     }
 
-    Client* client = new Client(clientFd);
+    Client* client = new Client(listenFd, clientFd);
+    // TODO: Check if map of client is usefull
     clients[clientFd] = client;
-    client->setDestinationFd(clientFd);
 }
 
 void ServerManager::closeConnection(int clientFd)
@@ -176,30 +176,30 @@ void ServerManager::closeConnection(int clientFd)
     }
 }
 
-void ServerManager::readFromClient(int clientFd)
+void ServerManager::readFromClient(int connectionFd)
 {
-    if (clients.find(clientFd) == clients.end()) {
-        std::cerr << "Warning: Attempt to read from a non-existing client fd " << clientFd << std::endl;
+    if (clients.find(connectionFd) == clients.end()) {
+        std::cerr << "Warning: Attempt to read from a non-existing client fd " << connectionFd << std::endl;
         return;
     }
 
-    Client* client = clients[clientFd];
+    Client* client = clients[connectionFd];
     char buffer[1024];
 
-    ssize_t bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
+    ssize_t bytesRead = recv(connectionFd, buffer, sizeof(buffer) - 1, 0);
     if (bytesRead <= 0) {
         if (bytesRead == 0) {
-            std::cout << "Client fd " << clientFd << " disconnected." << std::endl;
+            std::cout << "Client fd " << connectionFd << " disconnected." << std::endl;
         } else {
             std::cerr << bytesRead << std::endl;
-            std::cerr << "Read error on client fd "<< clientFd << std::endl;
+            std::cerr << "Read error on client fd " << connectionFd << std::endl;
         }
-        closeConnection(clientFd);
+        closeConnection(connectionFd);
         return;
     }
     buffer[bytesRead] = '\0';
     client->appendToBuffer(buffer, bytesRead);
 
-    int destinationFd = client->getDestinationFd();
-    ports[destinationFd]->processClientData(*client);
+    int listenFd = client->getListenFd();
+    ports[listenFd]->processClientData(*client);
 }

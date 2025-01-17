@@ -4,15 +4,10 @@ Client::~Client()
 {
 }
 
-Client::Client(int fd)
-    : fd(fd)
-    , destinationFd(-1)
+Client::Client(int listenFd, int connectionFd)
+    : listenFd(listenFd)
+    , connectionFd(connectionFd)
 {
-}
-
-void Client::setDestinationFd(int destinationFd)
-{
-    this->destinationFd = destinationFd;
 }
 
 std::string& Client::getBuffer()
@@ -20,14 +15,19 @@ std::string& Client::getBuffer()
     return buffer;
 }
 
-int Client::getDestinationFd() const
+int Client::getListenFd() const
 {
-    return this->destinationFd;
+    return this->listenFd;
+}
+
+int Client::getConnectionFd() const
+{
+    return this->connectionFd;
 }
 
 void Client::closeConnection()
 {
-    close(fd);
+    close(connectionFd);
     clearBuffer();
 }
 
