@@ -21,8 +21,6 @@ int main(int argc, char** argv)
         return (1);
     }
 
-    // TODO: Update Configuration to setup  a default server for a port
-
     ServerManager serverManager(server_configuration.getPortMap());
     if (serverManager.good())
         serverManager.start();
