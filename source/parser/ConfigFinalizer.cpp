@@ -112,6 +112,15 @@ void ConfigFinalizer::assignServersToPorts(const std::vector<Server>& servers)
     std::vector<Server>::const_iterator itServers;
 
     for (itServers = servers.begin(); itServers != servers.end(); ++itServers) {
-        ports[itServers->getPort()]->addVirtualHost(*itServers);
+        // ports[itServers->getPort()]->addVirtualHost(*itServers);
+        Port* port = ports[itServers->getPort()];
+        port->addVirtualHost(*itServers);
+        if (!port->getHasVirtualHost()) {
+            port->setDefaultVirtualHostName(itServers->getName());
+        }
+        if (itServers->isExplicitlyDefault()) {
+            port->setDefaultVirtualHostName(itServers->getName());
+            port->setHasDefaultVirtualHostName(true);
+        }
     }
 }
