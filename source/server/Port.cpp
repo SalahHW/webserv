@@ -93,7 +93,7 @@ void Port::processClientData(Client& client)
                            "Content-Length: 13\r\n"
                            "\r\n"
                            "Hello, World!";
-    send(client.getDestinationFd(), response.c_str(), response.size(), 0);
+    send(client.getConnectionFd(), response.c_str(), response.size(), 0);
 }
 
 void Port::addVirtualHost(const Server& server)
