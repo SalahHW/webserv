@@ -110,8 +110,28 @@ void ConfigFinalizer::createPorts()
 void ConfigFinalizer::assignServersToPorts(const std::vector<Server>& servers)
 {
     std::vector<Server>::const_iterator itServers;
+    bool defaultVirtualHost = false;
 
     for (itServers = servers.begin(); itServers != servers.end(); ++itServers) {
-        ports[itServers->getPort()]->addVirtualHost(*itServers);
+        // ports[itServers->getPort()]->addVirtualHost(*itServers);
+        Port* port = ports[itServers->getPort()];
+        port->addVirtualHost(*itServers);
+
+        if (!port->getHasDefaultVirtualHost()) {
+            port->setDefaultVirtualHostName(itServers->getName());
+            port->setHasDefaultVirtualHostName(true);
+        }
+
+        if (itServers->isExplicitlyDefault()) {
+            if (defaultVirtualHost) {
+                std::cerr << "Error: Multiple default servers defined for port "
+                          << itServers->getPort() << std::endl;
+                isValid = false;
+                return;
+            }
+            port->setDefaultVirtualHostName(itServers->getName());
+            port->setHasDefaultVirtualHostName(true);
+            defaultVirtualHost = true;
+        }
     }
 }

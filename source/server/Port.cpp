@@ -2,7 +2,12 @@
 
 Port::~Port() {}
 
-Port::Port() : isValid(true), port(-1), listenFd(-1) {}
+Port::Port()
+    : isValid(true),
+      port(-1),
+      listenFd(-1),
+      hasVirtualHost(false),
+      hasDefaultVirtualHost(false) {}
 
 // Port::Port(const Port& src) { *this = src; }
 
@@ -74,7 +79,7 @@ void Port::startListening() {
 void Port::processClientData(Client& client) {
   Request request(client.getBuffer());  // add as an attribute of each client
   request.displayRequest();
-  Response response(request, getVirtualHosts());
+  Response response(request, getVirtualHosts(), getDefaultVirtualHostName());
 }
 
 void Port::addVirtualHost(const Server& server) {
@@ -87,6 +92,7 @@ void Port::addVirtualHost(const Server& server) {
 
   VirtualHost newHost = createVirtualHost(server);
   virtualHosts[serverName] = newHost;
+  hasVirtualHost = true;
 }
 
 VirtualHost Port::createVirtualHost(const Server& server) {
@@ -104,6 +110,7 @@ bool Port::good() const { return this->isValid; }
 
 void Port::displayHosts() const {
   std::cout << "Printing virtual Hosts on port " << port << ":" << std::endl;
+  std::cout << "Default Hostname: " << defaultVirtualHostName << std::endl;
   std::map<std::string, VirtualHost>::const_iterator itHost;
 
   for (itHost = virtualHosts.begin(); itHost != virtualHosts.end(); ++itHost) {
@@ -127,6 +134,24 @@ const std::map<std::string, VirtualHost>& Port::getVirtualHosts() const {
   return this->virtualHosts;
 }
 
+bool Port::getHasVirtualHost() const { return this->hasVirtualHost; }
+
+bool Port::getHasDefaultVirtualHost() const {
+  return this->hasDefaultVirtualHost;
+}
+
+const std::string& Port::getDefaultVirtualHostName() const {
+  return this->defaultVirtualHostName;
+}
+
 void Port::setPort(int port) { this->port = port; }
 
 void Port::setListenFd(int fd) { this->listenFd = fd; }
+
+void Port::setDefaultVirtualHostName(const std::string& hostName) {
+  this->defaultVirtualHostName = hostName;
+}
+
+void Port::setHasDefaultVirtualHostName(bool value) {
+  this->hasDefaultVirtualHost = value;
+}

@@ -5,7 +5,8 @@
 Response::~Response() {}
 
 Response::Response(const Request& request,
-                   const std::map<std::string, VirtualHost>& virtualHosts)
+                   const std::map<std::string, VirtualHost>& virtualHosts,
+                   const std::string& defaultVirtualHostName)
     : statusLine(""),
       date(""),
       contentLength(""),
@@ -19,7 +20,7 @@ Response::Response(const Request& request,
       bytesSent(0),
       bytesTotal(0),
       fullResponse("") {
-  ResponseBuilder builder(request, *this, virtualHosts);
+  ResponseBuilder builder(request, *this, virtualHosts, defaultVirtualHostName);
   printResponseAttributes();
   std::cout << "SIZE HEADER= " << fullHeader.size() << std::endl;
   std::cout << "SIZE BODY= " << body.size() << std::endl;

@@ -6,11 +6,13 @@ ResponseBuilder::~ResponseBuilder() {}
 
 ResponseBuilder::ResponseBuilder(
     const Request& request, Response& response,
-    const std::map<std::string, VirtualHost>& virtualHosts)
+    const std::map<std::string, VirtualHost>& virtualHosts,
+    const std::string& defaultVirtualHostName)
     : request(request),
       response(response),
       statusCode(0),
-      virtualHost(findMatchingVirtualHost(virtualHosts)) {
+      virtualHost(
+          findMatchingVirtualHost(virtualHosts, defaultVirtualHostName)) {
   try {
     checkRequest();
     findMatchingLocation();
@@ -148,16 +150,18 @@ std::string ResponseBuilder::determinePath() {
 }
 
 const VirtualHost& ResponseBuilder::findMatchingVirtualHost(
-    const std::map<std::string, VirtualHost>& virtualHosts) {
+    const std::map<std::string, VirtualHost>& virtualHosts,
+    const std::string& defaultVirtualHostName) {
+  std::cout << "TO FIND HOST = " << request.getHostName() << std::endl;
   std::map<std::string, VirtualHost>::const_iterator it =
-      virtualHosts.find(request.getHost());
+      virtualHosts.find(request.getHostName());
   if (it != virtualHosts.end()) {
     return it->second;
   } else {
-    return virtualHosts.begin()
-        ->second;  // I assume that the first virtual host is
-                   //  the default one but maybe it's not since each port have a
-                   //  list of virtual hosts
+    std::cout << "Virtual host not found" << std::endl;
+    std::cout << "Default virtual host: " << defaultVirtualHostName
+              << std::endl;
+    return virtualHosts.find(defaultVirtualHostName)->second;
   }
 }
 

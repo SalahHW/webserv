@@ -27,7 +27,8 @@ class Response {
 
  public:
   Response(const Request& request,
-           const std::map<std::string, VirtualHost>& virtualHosts);
+           const std::map<std::string, VirtualHost>& virtualHosts,
+           const std::string& defaultVirtualHostName);
   ~Response();
 
   bool isResponseFullySend() const;

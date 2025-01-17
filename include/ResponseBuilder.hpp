@@ -29,7 +29,8 @@ class ResponseBuilder {
   void setStatusCode(size_t code);
   std::string determinePath();
   const VirtualHost& findMatchingVirtualHost(
-      const std::map<std::string, VirtualHost>& virtualHosts);
+      const std::map<std::string, VirtualHost>& virtualHosts,
+      const std::string& defaultVirtualHostName);
   void determineStatusCode();
   bool isMethodAccepted();
   bool findMatchingLocation();
@@ -58,7 +59,8 @@ class ResponseBuilder {
 
  public:
   ResponseBuilder(const Request& request, Response& response,
-                  const std::map<std::string, VirtualHost>& virtualHosts);
+                  const std::map<std::string, VirtualHost>& virtualHosts,
+                  const std::string& defaultVirtualHostName);
   ~ResponseBuilder();
   void buildBody();
 };
