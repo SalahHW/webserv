@@ -339,7 +339,7 @@ void ConfigFile::finalizeConfig()
 {
     finalizer.finalizeConfig(servers);
     if (!finalizer.good()) {
-        std::cerr << "Invalid port configuration" << std::endl;
+        std::cerr << "Error: Invalid port configuration" << std::endl;
         isValid = false;
         return;
     }
