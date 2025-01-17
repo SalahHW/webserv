@@ -83,7 +83,6 @@ bool ServerManager::initializePorts()
         }
         int portFd = itPort->second->getListenFd();
         newPorts[portFd] = itPort->second;
-        itPort->second->displayHosts();
     }
 
     ports.swap(newPorts);
