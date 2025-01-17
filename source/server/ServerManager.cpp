@@ -130,7 +130,7 @@ void ServerManager::acceptConnection(int listenFd) {
 
   Client* client = new Client(clientFd);
   clients[clientFd] = client;
-  client->setDestinationFd(listenFd);
+  client->setDestinationFd(clientFd);
   // clientsToPorts[clientFd] = listenFd;
 }
 
