@@ -168,6 +168,11 @@ bool Port::getHasDefaultVirtualHost() const
     return this->hasDefaultVirtualHost;
 }
 
+const std::string& Port::getDefaultVirtualHostName() const
+{
+    return this->defaultVirtualHostName;
+}
+
 void Port::setPort(int port)
 {
     this->port = port;
