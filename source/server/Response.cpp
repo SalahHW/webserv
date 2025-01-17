@@ -26,7 +26,7 @@ Response::Response(const Request& request,
   std::cout << "Bytes total: " << bytesTotal << std::endl;
   std::cout << "Bytes sent: " << bytesSent << std::endl;
   // while (!isResponseFullySend()) {
-  Sender sender(*this, 4);
+  Sender sender(*this, 6);
   // builder.buildBody();
   // }
 }

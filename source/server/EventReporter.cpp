@@ -30,24 +30,21 @@ bool EventReporter::addFD(int fd)
     return true;
 }
 
-void EventReporter::run(void (ServerManager::*eventHandler)(int fd, uint32_t events), ServerManager* instance)
+int EventReporter::getNextEvent(uint32_t& eventFlag)
 {
-    struct epoll_event events[10];
+    struct epoll_event events[1];
+    int numEvents = epoll_wait(epollFd, events, 1, 0);
 
-    while (isValid) {
-        int numEvents = epoll_wait(epollFd, events, 10, -1);
-
-        if (numEvents == -1) {
-            if (errno == EINTR) continue;
+    if (numEvents < 0 || numEvents == 0) {
+        if (errno == EINTR) {
             std::cerr << "Error: epoll_wait failed" << std::endl;
             isValid = false;
-            break;
         }
-
-        for (int i = 0; i < numEvents; ++i) {
-            (instance->*eventHandler)(events[i].data.fd, events[i].events);
-        }
+        return -1;
     }
+
+    eventFlag = events[0].events;
+    return events[0].data.fd;
 }
 
 void EventReporter::initializeEpoll()

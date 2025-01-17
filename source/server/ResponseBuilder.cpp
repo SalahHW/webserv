@@ -253,7 +253,7 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
         << "    <h1>Error " << errorCode << "</h1>\r\n"
         << "    <p>The requested page could not be found.</p>\r\n"
         << "</body>\r\n"
-        << "</html>\r\n";
+        << "</html>";
 
     response.setBody(oss.str());
   }
@@ -333,7 +333,11 @@ void ResponseBuilder::buildTransferEncoding() {
 }
 
 void ResponseBuilder::buildContentType() {
-  response.setContentType("Content-Type: " + findContentType(request.getUri()));
+  if (determinedPath.empty()) {
+    response.setContentType("Content-Type: text/html");
+  } else {
+    response.setContentType("Content-Type: " + findContentType(determinedPath));
+  }
 }
 
 const std::string ResponseBuilder::findContentType(
@@ -455,7 +459,7 @@ const std::string ResponseBuilder::to_string(size_t value) {
 }
 
 size_t ResponseBuilder::getFileSize(const std::string& filePath) {
-  std::ifstream file(filePath.c_str(), std::ios::binary);
+  std::ifstream file(filePath.c_str(), std::ios::binary | std::ios::ate);
   if (!file.is_open()) {
     std::cout << "File not found" << std::endl;
     if (response.getBody().size() != 0) {

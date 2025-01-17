@@ -35,7 +35,23 @@ bool ServerManager::good() const { return this->isValid; }
 
 void ServerManager::start() {
   addPortsToEventReporter();
-  eventReporter.run(&ServerManager::handleEvent, this);
+  isRunning = true;
+  runRoutine();
+}
+
+void ServerManager::runRoutine() {
+  while (isRunning) {
+    uint32_t eventFlags;
+    int fd = eventReporter.getNextEvent(eventFlags);
+
+    if (fd == -1) {
+      if (!eventReporter.good()) break;
+      continue;
+    }
+    handleEvent(fd, eventFlags);
+  }
+
+  std::cout << "Server stopped." << std::endl;
 }
 
 bool ServerManager::initializePorts() {
@@ -128,10 +144,9 @@ void ServerManager::acceptConnection(int listenFd) {
     return;
   }
 
-  Client* client = new Client(clientFd);
+  Client* client = new Client(listenFd, clientFd);
+  // TODO: Check if map of client is usefull
   clients[clientFd] = client;
-  client->setDestinationFd(clientFd);
-  // clientsToPorts[clientFd] = listenFd;
 }
 
 void ServerManager::closeConnection(int clientFd) {
@@ -139,37 +154,35 @@ void ServerManager::closeConnection(int clientFd) {
     clients[clientFd]->closeConnection();
     delete clients[clientFd];
     clients.erase(clientFd);
-    // clientsToPorts.erase(clientFd);
     std::cout << "Client fd " << clientFd << " connection closed" << std::endl;
   }
 }
 
-void ServerManager::readFromClient(int clientFd) {
-  if (clients.find(clientFd) == clients.end()) {
+void ServerManager::readFromClient(int connectionFd) {
+  if (clients.find(connectionFd) == clients.end()) {
     std::cerr << "Warning: Attempt to read from a non-existing client fd "
-              << clientFd << std::endl;
+              << connectionFd << std::endl;
     return;
   }
 
-  Client* client = clients[clientFd];
+  Client* client = clients[connectionFd];
   char buffer[1024];
 
-  ssize_t bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
+  ssize_t bytesRead = recv(connectionFd, buffer, sizeof(buffer) - 1, 0);
   if (bytesRead <= 0) {
     if (bytesRead == 0) {
-      std::cout << "Client fd " << clientFd << " disconnected." << std::endl;
+      std::cout << "Client fd " << connectionFd << " disconnected."
+                << std::endl;
     } else {
-      std::cerr << "Read error" << std::endl;
+      std::cerr << bytesRead << std::endl;
+      std::cerr << "Read error on client fd " << connectionFd << std::endl;
     }
-    closeConnection(clientFd);
+    closeConnection(connectionFd);
     return;
   }
   buffer[bytesRead] = '\0';
   client->appendToBuffer(buffer, bytesRead);
 
-  // std::cout << "Data received from client fd " << clientFd << ": " <<
-  // std::endl
-  //           << buffer << std::endl;
-  int destinationFd = client->getDestinationFd();
-  ports[destinationFd]->processClientData(*client);
+  int listenFd = client->getListenFd();
+  ports[listenFd]->processClientData(*client);
 }
