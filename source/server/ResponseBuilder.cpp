@@ -398,25 +398,24 @@ void ResponseBuilder::buildBody() {
   }
 
   std::size_t offset = response.getBytesLoad();
-  if (offset > 0) {
+  if (offset > response.getFullHeader().size()) {
     response.clearForChunked();
   }
-  std::cout << "Offset: " << offset << std::endl;
   file.seekg(offset, std::ios::beg);
   size_t bufferSize = BUFFER - response.getFullHeader().size() - 4;
   if ((!response.getTransferEncoding().empty()) || offset != 0) {
     bufferSize -= 3;
   }
-  std::cout << "BUFFER SIZE = " << bufferSize << std::endl;
 
   char buffer[bufferSize];
   file.read(buffer, bufferSize);
   std::streamsize bytesRead = file.gcount();
-  std::cout << "Bytes read: " << bytesRead << std::endl;
   if (bytesRead <= 0) {
     if (file.eof()) {
       if (response.getContentLength().empty()) {
         response.setBody("0\r\n\r\n");
+        response.setBytesLoad(response.getBytesTotal());
+        response.setBytesSent(response.getBytesTotal() - 5);
       }
     } else {
       throw HttpException(500, "Error reading file");
@@ -433,10 +432,10 @@ void ResponseBuilder::buildBody() {
     oss << std::hex << bytesRead << "\r\n" << content << "\r\n";
     response.setBody(oss.str());
   }
-  response.setBytesLoad(offset + bytesRead);
+  response.setBytesLoad(response.getFullHeader().size() + offset + bytesRead);
   file.close();
   if (offset != 0) {
-    response.setFullResponse(response.getBody());
+    response.setFullResponse(response.getFullHeader() + response.getBody());
   }
 }
 

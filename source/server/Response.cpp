@@ -24,9 +24,11 @@ Response::Response(const Request& request,
       bytesTotal(0),
       fullResponse("") {
   ResponseBuilder builder(request, *this, virtualHosts, defaultVirtualHostName);
+  Sender sender(*this, 6);
+
   while (!isResponseFullySend()) {
-    Sender sender(*this, 6);
     builder.buildBody();
+    Sender sender(*this, 6);
   }
 }
 
@@ -47,11 +49,6 @@ void Response::clearForChunked() {
 bool Response::isResponseFullySend() const {
   std::cout << "Response::isResponseFullySend: " << bytesSent
             << " == " << bytesTotal << std::endl;
-  std::cout << "Transfer Encoding: " << getTransferEncoding() << std::endl;
-  if (bytesSent == bytesTotal && !getTransferEncoding().empty()) {
-    size_t ret = send(6, "0\r\n\r\n", 5, 0);
-    std::cout << "WAAAAAZAAAAAA= " << ret << std::endl;
-  }
   return bytesSent == bytesTotal;
 }
 

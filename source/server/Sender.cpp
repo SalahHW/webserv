@@ -27,36 +27,16 @@ Sender::~Sender() {}
 void Sender::sendOnFd(Response& response, int sockfd) {
   std::cout << "Starting sendOnFd..." << std::endl;
 
-  // Vérifiez si le socket est valide
-  if (fcntl(sockfd, F_GETFD) == -1) {
-    perror("Invalid socket descriptor");
-    return;
-  }
+  const std::string& Response = response.getFullResponse();
+  size_t responseSize = Response.size();
+  std::cout << "SIZE BEFORE SEND= " << responseSize << std::endl;
 
-  const std::string& fullResponse = response.getFullResponse();
-  size_t offset = response.getBytesSent();
-  size_t totalSize = response.getBytesTotal();
-
-  // Vérifiez si la réponse est vide
-  if (fullResponse.empty()) {
+  if (Response.empty()) {
     std::cerr << "Response is empty, nothing to send." << std::endl;
     return;
   }
 
-  // Vérifiez si tout a déjà été envoyé
-  if (offset >= totalSize) {
-    std::cout << "All data has already been sent." << std::endl;
-    return;
-  }
-
-  size_t remain = totalSize - offset;
-  if (remain > 1024) remain = 1024;  // Envoie par blocs de 1024 octets max
-
-  std::cout << "Offset: " << offset << ", Remaining: " << remain << std::endl;
-
-  // Envoi des données avec gestion des erreurs
-  ssize_t ret =
-      send(sockfd, fullResponse.c_str() + offset, remain, MSG_NOSIGNAL);
+  ssize_t ret = send(sockfd, Response.c_str(), responseSize, MSG_NOSIGNAL);
   if (ret > 0) {
     response.setBytesSent(response.getBytesSent() + ret);
     std::cout << "Successfully sent " << ret << " bytes." << std::endl;
@@ -74,7 +54,11 @@ void Sender::sendOnFd(Response& response, int sockfd) {
     }
   }
   std::cout << "WHAT IS SEND = " << std::endl;
-  std::cout << "SIZE SENDER = " << fullResponse.size() << std::endl;
-  std::cout << fullResponse << std::endl;
+  std::cout << Response << std::endl;
+  std::cout << "SIZE SEND = " << Response.size() << std::endl;
+
+  std::cout << "LOADED= " << response.getBytesLoad() << std::endl;
+  std::cout << "SENT= " << response.getBytesSent() << std::endl;
+  std::cout << "TOTAL= " << response.getBytesTotal() << std::endl;
   std::cout << "Finished sendOnFd." << std::endl;
 }
