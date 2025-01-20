@@ -159,8 +159,6 @@ void ServerManager::acceptConnection(int listenFd)
     }
 
     Client* client = new Client(listenFd, clientFd, ports[listenFd]);
-
-    // TODO: Check if map of client is usefull
     clients[clientFd] = client;
 }
 
@@ -185,12 +183,8 @@ void ServerManager::readFromClient(int connectionFd)
 
     ssize_t bytesRead = recv(connectionFd, buffer, sizeof(buffer) - 1, 0);
     if (bytesRead <= 0) {
-        if (bytesRead == 0) {
-            std::cout << "Client fd " << connectionFd << " disconnected." << std::endl;
-        } else {
-            std::cerr << bytesRead << std::endl;
+        if (bytesRead < 0)
             std::cerr << "Read error on client fd " << connectionFd << std::endl;
-        }
         closeConnection(connectionFd);
         return;
     }
