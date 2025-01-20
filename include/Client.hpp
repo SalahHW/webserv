@@ -1,18 +1,16 @@
 #pragma once
 
-// #include <map>
+#include "Port.hpp"
+#include <iostream>
 #include <string>
 #include <unistd.h>
 
-// #include "HttpStatusCodeDeterminer.hpp"
-// #include "ParseRequest.hpp"
-// #include "ResponseHandler.hpp"
-// #include "Server.hpp"
+class Port;
 
 class Client {
 public:
     ~Client();
-    Client(int listenFd, int connectionFd);
+    Client(int listenFd, int connectionFd, Port* port);
 
     std::string& getBuffer();
     int getListenFd() const;
@@ -25,41 +23,10 @@ public:
 private:
     int listenFd;
     int connectionFd;
+    Port* associatedPort;
     std::string buffer;
 
     Client();
     Client(const Client& other);
     Client& operator=(const Client& other);
-    //  public:
-    //   Client(int client_fd, const Server& server);
-    //   ~Client();
-    //   // Client& operator=(const Client& src);
-    //   Client(const Client& other);
-
-    //   const int& getClientFd() const;
-    //   bool shouldCloseConnection() const;
-    //   void setConnectionShouldClose(bool shouldClose);
-
-    //   void appendToRequestBuffer(const std::string& data);
-    //   bool hasDataToWrite() const;
-    //   ssize_t sendData();
-
-    //  private:
-    //   int client_fd;
-    //   RequestParsed request;
-    //   std::string requestBuffer;
-    //   std::string responseBuffer;
-    //   bool connectionShouldClose;
-    //   size_t bytesSent;
-    //   const Server& server;
-
-    //   void processRequest();
-    //   void setResponse(const std::string& response);
-    //   void closeClientSocket();
-    //   bool isRequestComplete() const;
-    //   void parseRequest();
-    //   void handleResponse();
-    //   void prepareForSending();
-    //   void checkConnectionPersistence();
-    //   void handleError(const std::string& functionName);
 };

@@ -153,15 +153,13 @@ void ServerManager::acceptConnection(int listenFd)
         std::cerr << "Client acceptation failed" << std::endl;
         return;
     }
-
-    std::cout << "New client connected on fd: " << clientFd << std::endl;
-
     if (!eventReporter.addFD(clientFd)) {
         std::cerr << "Error: Failed to add client socket to EventReporter" << std::endl;
         return;
     }
 
-    Client* client = new Client(listenFd, clientFd);
+    Client* client = new Client(listenFd, clientFd, ports[listenFd]);
+
     // TODO: Check if map of client is usefull
     clients[clientFd] = client;
 }
@@ -172,7 +170,6 @@ void ServerManager::closeConnection(int clientFd)
         clients[clientFd]->closeConnection();
         delete clients[clientFd];
         clients.erase(clientFd);
-        std::cout << "Client fd " << clientFd << " connection closed" << std::endl;
     }
 }
 
