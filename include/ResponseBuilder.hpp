@@ -10,6 +10,8 @@
 #include "Location.hpp"
 #include "Request.hpp"
 
+#define BUFFER 1024
+
 class Response;
 class VirtualHost;
 

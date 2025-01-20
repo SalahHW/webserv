@@ -21,7 +21,6 @@ ResponseBuilder::ResponseBuilder(
     determineStatusCode();
     buildStatusLine();
     buildContentType();
-    buildBody();
     buildContentLength();
     buildLocation();
     buildAllow();
@@ -30,6 +29,7 @@ ResponseBuilder::ResponseBuilder(
     buildBytesSent();
     buildDate();
     buildFullHeader();
+    buildBody();
     buildBytesTotal();
     buildFullResponse();
   } catch (const HttpException& e) {
@@ -38,9 +38,7 @@ ResponseBuilder::ResponseBuilder(
     buildStatusLine();
     buildContentType();
     buildErrorContentLength();
-    if (!determinedPath.empty()) {
-      buildBody();
-    }
+
     buildLocation();
     buildAllow();
     buildRetryAfter();
@@ -48,6 +46,9 @@ ResponseBuilder::ResponseBuilder(
     buildBytesSent();
     buildDate();
     buildFullHeader();
+    if (!determinedPath.empty()) {
+      buildBody();
+    }
     buildBytesTotal();
     buildFullResponse();
   }
@@ -60,7 +61,7 @@ void ResponseBuilder::buildErrorContentLength() {
     response.setTransferEncoding("");
   } else {
     size_t fileSize = getFileSize(determinedPath);
-    if (fileSize > 1024) {
+    if (fileSize > BUFFER) {
       response.setContentLength("");
       buildTransferEncoding();
     } else {
@@ -326,14 +327,14 @@ void ResponseBuilder::buildDate() {
 void ResponseBuilder::buildContentLength() {
   response.setContentLength("Content-Length: " +
                             to_string(getFileSize(determinedPath)));
-  if (getFileSize(determinedPath) > 1024) {
+  if (getFileSize(determinedPath) > BUFFER) {
     response.setContentLength("");
     buildTransferEncoding();
   }
 }
 
 void ResponseBuilder::buildTransferEncoding() {
-  response.setTransferEncoding("Transfer-Encoding: chunked");
+  response.setTransferEncoding("Transfer-Encoding: chunked\r\n");
 }
 
 void ResponseBuilder::buildContentType() {
@@ -397,11 +398,21 @@ void ResponseBuilder::buildBody() {
   }
 
   std::size_t offset = response.getBytesLoad();
+  if (offset > 0) {
+    response.clearForChunked();
+  }
+  std::cout << "Offset: " << offset << std::endl;
   file.seekg(offset, std::ios::beg);
+  size_t bufferSize = BUFFER - response.getFullHeader().size() - 4;
+  if ((!response.getTransferEncoding().empty()) || offset != 0) {
+    bufferSize -= 3;
+  }
+  std::cout << "BUFFER SIZE = " << bufferSize << std::endl;
 
-  char buffer[1024];
-  file.read(buffer, 1024);
+  char buffer[bufferSize];
+  file.read(buffer, bufferSize);
   std::streamsize bytesRead = file.gcount();
+  std::cout << "Bytes read: " << bytesRead << std::endl;
   if (bytesRead <= 0) {
     if (file.eof()) {
       if (response.getContentLength().empty()) {
@@ -411,6 +422,7 @@ void ResponseBuilder::buildBody() {
       throw HttpException(500, "Error reading file");
     }
     file.close();
+    response.setFullResponse(response.getBody());
     return;
   }
   std::string content(buffer, static_cast<std::size_t>(bytesRead));
@@ -423,6 +435,9 @@ void ResponseBuilder::buildBody() {
   }
   response.setBytesLoad(offset + bytesRead);
   file.close();
+  if (offset != 0) {
+    response.setFullResponse(response.getBody());
+  }
 }
 
 void ResponseBuilder::buildLocation() {}
@@ -440,20 +455,35 @@ void ResponseBuilder::buildBytesSent() { response.setBytesSent(0); }
 
 void ResponseBuilder::buildBytesTotal() {
   size_t total = getFileSize(determinedPath) + response.getFullHeader().size();
+  if (!response.getTransferEncoding().empty()) {
+    total += 5;
+  }
   response.setBytesTotal(total);
 }
 
 void ResponseBuilder::buildFullHeader() {
-  response.setFullHeader(response.getStatusLine() + "\r\n" +
-                         response.getContentType() + "\r\n" +
-                         response.getTransferEncoding() + response.getDate() +
-                         "\r\n" + response.getContentLength() + "\r\n" +
-                         response.getConnection() + "\r\n\r\n");
+  if (response.getContentLength().empty()) {
+    response.setFullHeader(response.getStatusLine() + "\r\n" +
+                           response.getContentType() + "\r\n" +
+                           response.getTransferEncoding() + response.getDate() +
+                           "\r\n" + response.getConnection() + "\r\n\r\n");
+  } else {
+    response.setFullHeader(response.getStatusLine() + "\r\n" +
+                           response.getContentType() + "\r\n" +
+                           response.getTransferEncoding() + response.getDate() +
+                           "\r\n" + response.getContentLength() + "\r\n" +
+                           response.getConnection() + "\r\n\r\n");
+  }
 }
 
 void ResponseBuilder::buildFullResponse() {
   std::string fullResponse = response.getFullHeader() + response.getBody();
   response.setFullResponse(fullResponse);
+  std::cout << "HEADERS = " << response.getFullHeader().size() << std::endl;
+  std::cout << "BODY = " << getFileSize(determinedPath) << std::endl;
+  std::cout << "BOTH = "
+            << response.getFullHeader().size() + getFileSize(determinedPath)
+            << std::endl;
 }
 
 const std::string ResponseBuilder::to_string(size_t value) {
@@ -473,7 +503,5 @@ size_t ResponseBuilder::getFileSize(const std::string& filePath) {
   }
   file.seekg(0, std::ios::end);
   size_t size = static_cast<std::size_t>(file.tellg());
-  std::cout << "File sizeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: " << size
-            << std::endl;
   return size;
 }

@@ -2,6 +2,8 @@
 
 #include "Sender.hpp"
 
+// REND TOUT CA PROPRE AVEC DES BOOL
+
 Response::~Response() {}
 
 Response::Response(const Request& request,
@@ -18,21 +20,40 @@ Response::Response(const Request& request,
       retryAfter(""),
       connection(""),
       bytesSent(0),
+      bytesLoad(0),
       bytesTotal(0),
       fullResponse("") {
   ResponseBuilder builder(request, *this, virtualHosts, defaultVirtualHostName);
-  printResponseAttributes();
-  std::cout << "SIZE HEADER= " << fullHeader.size() << std::endl;
-  std::cout << "SIZE BODY= " << body.size() << std::endl;
-  std::cout << "Bytes total: " << bytesTotal << std::endl;
-  std::cout << "Bytes sent: " << bytesSent << std::endl;
-  // while (!isResponseFullySend()) {
-  Sender sender(*this, 6);
-  // builder.buildBody();
-  // }
+  while (!isResponseFullySend()) {
+    Sender sender(*this, 6);
+    builder.buildBody();
+  }
 }
 
-bool Response::isResponseFullySend() const { return bytesSent == bytesTotal; }
+void Response::clearForChunked() {
+  setStatusLine("");
+  setDate("");
+  setTransferEncoding("");
+  setContentType("");
+  setBody("");
+  setLocation("");
+  setAllow("");
+  setRetryAfter("");
+  setConnection("");
+  setFullHeader("");
+  setFullResponse("");
+}
+
+bool Response::isResponseFullySend() const {
+  std::cout << "Response::isResponseFullySend: " << bytesSent
+            << " == " << bytesTotal << std::endl;
+  std::cout << "Transfer Encoding: " << getTransferEncoding() << std::endl;
+  if (bytesSent == bytesTotal && !getTransferEncoding().empty()) {
+    size_t ret = send(6, "0\r\n\r\n", 5, 0);
+    std::cout << "WAAAAAZAAAAAA= " << ret << std::endl;
+  }
+  return bytesSent == bytesTotal;
+}
 
 void Response::setStatusLine(const std::string& statusLine) {
   this->statusLine = statusLine;
@@ -42,6 +63,8 @@ void Response::setDate(const std::string& date) { this->date = date; }
 
 void Response::setContentLength(const std::string& contentLength) {
   this->contentLength = contentLength;
+
+  std::cout << "CONTENT LENGTH = " << this->contentLength << std::endl;
 }
 
 void Response::setTransferEncoding(const std::string& transferEncoding) {

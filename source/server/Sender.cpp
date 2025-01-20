@@ -35,7 +35,7 @@ void Sender::sendOnFd(Response& response, int sockfd) {
 
   const std::string& fullResponse = response.getFullResponse();
   size_t offset = response.getBytesSent();
-  size_t totalSize = fullResponse.size();
+  size_t totalSize = response.getBytesTotal();
 
   // Vérifiez si la réponse est vide
   if (fullResponse.empty()) {
@@ -58,7 +58,7 @@ void Sender::sendOnFd(Response& response, int sockfd) {
   ssize_t ret =
       send(sockfd, fullResponse.c_str() + offset, remain, MSG_NOSIGNAL);
   if (ret > 0) {
-    response.setBytesSent(offset + ret);
+    response.setBytesSent(response.getBytesSent() + ret);
     std::cout << "Successfully sent " << ret << " bytes." << std::endl;
   } else if (ret < 0) {
     perror("send error");
@@ -73,6 +73,8 @@ void Sender::sendOnFd(Response& response, int sockfd) {
       std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
     }
   }
-
+  std::cout << "WHAT IS SEND = " << std::endl;
+  std::cout << "SIZE SENDER = " << fullResponse.size() << std::endl;
+  std::cout << fullResponse << std::endl;
   std::cout << "Finished sendOnFd." << std::endl;
 }

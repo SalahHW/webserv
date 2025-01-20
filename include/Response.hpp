@@ -32,6 +32,7 @@ class Response {
   ~Response();
 
   bool isResponseFullySend() const;
+  void clearForChunked();
   void setStatusLine(const std::string& statusLine);
   void setDate(const std::string& date);
   void setContentLength(const std::string& contentLength);
