@@ -2,7 +2,7 @@
 
 Client::~Client()
 {
-    std::cout << "Client fd " << connectionFd << " connection closed" << std::endl;
+    std::cout << RED << "Client fd " << connectionFd << " connection closed" << RESET << std::endl;
 }
 
 Client::Client(int listenFd, int connectionFd, Port* port)
@@ -10,7 +10,8 @@ Client::Client(int listenFd, int connectionFd, Port* port)
     , connectionFd(connectionFd)
     , associatedPort(port)
 {
-    std::cout << "New client connected on fd: " << connectionFd << " port: " << port->getPort() << std::endl;
+    std::cout << GREEN << "New client connected on fd: " RESET << connectionFd << GREEN " port: " RESET
+              << port->getPort() << std::endl;
 }
 
 std::string& Client::getBuffer()

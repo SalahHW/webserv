@@ -1,5 +1,6 @@
 #pragma once
 
+#include "color_macros.hpp"
 #include "Port.hpp"
 #include <iostream>
 #include <string>
