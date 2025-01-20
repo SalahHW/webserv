@@ -8,9 +8,7 @@ ServerManager::~ServerManager()
     }
 }
 
-ServerManager::ServerManager()
-{
-}
+ServerManager::ServerManager() { }
 
 ServerManager::ServerManager(std::map<int, Port*> ports)
     : isValid(true)
@@ -27,10 +25,7 @@ ServerManager::ServerManager(std::map<int, Port*> ports)
     }
 }
 
-ServerManager::ServerManager(const ServerManager& other)
-{
-    *this = other;
-}
+ServerManager::ServerManager(const ServerManager& other) { *this = other; }
 
 ServerManager& ServerManager::operator=(const ServerManager& other)
 {
@@ -41,10 +36,7 @@ ServerManager& ServerManager::operator=(const ServerManager& other)
     return *this;
 }
 
-bool ServerManager::good() const
-{
-    return this->isValid;
-}
+bool ServerManager::good() const { return this->isValid; }
 
 void ServerManager::start()
 {
@@ -153,6 +145,12 @@ void ServerManager::acceptConnection(int listenFd)
         std::cerr << "Client acceptation failed" << std::endl;
         return;
     }
+    int flags = fcntl(clientFd, F_GETFL, 0);
+    if (flags == -1 || fcntl(clientFd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        std::cerr << "Failed to set non-blocking mode for clientFd" << std::endl;
+        close(clientFd);
+        return;
+    }
     if (!eventReporter.addFD(clientFd)) {
         std::cerr << "Error: Failed to add client socket to EventReporter" << std::endl;
         return;
@@ -174,7 +172,8 @@ void ServerManager::closeConnection(int clientFd)
 void ServerManager::readFromClient(int connectionFd)
 {
     if (clients.find(connectionFd) == clients.end()) {
-        std::cerr << "Warning: Attempt to read from a non-existing client fd " << connectionFd << std::endl;
+        std::cerr << "Warning: Attempt to read from a non-existing client fd "
+                  << connectionFd << std::endl;
         return;
     }
 

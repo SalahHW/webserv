@@ -1,40 +1,68 @@
 #pragma once
 
-#include "HeaderBuilder.hpp"
+#include <sys/stat.h>
+
+#include <ctime>
+#include <fstream>
+#include <string>
+
+#include "HttpException.hpp"
 #include "Location.hpp"
-#include "ParseRequest.hpp"
-#include "Server.hpp"
+#include "Request.hpp"
+
+#define BUFFER 1024
+
+class Response;
+class VirtualHost;
 
 class ResponseBuilder {
- public:
-  ResponseBuilder(RequestParsed& requestParsed, const Server& server);
-  ~ResponseBuilder();
-
-  std::string buildResponse();
-
  private:
-  RequestParsed& requestParsed;
-  const Server& server;
+  ResponseBuilder();
 
-  HeaderBuilder headerBuilder;
-  std::string body;
-
-  void prepareResponse();
-
-  void prepareSuccessResponse();
-  void prepareRedirectionResponse();
-  void prepareClientErrorResponse();
-  void prepareServerErrorResponse();
-
-  // Utility methods
-  bool findMatchingLocation(const std::string& uri, Location& matchingLocation);
-  bool isDirectory(const std::string& path);
-  std::string generateDirectoryListing(const std::string& directoryPath,
-                                       const std::string& uri);
-  std::string readFile(const std::string& filePath);
-  std::string getContentType(const std::string& filePath);
-  std::string getReasonPhrase(int code);
-
-  // Additional members
+  const Request& request;
+  Response& response;
+  size_t statusCode;
+  const VirtualHost& virtualHost;
   Location matchingLocation;
+  std::string determinedPath;
+
+  void checkRequest();
+  const std::string& getReasonPhraseForCode(size_t code);
+  void setStatusCode(size_t code);
+  std::string determinePath();
+  const VirtualHost& findMatchingVirtualHost(
+      const std::map<std::string, VirtualHost>& virtualHosts,
+      const std::string& defaultVirtualHostName);
+  void determineStatusCode();
+  bool isMethodAccepted();
+  bool findMatchingLocation();
+  bool doesVhostExist();
+  bool doesUriExist();
+  bool isRessourceAvailable();
+
+  void buildErrorContentLength();
+  void buildErrorPage(size_t errorCode);
+  void buildStatusLine();
+  void buildDate();
+  void buildContentLength();
+  void buildTransferEncoding();
+  void buildContentType();
+  void buildLocation();
+  void buildAllow();
+  void buildRetryAfter();
+  void buildConnection();
+  void buildBytesSent();
+  void buildBytesTotal();
+  void buildFullHeader();
+  void buildFullResponse();
+  const std::string to_string(size_t number);
+  const std::string findContentType(const std::string& fileName);
+  size_t getFileSize(const std::string& fileName);
+
+ public:
+  ResponseBuilder(const Request& request, Response& response,
+                  const std::map<std::string, VirtualHost>& virtualHosts,
+                  const std::string& defaultVirtualHostName);
+  ~ResponseBuilder();
+  void buildBody();
 };
