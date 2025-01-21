@@ -2,8 +2,8 @@
 
 #include <unistd.h>
 
+#include <deque>
 #include <iostream>
-#include <queue>
 #include <string>
 
 #include "Port.hpp"
@@ -12,6 +12,12 @@
 #include "color_macros.hpp"
 
 class Port;
+
+enum ClientStatus {
+  WAITING,
+  PROCESSING,
+  READY,
+};
 
 class Client {
  public:
@@ -25,15 +31,19 @@ class Client {
   void closeConnection();
   void appendToBuffer(const char* data, size_t len);
   void clearBuffer();
-  void createResponse();
+  int readFromClient();
+
+  void executeNextTask();
+
+  ClientStatus status;
 
  private:
   int listenFd;
   int connectionFd;
   Port* associatedPort;
   std::string buffer;
-  std::queue<Request*> requests;
-  std::queue<Response*> responses;
+  std::deque<Response> responses;
+  std::deque<Request> requests;
 
   Client();
   Client(const Client& other);

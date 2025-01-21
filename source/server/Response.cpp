@@ -2,10 +2,10 @@
 
 Response::~Response() {}
 
-Response::Response(Request& request,
+Response::Response(Request* request,
                    const std::map<std::string, VirtualHost>& virtualHosts,
                    const std::string& defaultVirtualHostName)
-    : request(request),
+    :  // request(request),
       statusLine(""),
       date(""),
       contentLength(""),
@@ -20,9 +20,7 @@ Response::Response(Request& request,
       bytesLoad(0),
       bytesTotal(0),
       fullResponse(""),
-      builder(request, *this, virtualHosts, defaultVirtualHostName) {
-  (void)request;  // for test only so is not used error in compile
-}
+      builder(*request, *this, virtualHosts, defaultVirtualHostName) {}
 
 void Response::clearForChunked() {
   setStatusLine("");

@@ -6,9 +6,11 @@
 #include "ResponseBuilder.hpp"
 #include "VirtualHost.hpp"
 
+class ResponseBuilder;
+
 class Response {
  private:
-  Request& request;
+  // Request& request;
   std::string statusLine;
   std::string date;
   std::string contentLength;
@@ -25,10 +27,11 @@ class Response {
   size_t bytesTotal;
   std::string fullHeader;
   std::string fullResponse;
-  ResponseBuilder builder;
+  ResponseBuilder* builder;
 
  public:
-  Response(Request& request,
+  Response();
+  Response(Request* request,
            const std::map<std::string, VirtualHost>& virtualHosts,
            const std::string& defaultVirtualHostName);
   ~Response();

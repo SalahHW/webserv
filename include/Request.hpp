@@ -8,6 +8,10 @@
 
 #include "RequestParser.hpp"
 #include "RequestValidator.hpp"
+#include "Response.hpp"
+
+class Response;
+class VirtualHost;
 
 class Request {
  private:
@@ -35,6 +39,7 @@ class Request {
   bool isParsed;
   bool isTreated;
   bool isInTreatment;
+  Response* response;
 
  public:
   Request();
@@ -51,6 +56,8 @@ class Request {
   void setConnection(const std::string& connection);
   void setBody(const std::string& body);
   void setHostName(const std::string& hostName);
+  void setResponse(const std::map<std::string, VirtualHost>& virtualHosts,
+                   const std::string& defaultVirtualHostName);
 
   void setMethodGood(bool methodGood);
   void setUriGood(bool uriGood);
@@ -77,6 +84,7 @@ class Request {
   const std::string& getConnection() const;
   const std::string& getBody() const;
   const std::string& getHostName() const;
+  Response* getResponse() const;
 
   bool getHostGood() const;
   bool getUserAgentGood() const;

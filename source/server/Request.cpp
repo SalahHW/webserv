@@ -69,6 +69,12 @@ void Request::setHostName(const std::string& hostName) {
   this->hostName = hostName;
 }
 
+void Request::setResponse(
+    const std::map<std::string, VirtualHost>& virtualHosts,
+    const std::string& defaultVirtualHostName) {
+  this->response = new Response(this, virtualHosts, defaultVirtualHostName);
+}
+
 void Request::setMethodGood(bool methodGood) { this->methodGood = methodGood; }
 
 void Request::setUriGood(bool uriGood) { this->uriGood = uriGood; }
@@ -133,6 +139,8 @@ const std::string& Request::getConnection() const { return this->Connection; }
 
 const std::string& Request::getBody() const { return this->body; }
 
+Response* Request::getResponse() const { return response; }
+
 const std::string& Request::getHostName() const { return this->hostName; }
 
 bool Request::getMethodGood() const { return this->methodGood; }
@@ -157,7 +165,7 @@ bool Request::getIsRequestGood() const { return isRequestGood; }
 
 bool Request::getIsTreated() const { return isTreated; }
 
-bool Request::getIsInTreatment() const { return getIsInTreatment; }
+bool Request::getIsInTreatment() const { return isInTreatment; }
 
 bool Request::getIsParsed() const { return isParsed; }
 
