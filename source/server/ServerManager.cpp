@@ -56,7 +56,11 @@ void ServerManager::runRoutine()
                 break;
             continue;
         }
+        ///////
         handleEvent(fd, eventFlags);
+        ///////
+        if (clients[fd] && clients[fd]->status == PROCESSING)
+            clients[fd]->executeNextTask();
     }
 
     std::cout << "Server stopped." << std::endl;
@@ -103,9 +107,9 @@ void ServerManager::handleEvent(int fd, uint32_t events)
     if (events & EPOLLIN) {
         handleEpollIn(fd);
     }
-    if (events & EPOLLOUT) {
-        handleEpollOut(fd);
-    }
+    // if (events & EPOLLOUT) {
+    //     handleEpollOut(fd);
+    // }
     if (events & EPOLLERR) {
         handleEpollOut(fd);
     }
@@ -116,7 +120,10 @@ void ServerManager::handleEpollIn(int listenFd)
     if (isListeningSocket(listenFd)) {
         acceptConnection(listenFd);
     } else {
-        readFromClient(listenFd);
+        // readFromClient(listenFd);
+        int status = clients[listenFd]->readFromClient();
+        if (status <= 0)
+            closeConnection(clients[listenFd]->getConnectionFd());
     }
 }
 
@@ -169,27 +176,27 @@ void ServerManager::closeConnection(int clientFd)
     }
 }
 
-void ServerManager::readFromClient(int connectionFd)
-{
-    if (clients.find(connectionFd) == clients.end()) {
-        std::cerr << "Warning: Attempt to read from a non-existing client fd "
-                  << connectionFd << std::endl;
-        return;
-    }
+// void ServerManager::readFromClient(int connectionFd)
+// {
+//     if (clients.find(connectionFd) == clients.end()) {
+//         std::cerr << "Warning: Attempt to read from a non-existing client fd "
+//                   << connectionFd << std::endl;
+//         return;
+//     }
 
-    Client* client = clients[connectionFd];
-    char buffer[1024];
+//     Client* client = clients[connectionFd];
+//     char buffer[1024];
 
-    ssize_t bytesRead = recv(connectionFd, buffer, sizeof(buffer) - 1, 0);
-    if (bytesRead <= 0) {
-        if (bytesRead < 0)
-            std::cerr << "Read error on client fd " << connectionFd << std::endl;
-        closeConnection(connectionFd);
-        return;
-    }
-    buffer[bytesRead] = '\0';
-    client->appendToBuffer(buffer, bytesRead);
+//     ssize_t bytesRead = recv(connectionFd, buffer, sizeof(buffer) - 1, 0);
+//     if (bytesRead <= 0) {
+//         if (bytesRead < 0)
+//             std::cerr << "Read error on client fd " << connectionFd << std::endl;
+//         closeConnection(connectionFd);
+//         return;
+//     }
+//     buffer[bytesRead] = '\0';
+//     client->appendToBuffer(buffer, bytesRead);
 
-    int listenFd = client->getListenFd();
-    ports[listenFd]->processClientData(*client);
-}
+//     int listenFd = client->getListenFd();
+//     ports[listenFd]->processClientData(*client);
+// }
