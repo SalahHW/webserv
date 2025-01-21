@@ -37,7 +37,9 @@ class Request {
   bool isRequestGood;
 
  public:
-  Request(const std::string& request);
+  Request(const std::string& request,
+          const std::map<std::string, VirtualHost>& virtualHosts,
+          const std::string& defaultVirtualHostName);
   ~Request();
   void setMethod(const std::string& method);
   void setUri(const std::string& uri);
