@@ -11,7 +11,6 @@
 
 class Request {
  private:
-  Request();
   std::string method;
   std::string uri;
   std::string version;
@@ -35,9 +34,10 @@ class Request {
   bool isRequestGood;
   bool isParsed;
   bool isTreated;
-  bool isInProcess;
+  bool isInTreatment;
 
  public:
+  Request();
   Request(const std::string& request);
   ~Request();
   void setMethod(const std::string& method);
@@ -63,7 +63,7 @@ class Request {
   void setConnectionGood(bool connectionGood);
   void setIsRequestGood(bool isRequestGood);
   void setIsTreated(bool isTreated);
-  void setIsInProcess(bool isInProcess);
+  void setIsInTreatment(bool isInProcess);
   void setIsParsed(bool isParsed);
 
   const std::string& getMethod() const;
@@ -91,7 +91,7 @@ class Request {
   bool getVersionGood() const;
   bool getIsRequestGood() const;
   bool getIsTreated() const;
-  bool getIsInProcess() const;
+  bool getIsInTreatment() const;
   bool getIsParsed() const;
 
   void displayRequest() const;

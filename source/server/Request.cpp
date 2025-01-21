@@ -14,7 +14,7 @@ Request::Request(const std::string& request)
       isParsed(true),  // for now true but gonna be false when the test will be
                        // implemented
       isTreated(false),
-      isInProcess(true) {
+      isInTreatment(true) {
   RequestParser requestParser(request, *this);
   methodGood = RequestValidator::validateMethod(method);
   uriGood = RequestValidator::validateUri(uri);
@@ -27,6 +27,8 @@ Request::Request(const std::string& request)
   connectionGood = RequestValidator::validateConnection(Connection);
   isRequestGood = RequestValidator::validateRequest(*this);
 }
+
+Request::Request() {}
 
 Request::~Request() {}
 
@@ -101,8 +103,8 @@ void Request::setIsRequestGood(bool isRequestGood) {
 
 void Request::setIsTreated(bool isTreated) { this->isTreated = isTreated; }
 
-void Request::setIsInProcess(bool isInProcess) {
-  this->isInProcess = isInProcess;
+void Request::setIsInTreatment(bool isInProcess) {
+  this->isInTreatment = isInProcess;
 }
 
 void Request::setIsParsed(bool isParsed) { this->isParsed = isParsed; }
@@ -155,7 +157,7 @@ bool Request::getIsRequestGood() const { return isRequestGood; }
 
 bool Request::getIsTreated() const { return isTreated; }
 
-bool Request::getIsInProcess() const { return isInProcess; }
+bool Request::getIsInTreatment() const { return getIsInTreatment; }
 
 bool Request::getIsParsed() const { return isParsed; }
 
