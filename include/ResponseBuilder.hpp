@@ -12,8 +12,8 @@
 
 #define BUFFER 1024
 
-class Response;
 class VirtualHost;
+class Response;
 
 class ResponseBuilder {
  private:

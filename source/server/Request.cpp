@@ -1,8 +1,7 @@
 #include "Request.hpp"
 
 Request::Request(const std::string& request)
-    : response(new Response(*this, virtualHosts, defaultVirtualHostName)),
-      methodGood(false),
+    : methodGood(false),
       uriGood(false),
       versionGood(false),
       hostGood(false),
@@ -11,7 +10,11 @@ Request::Request(const std::string& request)
       acceptLanguageGood(false),
       acceptEncodingGood(false),
       connectionGood(false),
-      isRequestGood(false) {
+      isRequestGood(false),
+      isParsed(true),  // for now true but gonna be false when the test will be
+                       // implemented
+      isTreated(false),
+      isInProcess(true) {
   RequestParser requestParser(request, *this);
   methodGood = RequestValidator::validateMethod(method);
   uriGood = RequestValidator::validateUri(uri);
@@ -96,6 +99,14 @@ void Request::setIsRequestGood(bool isRequestGood) {
   this->isRequestGood = isRequestGood;
 }
 
+void Request::setIsTreated(bool isTreated) { this->isTreated = isTreated; }
+
+void Request::setIsInProcess(bool isInProcess) {
+  this->isInProcess = isInProcess;
+}
+
+void Request::setIsParsed(bool isParsed) { this->isParsed = isParsed; }
+
 const std::string& Request::getMethod() const { return this->method; }
 
 const std::string& Request::getUri() const { return this->uri; }
@@ -141,6 +152,12 @@ bool Request::getAcceptEncodingGood() const { return this->acceptEncodingGood; }
 bool Request::getConnectionGood() const { return this->connectionGood; }
 
 bool Request::getIsRequestGood() const { return isRequestGood; }
+
+bool Request::getIsTreated() const { return isTreated; }
+
+bool Request::getIsInProcess() const { return isInProcess; }
+
+bool Request::getIsParsed() const { return isParsed; }
 
 void Request::displayRequest() const {
   std::cout << "Method: " << this->method << std::endl;

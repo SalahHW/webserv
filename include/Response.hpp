@@ -8,6 +8,7 @@
 
 class Response {
  private:
+  const Request& request;
   std::string statusLine;
   std::string date;
   std::string contentLength;
@@ -24,8 +25,10 @@ class Response {
   size_t bytesTotal;
   std::string fullHeader;
   std::string fullResponse;
+  ResponseBuilder builder;
 
  public:
+  Response();
   Response(const Request& request,
            const std::map<std::string, VirtualHost>& virtualHosts,
            const std::string& defaultVirtualHostName);
@@ -64,6 +67,7 @@ class Response {
   size_t getBytesTotal() const;
   const std::string& getFullHeader() const;
   const std::string& getFullResponse() const;
+  ResponseBuilder getResponseBuilder() const;
 
   void printResponseAttributes() const;
 };

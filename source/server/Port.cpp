@@ -1,5 +1,7 @@
 #include "Port.hpp"
 
+#include "Sender.hpp"
+
 Port::~Port() {}
 
 Port::Port()
@@ -77,9 +79,7 @@ void Port::startListening() {
 }
 
 void Port::processClientData(Client& client) {
-  Request request(client.getBuffer());  // add as an attribute of each client
-  request.displayRequest();
-  Response response(request, getVirtualHosts(), getDefaultVirtualHostName());
+  std::cout << "FD = " << client.getConnectionFd() << std::endl;
 }
 
 void Port::addVirtualHost(const Server& server) {

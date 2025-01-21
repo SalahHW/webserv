@@ -49,4 +49,9 @@ void Sender::sendOnFd(Response& response, int sockfd) {
       std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
     }
   }
+  response.isResponseFullySend();
+  // if (Response == "0\r\n\r\n") {
+  //   Request& request = response.getRequest();
+  //   request.setIsTreated(true);
+  // }
 }

@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <string>
 
+#include "Request.hpp"
 #include "Response.hpp"
 
 class Sender {

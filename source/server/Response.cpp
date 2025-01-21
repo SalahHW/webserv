@@ -1,13 +1,12 @@
 #include "Response.hpp"
 
-#include "Sender.hpp"
-
 Response::~Response() {}
 
 Response::Response(const Request& request,
                    const std::map<std::string, VirtualHost>& virtualHosts,
                    const std::string& defaultVirtualHostName)
-    : statusLine(""),
+    : request(request),
+      statusLine(""),
       date(""),
       contentLength(""),
       transferEncoding(""),
@@ -20,15 +19,8 @@ Response::Response(const Request& request,
       bytesSent(0),
       bytesLoad(0),
       bytesTotal(0),
-      fullResponse("") {
-  ResponseBuilder builder(request, *this, virtualHosts, defaultVirtualHostName);
-  Sender sender(*this, 6);
-
-  while (!isResponseFullySend()) {
-    builder.buildBody();
-    Sender sender(*this, 6);
-  }
-}
+      fullResponse(""),
+      builder(request, *this, virtualHosts, defaultVirtualHostName) {}
 
 void Response::clearForChunked() {
   setStatusLine("");
@@ -134,6 +126,8 @@ size_t Response::getBytesTotal() const { return bytesTotal; }
 const std::string& Response::getFullHeader() const { return fullHeader; }
 
 const std::string& Response::getFullResponse() const { return fullResponse; }
+
+ResponseBuilder Response::getResponseBuilder() const { return builder; }
 
 void Response::printResponseAttributes() const {
   std::cout << "Full Response: " << fullResponse << std::endl;

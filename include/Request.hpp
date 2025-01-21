@@ -8,11 +8,9 @@
 
 #include "RequestParser.hpp"
 #include "RequestValidator.hpp"
-#include "Response.hpp"
 
 class Request {
  private:
-  Response response;
   Request();
   std::string method;
   std::string uri;
@@ -35,11 +33,12 @@ class Request {
   bool acceptEncodingGood;
   bool connectionGood;
   bool isRequestGood;
+  bool isParsed;
+  bool isTreated;
+  bool isInProcess;
 
  public:
-  Request(const std::string& request,
-          const std::map<std::string, VirtualHost>& virtualHosts,
-          const std::string& defaultVirtualHostName);
+  Request(const std::string& request);
   ~Request();
   void setMethod(const std::string& method);
   void setUri(const std::string& uri);
@@ -63,6 +62,9 @@ class Request {
   void setAcceptEncodingGood(bool acceptEncodingGood);
   void setConnectionGood(bool connectionGood);
   void setIsRequestGood(bool isRequestGood);
+  void setIsTreated(bool isTreated);
+  void setIsInProcess(bool isInProcess);
+  void setIsParsed(bool isParsed);
 
   const std::string& getMethod() const;
   const std::string& getUri() const;
@@ -88,6 +90,9 @@ class Request {
   bool getUriGood() const;
   bool getVersionGood() const;
   bool getIsRequestGood() const;
+  bool getIsTreated() const;
+  bool getIsInProcess() const;
+  bool getIsParsed() const;
 
   void displayRequest() const;
 };
