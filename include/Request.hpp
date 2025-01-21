@@ -8,9 +8,11 @@
 
 #include "RequestParser.hpp"
 #include "RequestValidator.hpp"
+#include "Response.hpp"
 
 class Request {
  private:
+  Response response;
   Request();
   std::string method;
   std::string uri;

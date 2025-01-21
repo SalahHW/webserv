@@ -1,7 +1,8 @@
 #include "Request.hpp"
 
 Request::Request(const std::string& request)
-    : methodGood(false),
+    : response(new Response(*this, virtualHosts, defaultVirtualHostName)),
+      methodGood(false),
       uriGood(false),
       versionGood(false),
       hostGood(false),

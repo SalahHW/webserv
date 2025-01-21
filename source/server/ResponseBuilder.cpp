@@ -29,8 +29,8 @@ ResponseBuilder::ResponseBuilder(
     buildBytesSent();
     buildDate();
     buildFullHeader();
-    buildBody();
     buildBytesTotal();
+    buildBody();
     buildFullResponse();
   } catch (const HttpException& e) {
     statusCode = e.getCode();
@@ -46,10 +46,10 @@ ResponseBuilder::ResponseBuilder(
     buildBytesSent();
     buildDate();
     buildFullHeader();
+    buildBytesTotal();
     if (!determinedPath.empty()) {
       buildBody();
     }
-    buildBytesTotal();
     buildFullResponse();
   }
 }
@@ -262,18 +262,6 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
 
     response.setBody(oss.str());
   }
-
-  std::ostringstream oss;
-  oss << "<html>\r\n"
-      << "<head>\r\n"
-      << "    <title>Error " << errorCode << "</title>\r\n"
-      << "</head>\r\n"
-      << "<body>\r\n"
-      << "    <h1>Error " << errorCode << "</h1>\r\n"
-      << "    <p>The requested page could not be found.</p>\r\n"
-      << "</body>\r\n"
-      << "</html>\r\n";
-  response.setBody(oss.str());
 }
 
 const std::string& ResponseBuilder::getReasonPhraseForCode(size_t code) {
@@ -478,11 +466,6 @@ void ResponseBuilder::buildFullHeader() {
 void ResponseBuilder::buildFullResponse() {
   std::string fullResponse = response.getFullHeader() + response.getBody();
   response.setFullResponse(fullResponse);
-  std::cout << "HEADERS = " << response.getFullHeader().size() << std::endl;
-  std::cout << "BODY = " << getFileSize(determinedPath) << std::endl;
-  std::cout << "BOTH = "
-            << response.getFullHeader().size() + getFileSize(determinedPath)
-            << std::endl;
 }
 
 const std::string ResponseBuilder::to_string(size_t value) {

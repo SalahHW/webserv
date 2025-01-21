@@ -29,13 +29,10 @@ void Sender::sendOnFd(Response& response, int sockfd) {
 
   const std::string& Response = response.getFullResponse();
   size_t responseSize = Response.size();
-  std::cout << "SIZE BEFORE SEND= " << responseSize << std::endl;
-
   if (Response.empty()) {
     std::cerr << "Response is empty, nothing to send." << std::endl;
     return;
   }
-
   ssize_t ret = send(sockfd, Response.c_str(), responseSize, MSG_NOSIGNAL);
   if (ret > 0) {
     response.setBytesSent(response.getBytesSent() + ret);
@@ -44,7 +41,6 @@ void Sender::sendOnFd(Response& response, int sockfd) {
     perror("send error");
     std::cerr << "Errno: " << errno << std::endl;
 
-    // Détection des erreurs communes
     if (errno == EPIPE) {
       std::cerr << "Connection closed by peer (EPIPE)." << std::endl;
     } else if (errno == ECONNRESET) {
@@ -53,12 +49,4 @@ void Sender::sendOnFd(Response& response, int sockfd) {
       std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
     }
   }
-  std::cout << "WHAT IS SEND = " << std::endl;
-  std::cout << Response << std::endl;
-  std::cout << "SIZE SEND = " << Response.size() << std::endl;
-
-  std::cout << "LOADED= " << response.getBytesLoad() << std::endl;
-  std::cout << "SENT= " << response.getBytesSent() << std::endl;
-  std::cout << "TOTAL= " << response.getBytesTotal() << std::endl;
-  std::cout << "Finished sendOnFd." << std::endl;
 }

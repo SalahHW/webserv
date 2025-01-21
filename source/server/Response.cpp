@@ -2,8 +2,6 @@
 
 #include "Sender.hpp"
 
-// REND TOUT CA PROPRE AVEC DES BOOL
-
 Response::~Response() {}
 
 Response::Response(const Request& request,
