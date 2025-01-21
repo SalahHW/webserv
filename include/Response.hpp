@@ -8,7 +8,7 @@
 
 class Response {
  private:
-  const Request& request;
+  Request& request;
   std::string statusLine;
   std::string date;
   std::string contentLength;
@@ -28,8 +28,7 @@ class Response {
   ResponseBuilder builder;
 
  public:
-  Response();
-  Response(const Request& request,
+  Response(Request& request,
            const std::map<std::string, VirtualHost>& virtualHosts,
            const std::string& defaultVirtualHostName);
   ~Response();
