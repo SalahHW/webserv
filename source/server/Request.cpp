@@ -14,7 +14,7 @@ Request::Request(const std::string& request)
       isParsed(true),  // for now true but gonna be false when the test will be
                        // implemented
       isTreated(false),
-      isInTreatment(true) {
+      isInTreatment(false) {
   RequestParser requestParser(request, *this);
   methodGood = RequestValidator::validateMethod(method);
   uriGood = RequestValidator::validateUri(uri);
@@ -73,6 +73,7 @@ void Request::setResponse(
     const std::map<std::string, VirtualHost>& virtualHosts,
     const std::string& defaultVirtualHostName) {
   this->response = new Response(this, virtualHosts, defaultVirtualHostName);
+  isInTreatment = true;
 }
 
 void Request::setMethodGood(bool methodGood) { this->methodGood = methodGood; }

@@ -2,7 +2,9 @@
 
 #include <fcntl.h>
 
-Sender::Sender(Response& response, int sockfd) { sendOnFd(response, sockfd); }
+Sender::Sender(Response& response, int sockfd, Request& request) {
+  sendOnFd(response, sockfd, request);
+}
 
 Sender::~Sender() {}
 
@@ -24,7 +26,7 @@ Sender::~Sender() {}
 //     perror("send");
 //   }
 // }
-void Sender::sendOnFd(Response& response, int sockfd) {
+void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
   std::cout << "Starting sendOnFd..." << std::endl;
 
   const std::string& Response = response.getFullResponse();
@@ -50,8 +52,7 @@ void Sender::sendOnFd(Response& response, int sockfd) {
     }
   }
   response.isResponseFullySend();
-  // if (Response == "0\r\n\r\n") {
-  //   Request& request = response.getRequest();
-  //   request.setIsTreated(true);
-  // }
+  if (Response == "0\r\n\r\n") {
+    request.setIsTreated(true);
+  }
 }

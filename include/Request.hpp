@@ -15,6 +15,7 @@ class VirtualHost;
 
 class Request {
  private:
+  std::string buffer;
   std::string method;
   std::string uri;
   std::string version;

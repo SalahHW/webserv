@@ -5,7 +5,7 @@
 ResponseBuilder::~ResponseBuilder() {}
 
 ResponseBuilder::ResponseBuilder(
-    const Request& request, Response& response,
+    Request* request, Response& response,
     const std::map<std::string, VirtualHost>& virtualHosts,
     const std::string& defaultVirtualHostName)
     : request(request),
@@ -72,8 +72,8 @@ void ResponseBuilder::buildErrorContentLength() {
 }
 
 void ResponseBuilder::checkRequest() {
-  if (!request.getIsRequestGood()) {
-    if (!request.getMethodGood()) {
+  if (!request->getIsRequestGood()) {
+    if (!request->getMethodGood()) {
       setStatusCode(405);
     }
 
@@ -95,7 +95,7 @@ std::string ResponseBuilder::determinePath() {
   const std::string& indexFile = matchingLocation.getIndexFile();
   bool autoIndex = matchingLocation.getAutoIndex();
 
-  std::string uri = request.getUri();
+  std::string uri = request->getUri();
   std::string remainder;
   if (uri.find(locPath) == 0) {
     remainder = uri.substr(locPath.size());
@@ -153,9 +153,9 @@ std::string ResponseBuilder::determinePath() {
 const VirtualHost& ResponseBuilder::findMatchingVirtualHost(
     const std::map<std::string, VirtualHost>& virtualHosts,
     const std::string& defaultVirtualHostName) {
-  std::cout << "TO FIND HOST = " << request.getHostName() << std::endl;
+  std::cout << "TO FIND HOST = " << request->getHostName() << std::endl;
   std::map<std::string, VirtualHost>::const_iterator it =
-      virtualHosts.find(request.getHostName());
+      virtualHosts.find(request->getHostName());
   if (it != virtualHosts.end()) {
     return it->second;
   } else {
@@ -204,9 +204,9 @@ bool ResponseBuilder::doesVhostExist() {
 }
 
 bool ResponseBuilder::isMethodAccepted() {
-  if ((request.getMethod() == "GET" && matchingLocation.getGetAccepted()) ||
-      (request.getMethod() == "POST" && matchingLocation.getPostAccepted()) ||
-      (request.getMethod() == "DELETE" &&
+  if ((request->getMethod() == "GET" && matchingLocation.getGetAccepted()) ||
+      (request->getMethod() == "POST" && matchingLocation.getPostAccepted()) ||
+      (request->getMethod() == "DELETE" &&
        matchingLocation.getDeleteAccepted())) {
     return true;
   } else {
@@ -222,7 +222,8 @@ bool ResponseBuilder::findMatchingLocation() {
   for (std::map<std::string, Location>::const_iterator it = locations.begin();
        it != locations.end(); ++it) {
     const std::string& locationPath = it->first;
-    if (request.getUri().compare(0, locationPath.length(), locationPath) == 0 &&
+    if (request->getUri().compare(0, locationPath.length(), locationPath) ==
+            0 &&
         locationPath.length() > longestMatch) {
       longestMatch = locationPath.length();
       matchingLocation = it->second;

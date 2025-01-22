@@ -69,7 +69,7 @@ class Response {
   size_t getBytesTotal() const;
   const std::string& getFullHeader() const;
   const std::string& getFullResponse() const;
-  ResponseBuilder getResponseBuilder() const;
+  ResponseBuilder* getResponseBuilder() const;
 
   void printResponseAttributes() const;
 };

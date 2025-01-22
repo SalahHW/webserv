@@ -19,7 +19,7 @@ class ResponseBuilder {
  private:
   ResponseBuilder();
 
-  const Request& request;
+  Request* request;
   Response& response;
   size_t statusCode;
   const VirtualHost& virtualHost;
@@ -60,7 +60,7 @@ class ResponseBuilder {
   size_t getFileSize(const std::string& fileName);
 
  public:
-  ResponseBuilder(const Request& request, Response& response,
+  ResponseBuilder(Request* request, Response& response,
                   const std::map<std::string, VirtualHost>& virtualHosts,
                   const std::string& defaultVirtualHostName);
   ~ResponseBuilder();

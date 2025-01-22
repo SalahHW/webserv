@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sys/epoll.h>
 #include <unistd.h>
 
 #include <deque>
@@ -24,6 +25,7 @@ class Client {
   ~Client();
   Client(int listenFd, int connectionFd, Port* port);
 
+  void initEv();
   std::string& getBuffer();
   int getListenFd() const;
   int getConnectionFd() const;
@@ -33,11 +35,16 @@ class Client {
   void clearBuffer();
   int readFromClient();
 
-  void executeNextTask();
+  void clientRoutine();
+  void requestRoutine();
+  void responsesRoutine();
+  void eventToOut();
+  void eventToIn();
 
   ClientStatus status;
 
  private:
+  struct epoll_event ev;
   int listenFd;
   int connectionFd;
   Port* associatedPort;

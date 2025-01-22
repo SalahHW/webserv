@@ -12,8 +12,14 @@ Client::Client(int listenFd, int connectionFd, Port* port)
       listenFd(listenFd),
       connectionFd(connectionFd),
       associatedPort(port) {
+  initEv();
   std::cout << GREEN << "New client connected on fd: " RESET << connectionFd
             << GREEN " port: " RESET << port->getPort() << std::endl;
+}
+
+void Client::initEv() {
+  ev.events = EPOLLIN;
+  ev.data.fd = connectionFd;
 }
 
 std::string& Client::getBuffer() { return buffer; }
@@ -46,31 +52,63 @@ int Client::readFromClient() {
   }
   buffer[bytesRead] = '\0';
   appendToBuffer(buffer, bytesRead);
-  //  Status = Have work
-  std::cout << "Coucou" << std::endl;
   return bytesRead;
 }
 
-void Client::executeNextTask() {
-  std::cout << "TEST" << std::endl;
+void Client::eventToOut() {
+  ev.events = EPOLLOUT;
+  epoll_ctl(listenFd, EPOLL_CTL_MOD, connectionFd, &ev);
+}
+
+void Client::eventToIn() {
+  ev.events = EPOLLIN;
+  epoll_ctl(listenFd, EPOLL_CTL_MOD, connectionFd, &ev);
+}
+
+void Client::requestRoutine() {
+  if (readFromClient() <= 0) {
+    return;
+  }
+  if (buffer.find("\r\n\r\n")) {
+    eventToOut();
+    Request* request = new Request(getBuffer());
+    requests.push_back(*request);
+    clearBuffer();  // clear only before the \r\n\r\n and before
+  }
+}
+
+void Client::responsesRoutine() {
   if (!requests.empty()) {
     for (std::deque<Request>::iterator it = requests.begin();
          it != requests.end(); ++it) {
       if (it->getIsParsed()) {
-        // init response
-        it->setResponse(associatedPort->getVirtualHosts(),
-                        associatedPort->getDefaultVirtualHostName());
-      }
-      if (it->getIsInTreatment()) {
-        // buildResponse
-        it->getResponse()->getResponseBuilder().buildBody();
+        if (it->getIsInTreatment()) {
+          it->getResponse()->getResponseBuilder()->buildBody();
+        } else {
+          it->setIsInTreatment(true);
+          it->setResponse(associatedPort->getVirtualHosts(),
+                          associatedPort->getDefaultVirtualHostName());
+        }
+        Sender sender(*it->getResponse(), connectionFd, *it);
       }
       if (it->getIsTreated()) {
-        // delete the request and associated response
+        eventToIn();
+        requests.erase(it);  // delete request and you have to delete all what
+        // is new in like the associated response
+        break;
       }
+      // if (it->getResponse()->getBody().empty()) {
+      //   eventToIn();
+      // }
     }
   }
-  if (buffer.empty()) return;
-  if (buffer.find("\r\n\r\n")) {
+}
+
+void Client::clientRoutine() {
+  if (ev.events == EPOLLIN) {
+    requestRoutine();
+  }
+  if (ev.events == EPOLLOUT) {
+    responsesRoutine();
   }
 }

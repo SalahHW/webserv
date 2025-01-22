@@ -5,8 +5,7 @@ Response::~Response() {}
 Response::Response(Request* request,
                    const std::map<std::string, VirtualHost>& virtualHosts,
                    const std::string& defaultVirtualHostName)
-    :  // request(request),
-      statusLine(""),
+    : statusLine(""),
       date(""),
       contentLength(""),
       transferEncoding(""),
@@ -20,7 +19,8 @@ Response::Response(Request* request,
       bytesLoad(0),
       bytesTotal(0),
       fullResponse(""),
-      builder(*request, *this, virtualHosts, defaultVirtualHostName) {}
+      builder(new ResponseBuilder(request, *this, virtualHosts,
+                                  defaultVirtualHostName)) {}
 
 void Response::clearForChunked() {
   setStatusLine("");
@@ -127,7 +127,7 @@ const std::string& Response::getFullHeader() const { return fullHeader; }
 
 const std::string& Response::getFullResponse() const { return fullResponse; }
 
-ResponseBuilder Response::getResponseBuilder() const { return builder; }
+ResponseBuilder* Response::getResponseBuilder() const { return builder; }
 
 void Response::printResponseAttributes() const {
   std::cout << "Full Response: " << fullResponse << std::endl;
