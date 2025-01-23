@@ -8,10 +8,7 @@ Client::~Client() {
 }
 
 Client::Client(int listenFd, int connectionFd, Port* port)
-    : status(WAITING),
-      listenFd(listenFd),
-      connectionFd(connectionFd),
-      associatedPort(port) {
+    : listenFd(listenFd), connectionFd(connectionFd), associatedPort(port) {
   initEv();
   std::cout << GREEN << "New client connected on fd: " RESET << connectionFd
             << GREEN " port: " RESET << port->getPort() << std::endl;
@@ -35,7 +32,6 @@ void Client::closeConnection() {
 
 void Client::appendToBuffer(const char* data, size_t len) {
   buffer.append(data, len);
-  status = PROCESSING;
 }
 
 void Client::clearBuffer() { buffer.clear(); }
@@ -102,9 +98,6 @@ void Client::responsesRoutine() {
         // is new in like the associated response
         break;
       }
-      // if (it->getResponse()->getBody().empty()) {
-      //   eventToIn();
-      // }
     }
   }
 }

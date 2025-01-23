@@ -38,7 +38,6 @@ ResponseBuilder::ResponseBuilder(
     buildStatusLine();
     buildContentType();
     buildErrorContentLength();
-
     buildLocation();
     buildAllow();
     buildRetryAfter();
@@ -383,7 +382,8 @@ const std::string ResponseBuilder::findContentType(
 void ResponseBuilder::buildBody() {
   std::ifstream file(determinedPath.c_str(), std::ios::binary);
   if (!file.is_open()) {
-    throw HttpException(404, "File not found");
+    setStatusCode(404);
+    // throw HttpException(404, "File not found");
   }
 
   std::size_t offset = response.getBytesLoad();

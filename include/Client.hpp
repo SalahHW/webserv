@@ -14,12 +14,6 @@
 
 class Port;
 
-enum ClientStatus {
-  WAITING,
-  PROCESSING,
-  READY,
-};
-
 class Client {
  public:
   ~Client();
@@ -41,7 +35,6 @@ class Client {
   void eventToIn();
   void eventToErr();
 
-  ClientStatus status;
   int epollFd;
 
  private:

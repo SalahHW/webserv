@@ -121,7 +121,7 @@ void ServerManager::handleEvent(int fd, uint32_t events) {
     handleEpollOut(fd);
   }
   if (events & EPOLLERR) {
-    handleEpollOut(fd);
+    handleEpollErr(fd);
   }
 }
 
