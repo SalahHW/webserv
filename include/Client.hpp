@@ -35,13 +35,14 @@ class Client {
   void clearBuffer();
   int readFromClient();
 
-  void clientRoutine();
   void requestRoutine();
   void responsesRoutine();
   void eventToOut();
   void eventToIn();
+  void eventToErr();
 
   ClientStatus status;
+  int epollFd;
 
  private:
   struct epoll_event ev;

@@ -57,12 +57,17 @@ int Client::readFromClient() {
 
 void Client::eventToOut() {
   ev.events = EPOLLOUT;
-  epoll_ctl(listenFd, EPOLL_CTL_MOD, connectionFd, &ev);
+  epoll_ctl(epollFd, EPOLL_CTL_MOD, connectionFd, &ev);
 }
 
 void Client::eventToIn() {
   ev.events = EPOLLIN;
-  epoll_ctl(listenFd, EPOLL_CTL_MOD, connectionFd, &ev);
+  epoll_ctl(epollFd, EPOLL_CTL_MOD, connectionFd, &ev);
+}
+
+void Client::eventToErr() {
+  ev.events = EPOLLERR;
+  epoll_ctl(epollFd, EPOLL_CTL_MOD, connectionFd, &ev);
 }
 
 void Client::requestRoutine() {
@@ -101,14 +106,5 @@ void Client::responsesRoutine() {
       //   eventToIn();
       // }
     }
-  }
-}
-
-void Client::clientRoutine() {
-  if (ev.events == EPOLLIN) {
-    requestRoutine();
-  }
-  if (ev.events == EPOLLOUT) {
-    responsesRoutine();
   }
 }
