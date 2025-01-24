@@ -343,6 +343,8 @@ void ResponseBuilder::buildContentType() {
     response.setContentType("Content-Type: text/html");
   } else {
     response.setContentType("Content-Type: " + findContentType(determinedPath));
+    std::cout << "Content-Type: " << findContentType(determinedPath)
+              << std::endl;
   }
 }
 
