@@ -36,11 +36,7 @@ void Response::clearForChunked() {
   setFullResponse("");
 }
 
-bool Response::isResponseFullySend() const {
-  std::cout << "Response::isResponseFullySend: " << bytesSent
-            << " == " << bytesTotal << std::endl;
-  return bytesSent == bytesTotal;
-}
+bool Response::isResponseFullySend() const { return bytesSent == bytesTotal; }
 
 void Response::setStatusLine(const std::string& statusLine) {
   this->statusLine = statusLine;
@@ -50,8 +46,6 @@ void Response::setDate(const std::string& date) { this->date = date; }
 
 void Response::setContentLength(const std::string& contentLength) {
   this->contentLength = contentLength;
-
-  std::cout << "CONTENT LENGTH = " << this->contentLength << std::endl;
 }
 
 void Response::setTransferEncoding(const std::string& transferEncoding) {
@@ -84,7 +78,6 @@ void Response::setBytesLoad(size_t bytesLoad) { this->bytesLoad = bytesLoad; }
 
 void Response::setBytesTotal(size_t bytesTotal) {
   this->bytesTotal = bytesTotal;
-  std::cout << "bytesTotal: " << bytesTotal << std::endl;
 }
 
 void Response::setFullHeader(const std::string& fullHeader) {
@@ -129,6 +122,4 @@ const std::string& Response::getFullResponse() const { return fullResponse; }
 
 ResponseBuilder* Response::getResponseBuilder() const { return builder; }
 
-void Response::printResponseAttributes() const {
-  std::cout << "Full Response: " << fullResponse << std::endl;
-}
+void Response::printResponseAttributes() const {}

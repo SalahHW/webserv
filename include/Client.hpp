@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sys/epoll.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #include <deque>
@@ -34,10 +35,12 @@ class Client {
   void eventToOut();
   void eventToIn();
   void eventToErr();
+  double getCurrentTime(void);
 
   int epollFd;
+  double lastActivity;
 
- private:
+  private:
   struct epoll_event ev;
   int listenFd;
   int connectionFd;

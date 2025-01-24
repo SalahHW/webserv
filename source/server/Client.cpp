@@ -10,6 +10,7 @@ Client::~Client() {
 Client::Client(int listenFd, int connectionFd, Port* port)
     : listenFd(listenFd), connectionFd(connectionFd), associatedPort(port) {
   initEv();
+  lastActivity = getCurrentTime();
   std::cout << GREEN << "New client connected on fd: " RESET << connectionFd
             << GREEN " port: " RESET << port->getPort() << std::endl;
 }
@@ -26,6 +27,11 @@ int Client::getListenFd() const { return this->listenFd; }
 int Client::getConnectionFd() const { return this->connectionFd; }
 
 void Client::closeConnection() {
+  for (std::deque<Request>::iterator it = requests.begin();
+       it != requests.end(); ++it) {
+    delete (*it).getResponse();
+    delete &(*it);
+  }
   close(connectionFd);
   clearBuffer();
 }
@@ -66,8 +72,16 @@ void Client::eventToErr() {
   epoll_ctl(epollFd, EPOLL_CTL_MOD, connectionFd, &ev);
 }
 
+double Client::getCurrentTime(void) {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  // Convertir en secondes
+  return (double)(tv.tv_sec) + (double)(tv.tv_usec) / 1e6;
+}
+
 void Client::requestRoutine() {
   if (readFromClient() <= 0) {
+    this->lastActivity = getCurrentTime();
     return;
   }
   if (buffer.find("\r\n\r\n")) {
@@ -87,6 +101,7 @@ void Client::requestRoutine() {
     buffer.erase(0, pos + 4);
     eventToIn();
   }
+  this->lastActivity = getCurrentTime();
 }
 
 void Client::responsesRoutine() {
@@ -111,4 +126,5 @@ void Client::responsesRoutine() {
       }
     }
   }
+  this->lastActivity = getCurrentTime();
 }

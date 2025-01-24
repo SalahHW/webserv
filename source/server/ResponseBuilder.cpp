@@ -395,7 +395,7 @@ const std::string ResponseBuilder::findContentType(
 }
 
 void ResponseBuilder::buildBody() {
-  std::ifstream file(determinedPath.c_str(), std::ios::binary);
+  std::ifstream file(determinedPath.c_str(), std::ios::in | std::ios::binary);
   if (!file.is_open() && !determinedPath.empty()) {
     setStatusCode(404);
     // throw HttpException(404, "File not found");
