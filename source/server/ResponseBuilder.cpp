@@ -15,7 +15,13 @@ ResponseBuilder::ResponseBuilder(
           findMatchingVirtualHost(virtualHosts, defaultVirtualHostName)) {
   try {
     checkRequest();
-    findMatchingLocation();
+    if (request->getMethod() == "POST") {
+      treatAPost();
+      return;
+    }
+    if (!findMatchingLocation()) {
+      setStatusCode(404);
+    }
     determinedPath = determinePath();
     std::cout << "determinedPath: " << determinedPath << std::endl;
     determineStatusCode();
@@ -50,6 +56,12 @@ ResponseBuilder::ResponseBuilder(
       buildBody();
     }
     buildFullResponse();
+  }
+}
+
+void ResponseBuilder::treatAPost() {
+  if (!findMatchingLocation()) {
+    setStatusCode(404);
   }
 }
 
@@ -245,6 +257,7 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
         struct stat info;
         if (stat(errorPagePath.c_str(), &info) == 0 && S_ISREG(info.st_mode)) {
           determinedPath = errorPagePath;
+          return;
         }
       }
     }
@@ -381,7 +394,7 @@ const std::string ResponseBuilder::findContentType(
 
 void ResponseBuilder::buildBody() {
   std::ifstream file(determinedPath.c_str(), std::ios::binary);
-  if (!file.is_open()) {
+  if (!file.is_open() && !determinedPath.empty()) {
     setStatusCode(404);
     // throw HttpException(404, "File not found");
   }

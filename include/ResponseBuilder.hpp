@@ -27,6 +27,7 @@ class ResponseBuilder {
   std::string determinedPath;
 
   void checkRequest();
+  void treatAPost();
   const std::string& getReasonPhraseForCode(size_t code);
   void setStatusCode(size_t code);
   std::string determinePath();

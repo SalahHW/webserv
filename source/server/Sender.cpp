@@ -27,8 +27,6 @@ Sender::~Sender() {}
 //   }
 // }
 void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
-  std::cout << "Starting sendOnFd..." << std::endl;
-
   const std::string& Response = response.getFullResponse();
   size_t responseSize = Response.size();
   if (Response.empty()) {
@@ -38,7 +36,6 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
   ssize_t ret = send(sockfd, Response.c_str(), responseSize, MSG_NOSIGNAL);
   if (ret > 0) {
     response.setBytesSent(response.getBytesSent() + ret);
-    std::cout << "Successfully sent " << ret << " bytes." << std::endl;
   } else if (ret < 0) {
     perror("send error");
     std::cerr << "Errno: " << errno << std::endl;
@@ -51,7 +48,9 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
       std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
     }
   }
-  response.isResponseFullySend();
+  if (response.isResponseFullySend()) {
+    request.setIsTreated(true);
+  }
   if (Response == "0\r\n\r\n") {
     request.setIsTreated(true);
   }

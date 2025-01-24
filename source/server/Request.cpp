@@ -11,8 +11,8 @@ Request::Request(const std::string& request)
       acceptEncodingGood(false),
       connectionGood(false),
       isRequestGood(false),
-      isParsed(true),  // for now true but gonna be false when the test will be
-                       // implemented
+      isParsed(false),  // for now true but gonna be false when the test will be
+                        // implemented
       isTreated(false),
       isInTreatment(false) {
   RequestParser requestParser(request, *this);
@@ -26,6 +26,7 @@ Request::Request(const std::string& request)
   acceptEncodingGood = RequestValidator::validateAcceptEncoding(AcceptEncoding);
   connectionGood = RequestValidator::validateConnection(Connection);
   isRequestGood = RequestValidator::validateRequest(*this);
+  isParsed = true;
 }
 
 Request::Request() {}

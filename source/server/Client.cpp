@@ -76,6 +76,17 @@ void Client::requestRoutine() {
     requests.push_back(*request);
     clearBuffer();  // clear only before the \r\n\r\n and before
   }
+  if (buffer.find("POST") != std::string::npos &&
+      buffer.find("\r\n\r\n") != std::string::npos) {
+    eventToOut();
+    size_t pos = buffer.find("\r\n\r\n");
+    std::string header = buffer.substr(0, pos + 4);
+    Request* request = new Request(getBuffer());
+    // if if the request is invalid send response
+    requests.push_back(*request);
+    buffer.erase(0, pos + 4);
+    eventToIn();
+  }
 }
 
 void Client::responsesRoutine() {
