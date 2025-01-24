@@ -41,7 +41,7 @@
 #include "CgiHandler.hpp"
 
 CgiHandler::CgiHandler() {
-    this->setScriptPath("/home/sickest_one/Travail/webserv/www/cgi-bin/"); // modif to getCgiLocation (isCgiLocation ?)
+    this->setScriptPath("/home/sickest-one/Travail/webserv/www/cgi-bin/"); // modif to getCgiLocation (isCgiLocation ?)
 	request.method = "GET";
 	request.uri = "http://example.com/cgi-bin/cgi.py";
 	request.version = "HTTP/1.1";
@@ -70,42 +70,34 @@ std::pair<int, pid_t> CgiHandler::cgiExecution() {
         envArray = this->allocateEnvArray(env);
         pid = fork();
         if (pid < 0) {
-            std::cerr << FORK_ERR << std::endl;
-            this->cleanupEnvArray(env, envArray);
-            return (std::make_pair(-1, pid));
+            throw std::runtime_error(FORK_ERR);
         }
         else if (pid == 0) {
             if (this->checkQueryStringPresence(request.uri)) {
-                std::cerr << QUERY_ERR << std::endl;
-                this->cleanupEnvArray(env, envArray);
-                std::exit(EXIT_FAILURE);
+                throw std::runtime_error(QUERY_ERR);
             }
             if (chdir(scriptDir) < 0) {
-                std::cerr << CGI_DIR_ERR << std::endl;
-                this->cleanupEnvArray(env, envArray);
-                std::exit(EXIT_FAILURE);
+                throw std::runtime_error(CGI_DIR_ERR);
             }
             // implement POST fd redirection
             if (execve(PY_INTERP, args, envArray) < 0) {
-                std::cerr << EXECVE_ERR << std::endl;
-                this->cleanupEnvArray(env, envArray);
-                std::exit(EXIT_FAILURE);
+                throw std::runtime_error(PY_INTERP);
             }
         }
         else {
             if (waitpid(pid, &status, 0) < 0) {
-                std::cerr << WAITPID_ERR << std::endl;
-                this->cleanupEnvArray(env, envArray);
-                return (std::make_pair(-1, pid));
+                throw std::runtime_error(WAITPID_ERR);
             }
         }
     }
     catch (const std::exception &e) {
-        std::cerr << "Nah uuuuh" << std::endl;
+        std::cerr << "Error : " << e.what() << std::endl;
+        std::cout << "READY TO CLEAN" << std::endl;
+        this->cleanupEnvArray(env, envArray);
         return (std::make_pair(-1, pid));
     }
     this->cleanupEnvArray(env, envArray);
-    return std::make_pair(-1, pid);
+    return std::make_pair(status, pid);
 }
 
 //std::pair<int, pid_t> CgiHandler::cgiExecution() {
@@ -208,13 +200,13 @@ std::pair<int, pid_t> CgiHandler::cgiExecution() {
 //    this->cleanupEnvArray(env, envArray);
 //    return std::make_pair(0, pid);
 //}
-//
-//
-//void CgiHandler::printEnv(std::vector<std::string> &env)
-//{
-//    // FOR DEBUG, DELETE LATER
-//    std::vector<std::string>::iterator vec_it;
-//    for (vec_it = env.begin(); vec_it != env.end(); vec_it++) {
-//        std::cout << "[DEBUG] : " << *vec_it << std::endl;
-//    }
-//}
+
+
+void CgiHandler::printEnv(std::vector<std::string> &env)
+{
+    // FOR DEBUG, DELETE LATER
+    std::vector<std::string>::iterator vec_it;
+    for (vec_it = env.begin(); vec_it != env.end(); vec_it++) {
+        std::cout << "[DEBUG] : " << *vec_it << std::endl;
+    }
+}

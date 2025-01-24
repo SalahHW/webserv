@@ -1,4 +1,4 @@
-import os
+import os, cgi, cgitb
 
 def main():
     # Retrieve the REQUEST_METHOD environment variable
@@ -13,7 +13,7 @@ def main():
     print("<head><title>CGI Script Output</title></head>")
     print("<body>")
     print("<h1>Python CGI Script</h1>")
-    print(f"<p>REQUEST_METHOD: {request_method}</p>")
+    print("<p>REQUEST_METHOD: {request_method}</p>")
     print("</body>")
     print("</html>")
 
