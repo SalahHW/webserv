@@ -10,7 +10,7 @@ Response::Response(Request* request,
       contentLength(""),
       transferEncoding(""),
       contentType(""),
-      body(""),
+      body(),
       location(""),
       allow(""),
       retryAfter(""),
@@ -18,7 +18,7 @@ Response::Response(Request* request,
       bytesSent(0),
       bytesLoad(0),
       bytesTotal(0),
-      fullResponse(""),
+      fullResponse(),
       builder(new ResponseBuilder(request, *this, virtualHosts,
                                   defaultVirtualHostName)) {}
 
@@ -27,13 +27,13 @@ void Response::clearForChunked() {
   setDate("");
   setTransferEncoding("");
   setContentType("");
-  setBody("");
+  setBody(std::vector<char>());
   setLocation("");
   setAllow("");
   setRetryAfter("");
   setConnection("");
   setFullHeader("");
-  setFullResponse("");
+  setFullResponse(std::vector<char>());
 }
 
 bool Response::isResponseFullySend() const { return bytesSent == bytesTotal; }
@@ -56,7 +56,7 @@ void Response::setContentType(const std::string& contentType) {
   this->contentType = contentType;
 }
 
-void Response::setBody(const std::string& body) { this->body = body; }
+void Response::setBody(const std::vector<char> body) { this->body = body; }
 
 void Response::setLocation(const std::string& location) {
   this->location = location;
@@ -84,7 +84,7 @@ void Response::setFullHeader(const std::string& fullHeader) {
   this->fullHeader = fullHeader;
 }
 
-void Response::setFullResponse(const std::string& fullResponse) {
+void Response::setFullResponse(const std::vector<char> fullResponse) {
   this->fullResponse = fullResponse;
 }
 
@@ -100,7 +100,7 @@ const std::string& Response::getTransferEncoding() const {
 
 const std::string& Response::getContentType() const { return contentType; }
 
-const std::string& Response::getBody() const { return body; }
+const std::vector<char> Response::getBody() const { return body; }
 
 const std::string& Response::getLocation() const { return location; }
 
@@ -118,7 +118,9 @@ size_t Response::getBytesTotal() const { return bytesTotal; }
 
 const std::string& Response::getFullHeader() const { return fullHeader; }
 
-const std::string& Response::getFullResponse() const { return fullResponse; }
+const std::vector<char> Response::getFullResponse() const {
+  return fullResponse;
+}
 
 ResponseBuilder* Response::getResponseBuilder() const { return builder; }
 

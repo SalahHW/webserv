@@ -75,7 +75,6 @@ void Client::eventToErr() {
 double Client::getCurrentTime(void) {
   struct timeval tv;
   gettimeofday(&tv, NULL);
-  // Convertir en secondes
   return (double)(tv.tv_sec) + (double)(tv.tv_usec) / 1e6;
 }
 

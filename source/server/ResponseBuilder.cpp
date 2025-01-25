@@ -262,19 +262,32 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
       }
     }
 
-    std::ostringstream oss;
-    oss << "<html>\r\n"
-        << "<head>\r\n"
-        << "    <title>Error " << errorCode << "</title>\r\n"
-        << "</head>\r\n"
-        << "<body>\r\n"
-        << "    <h1>Error " << errorCode << "</h1>\r\n"
-        << "    <p>The requested page could not be found.</p>\r\n"
-        << "</body>\r\n"
-        << "</html>";
+    std::vector<char> responseChar;
 
-    response.setBody(oss.str());
+    std::ostringstream oss;
+    oss << errorCode;
+    std::string errorCodeStr = oss.str();
+
+    appendToVector(responseChar, "<html>\r\n");
+    appendToVector(responseChar, "<head>\r\n");
+    appendToVector(responseChar, "    <title>Error ");
+    appendToVector(responseChar, "/title>\r\n");
+    appendToVector(responseChar, "</head>\r\n");
+    appendToVector(responseChar, "<body>\r\n");
+    appendToVector(responseChar, "    <h1>Error " + errorCodeStr + "</h1>\r\n");
+    appendToVector(responseChar,
+                   "    <p>The requested page could not be "
+                   "found.</p>\r\n");
+    appendToVector(responseChar, "</body>\r\n");
+    appendToVector(responseChar, "</html>");
+
+    response.setBody(responseChar);
   }
+}
+
+void ResponseBuilder::appendToVector(std::vector<char>& vec,
+                                     const std::string& str) {
+  vec.insert(vec.end(), str.begin(), str.end());
 }
 
 const std::string& ResponseBuilder::getReasonPhraseForCode(size_t code) {
@@ -361,7 +374,7 @@ const std::string ResponseBuilder::findContentType(
     extension[i] = static_cast<char>(tolower(extension[i]));
   }
   if (extension == ".html" || extension == ".htm") {
-    return "text/html";
+    return "text/html; charset=UTF-8";
   } else if (extension == ".css") {
     return "text/css";
   } else if (extension == ".js") {
@@ -411,15 +424,16 @@ void ResponseBuilder::buildBody() {
     bufferSize -= 3;
   }
 
-  char buffer[bufferSize];
-  file.read(buffer, bufferSize);
+  std::vector<char> buffer(bufferSize);
+  file.read(&buffer[0], bufferSize);
   std::streamsize bytesRead = file.gcount();
   if (bytesRead <= 0) {
     if (file.eof()) {
       if (response.getContentLength().empty()) {
-        response.setBody("0\r\n\r\n");
+        std::vector<char> endChunkedBody = {'0', '\r', '\n', '\r', '\n'};
+        response.setBody(endChunkedBody);
         response.setBytesLoad(response.getBytesTotal());
-        response.setBytesSent(response.getBytesTotal() - 5);
+        response.setBytesSent(response.getBytesTotal() - endChunkedBody.size());
       }
     } else {
       throw HttpException(500, "Error reading file");
@@ -428,13 +442,16 @@ void ResponseBuilder::buildBody() {
     response.setFullResponse(response.getBody());
     return;
   }
-  std::string content(buffer, static_cast<std::size_t>(bytesRead));
+  std::vector<char> content(buffer.begin(), buffer.begin() + bytesRead);
   if (!response.getContentLength().empty()) {
     response.setBody(content);
   } else {
     std::ostringstream oss;
-    oss << std::hex << bytesRead << "\r\n" << content << "\r\n";
-    response.setBody(oss.str());
+    oss << std::hex << bytesRead << "\r\n";
+    std::string chunkHeader = oss.str();
+    std::vector<char> chunkBody(chunkHeader.begin(), chunkHeader.end());
+    chunkBody.insert(chunkBody.end(), content.begin(), content.end());
+    chunkBody.insert(chunkBody.end(), {'\r', '\n'});
   }
   response.setBytesLoad(response.getFullHeader().size() + offset + bytesRead);
   file.close();

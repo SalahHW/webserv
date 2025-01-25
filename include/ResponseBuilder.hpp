@@ -40,6 +40,7 @@ class ResponseBuilder {
   bool doesVhostExist();
   bool doesUriExist();
   bool isRessourceAvailable();
+  void appendToVector(std::vector<char>& vec, const std::string& str);
 
   void buildErrorContentLength();
   void buildErrorPage(size_t errorCode);
