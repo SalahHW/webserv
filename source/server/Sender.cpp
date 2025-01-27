@@ -24,7 +24,7 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
     std::cerr << "Response is empty, nothing to send." << std::endl;
     return;
   }
-  if (!request.getIsTreated()) {
+  if (!request.getIsTreated() && response.getContentLength().empty()) {
     hex << std::hex << responseSize;
     hexStr = hex.str() + "\r\n";
 
@@ -46,7 +46,7 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
       std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
     }
   }
-  if (response.getContentLength().empty()) {
+  if (response.getContentLength().empty() && !request.getIsTreated()) {
     ret = send(sockfd, "\r\n", 2, MSG_NOSIGNAL);
   }
 

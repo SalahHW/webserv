@@ -58,6 +58,8 @@ ResponseBuilder::ResponseBuilder(
   }
 }
 
+size_t ResponseBuilder::getStatusCode() const { return statusCode; }
+
 void ResponseBuilder::treatAPost() {
   if (!findMatchingLocation()) {
     setStatusCode(404);

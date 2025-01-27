@@ -108,8 +108,12 @@ void Client::responsesRoutine() {
     for (std::deque<Request>::iterator it = requests.begin();
          it != requests.end(); ++it) {
       if (it->getIsParsed()) {
-        if (it->getIsInTreatment()) {
+        if (it->getIsInTreatment() &&
+            it->getResponse()->getResponseBuilder()->getStatusCode() == 200) {
           it->getResponse()->getResponseBuilder()->buildBody();
+        } else if (it->getIsInTreatment() &&
+                   it->getResponse()->getResponseBuilder()->getStatusCode() !=
+                       200) {
         } else {
           it->setIsInTreatment(true);
           it->setResponse(associatedPort->getVirtualHosts(),

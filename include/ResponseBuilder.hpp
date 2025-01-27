@@ -69,4 +69,5 @@ class ResponseBuilder {
                   const std::string& defaultVirtualHostName);
   ~ResponseBuilder();
   void buildBody();
+  size_t getStatusCode() const;
 };
