@@ -72,6 +72,7 @@ void CgiHandler::cgiExecution(Request &request, const std::string &scriptLoc, co
     char **envArray;
     pid_t pid;
     int status;
+    std::cout << "ALLAAAAAAAAAAAAAAAAH" << std::endl;
 
     try
     {

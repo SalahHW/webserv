@@ -1,36 +1,30 @@
-import os, cgi, cgitb
+#!/usr/bin/env python3
 
-#def main():
-#    # Retrieve the REQUEST_METHOD environment variable
-#    request_method = os.environ.get("REQUEST_METHOD", "")
-#
-#    # Output HTTP headers
-#    print("Content-Type: text/html")
-#    print("")  # Empty line to indicate end of headers
-#
-#    # Output HTML content
-#    print("<html>")
-#    print("<head><title>CGI Script Output</title></head>")
-#    print("<body>")
-#    print("<h1>Python CGI Script</h1>")
-#    print("<p>REQUEST_METHOD: {request_method}</p>")
-#    print("</body>")
-#    print("</html>")
-#
-#if __name__ == "__main__":
-#    main()
+import os
+import cgi
+import cgitb
 
+# Enable debugging for CGI errors
+cgitb.enable()
 
 def main():
-# Parse the form data
-    form = cgi.FieldStorage()
+    # Parse form data
+    #form = cgi.FieldStorage()
+
     # Get the filename and content from the form
-    filename = form.getvalue("filename")
-    content = form.getvalue("content")
-    
-    # Set the content-type header
+    #filename = form.getvalue("filename")
+    #content = form.getvalue("content")
+    filename = "lolololo.txt"
+    content = "klklklklklklklkl"
+
+    # Output content-type header
     print("Content-Type: text/html\n")
-    
+
+    # Start HTML output
+    print("<html>")
+    print("<head><title>File Upload</title></head>")
+    print("<body>")
+
     # Validate inputs
     if not filename or not content:
         print("<h1>Error</h1>")
@@ -38,10 +32,22 @@ def main():
     else:
         try:
             # Save the file
-            with open(f"/path/to/save/{filename}", "w") as file:
+            upload_dir = "/home/sickest-one/Travail/webserv/var/upload/"
+            os.makedirs(upload_dir, exist_ok=True)  # Ensure the directory exists
+            file_path = os.path.join(upload_dir, filename)
+
+            with open(file_path, "w") as file:
                 file.write(content)
+
             print("<h1>File Saved</h1>")
-            print(f"<p>File <strong>{filename}</strong> has been saved successfully.</p>")
+            print(f"<p>File <strong>{filename}</strong> has been saved successfully at <strong>{file_path}</strong>.</p>")
         except Exception as e:
             print("<h1>Error</h1>")
             print(f"<p>Could not save the file: {e}</p>")
+
+    # End HTML output
+    print("</body>")
+    print("</html>")
+
+if __name__ == "__main__":
+    main()

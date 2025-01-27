@@ -16,7 +16,8 @@ ResponseBuilder::ResponseBuilder(
       virtualHost(
           findMatchingVirtualHost(virtualHosts, defaultVirtualHostName)) {
   try {
-    checkRequest();
+    //checkRequest();
+    std::cout << "FDP ELLE EST LA LA METHODE " << request->getMethod() << std::endl;
     if (request->getMethod() == "POST") {
       treatAPost();
       return;
@@ -62,7 +63,7 @@ ResponseBuilder::ResponseBuilder(
 }
 
 void ResponseBuilder::treatAPost() {
-  CgiHandler cgi(*request, "/home/rvan-den/webserv/var/www/cgi-bin", request->getBody());
+  CgiHandler cgi(*request, "/home/sickest-one/Travail/webserv/var/www/cgi-bin", request->getBody());
   if (!findMatchingLocation()) {
     setStatusCode(404);
   }
