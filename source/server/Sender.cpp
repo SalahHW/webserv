@@ -54,4 +54,5 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
   if (Response == "0\r\n\r\n") {
     request.setIsTreated(true);
   }
+  std::cout << "What is send = " << Response << std::endl;
 }

@@ -10,15 +10,15 @@
 ///*                                                                            */
 ///* ************************************************************************** */
 //
-//#include "Cgi.hpp"
-//
-//const std::string CgiHandler::convertSizetToString(size_t value) {
-//    std::ostringstream oss;
-//    oss << value;
-//    return oss.str();
-//}
-//
-//const std::string CgiHandler::genQueryString() {
+#include "Cgi.hpp"
+
+const std::string CgiHandler::convertSizetToString(size_t value) {
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
+}
+
+//const std::string CgiHandler::genQueryString(const std::string &queryString) {
 //    std::string::const_iterator it = std::find(request.uri.begin(), request.uri.end(), '?');
 //    if (it != request.uri.end()) {
 //        size_t pos = it - request.uri.begin();
@@ -28,12 +28,12 @@
 //    return ("QUERY_STRING=");
 //}
 //
-//const std::string CgiHandler::genRequestMethod() {
+//const std::string CgiHandler::genRequestMethod(const std::string &requestMethod) {
 //    const std::string requestMethod = request.method.c_str();
 //    return ("REQUEST_METHOD=" + requestMethod);
 //}
 //
-//const std::string CgiHandler::genServerProtocol() {
+//const std::string CgiHandler::genServerProtocol(const std::string &serverProtocol) {
 //    const std::string serverProtocol = request.version.c_str();
 //    return ("SERVER_PROTOCOL=" + serverProtocol);
 //}
@@ -48,7 +48,7 @@
 //    return (this->scriptPath);
 //}
 //
-//const std::string CgiHandler::genHttpUserAgent()
+//const std::string CgiHandler::genHttpUserAgent(const std::string &httpUserAgent)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //
@@ -62,7 +62,7 @@
 //    return ("HTTP_USER_AGENT=");
 //}
 //
-//const std::string CgiHandler::genHttpAccept()
+//const std::string CgiHandler::genHttpAccept(const std::string &httpAccept)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt)
@@ -75,7 +75,7 @@
 //    return ("HTTP_ACCEPT=");
 //}
 //
-//const std::string CgiHandler::genHttpAcceptLanguage()
+//const std::string CgiHandler::genHttpAcceptLanguage(const std::string &acceptLanguage)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt)
@@ -88,7 +88,7 @@
 //    return ("HTTP_ACCEPT_LANGUAGE=");
 //}
 //
-//const std::string CgiHandler::genHttpAcceptEncoding()
+//const std::string CgiHandler::genHttpAcceptEncoding(const std::string httpAcceptEncoding)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt)
@@ -101,7 +101,7 @@
 //    return ("HTTP_ACCEPT_ENCODING=");
 //}
 //
-//const std::string CgiHandler::genHttpConnexion()
+//const std::string CgiHandler::genHttpConnexion(const std::string &httpConnexion)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt) {
@@ -113,7 +113,7 @@
 //    return ("HTTP_CONNECTION=");
 //}
 //
-//const std::string CgiHandler::genHttpHost()
+//const std::string CgiHandler::genHttpHost(const std::string &httpHost)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt)
@@ -126,7 +126,7 @@
 //    return ("HTTP_HOST=");
 //}
 //
-//const std::string CgiHandler::genHttpUpgradeInsecureRequests()
+//const std::string CgiHandler::genHttpUpgradeInsecureRequests(const std::string &httpUpgradeInsecureRequests)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt) {
@@ -138,7 +138,7 @@
 //    return ("HTTP_UPGRADE_INSECURE_REQUESTS=");
 //}
 //
-//const std::string CgiHandler::genHttpSecFetchDest()
+//const std::string CgiHandler::genHttpSecFetchDest(const std::string &httpSecFetchDest)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt) {
@@ -150,7 +150,7 @@
 //    return ("HTTP_SEC_FETCH_DEST=");
 //}
 //
-//const std::string CgiHandler::genHttpSecFetchMode()
+//const std::string CgiHandler::genHttpSecFetchMode(const std::string &httpSecFetchMode)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt) {
@@ -162,7 +162,7 @@
 //    return ("HTTP_SEC_FETCH_MODE=");
 //}
 //
-//const std::string CgiHandler::genHttpSecFetchSite()
+//const std::string CgiHandler::genHttpSecFetchSite(const std::string &httpSecFetchSite)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt) {
@@ -174,7 +174,7 @@
 //    return ("HTTP_SEC_FETCH_SITE=");
 //}
 //
-//const std::string CgiHandler::genHttpPriority()
+//const std::string CgiHandler::genHttpPriority(const std::string &httpPriority)
 //{
 //    std::map<std::string, std::string>::iterator mapIt = request.headers.begin();
 //    for (; mapIt != request.headers.end(); ++mapIt) {
@@ -185,7 +185,7 @@
 //    }
 //    return ("HTTP_PRIORITY=");
 //}
-//
+
 //const std::string CgiHandler::genPathInfo(const std::string &input)
 //{
 //    const std::string marker = "cgi-bin/";
@@ -201,8 +201,8 @@
 //    }
 //    return ("PATH_INFO=");
 //}
-//
-//const std::string CgiHandler::genContentLenght()
+
+//const std::string CgiHandler::genContentLenght(const std::string &contentLenght)
 //{
 //    // TEMPORARY ! FIX LATER
 //    // SHOULD GET CONTENT LENGHT VIA PAGE REQUEST (sortof...)
@@ -224,53 +224,60 @@
 //    }
 //    return (0);
 //}
-//
-//void CgiHandler::buildEnv()
-//{
-//    envVec.push_back(this->genRequestMethod());
-//    envVec.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
-//    //envVec.push_back(this->genContentLenght());
-//    envVec.push_back(this->genServerProtocol());
-//    envVec.push_back(this->genQueryString());
-//    envVec.push_back(this->genHttpUserAgent());
-//    envVec.push_back(this->genHttpAccept());
-//    envVec.push_back(this->genHttpHost());
-//    envVec.push_back(this->genHttpAcceptLanguage());
-//    envVec.push_back(this->genHttpAcceptEncoding());
-//    envVec.push_back(this->genHttpConnexion());
-//    envVec.push_back(this->genHttpUpgradeInsecureRequests());
-//    envVec.push_back(this->genHttpSecFetchDest());
-//    envVec.push_back(this->genHttpSecFetchMode());
-//    envVec.push_back(this->genHttpSecFetchSite());
-//    envVec.push_back(this->genHttpPriority());
-//}
-//
-//const std::vector<std::string>& CgiHandler::getEnvVec() const
-//{
-//    return (envVec);
-//}
-//
-//void CgiHandler::cleanupEnvArray(const std::vector<std::string> &env, char **envArray)
-//{
-//    if (!envArray) {
-//        std::cerr << ENVARRAY_MALLOC_FAIL << std::endl;
-//        return;
-//    }
-//    for (size_t i = 0; i < env.size(); ++i)
-//        delete[] envArray[i];
-//    delete[] envArray;
-//}
-//
-//char **CgiHandler::allocateEnvArray(const std::vector<std::string> &env)
-//{
-//    char **envArray = new char *[env.size() + 1];
-//    envArray[env.size()] = NULL;
-//    for (size_t i = 0; i < env.size(); ++i)
-//    {
-//        envArray[i] = new char[env[i].size() + 1];
-//        std::strcpy(envArray[i], env[i].c_str());
-//    }
-//    return (envArray);
-//}
 
-// TODO : adapt code with newly made request class
+void CgiHandler::buildEnv(Request &request)
+{
+    //envVec.push_back(this->genRequestMethod());// IN R
+    //envVec.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
+    ////envVec.push_back(this->genContentLenght());
+    //envVec.push_back(this->genServerProtocol());// IN R ?
+    //envVec.push_back(this->genQueryString());
+    //envVec.push_back(this->genHttpUserAgent());
+    //envVec.push_back(this->genHttpAccept());// IN R
+    //envVec.push_back(this->genHttpHost());// IN R
+    //envVec.push_back(this->genHttpAcceptLanguage());// IN R
+    //envVec.push_back(this->genHttpAcceptEncoding()); // IN R
+    //envVec.push_back(this->genHttpConnexion());// IN R
+    //envVec.push_back(this->genHttpUpgradeInsecureRequests());
+    //envVec.push_back(this->genHttpSecFetchDest());
+    //envVec.push_back(this->genHttpSecFetchMode());
+    //envVec.push_back(this->genHttpSecFetchSite());
+    //envVec.push_back(this->genHttpPriority());
+
+    envVec.push_back(request.getMethod());
+    envVec.push_back(request.getAccept());
+    envVec.push_back(request.getHost());
+    envVec.push_back(request.getAcceptLanguage());
+    envVec.push_back(request.getAcceptEncoding());
+    envVec.push_back(request.getConnection());
+}
+
+const std::vector<std::string>& CgiHandler::getEnvVec() const
+{
+    return (envVec);
+}
+
+void CgiHandler::cleanupEnvArray(const std::vector<std::string> &env, char **envArray)
+{
+    if (!envArray) {
+        std::cerr << ENVARRAY_MALLOC_FAIL << std::endl;
+        return;
+    }
+    for (size_t i = 0; i < env.size(); ++i)
+        delete[] envArray[i];
+    delete[] envArray;
+}
+
+char **CgiHandler::allocateEnvArray(const std::vector<std::string> &env)
+{
+    char **envArray = new char *[env.size() + 1];
+    envArray[env.size()] = NULL;
+    for (size_t i = 0; i < env.size(); ++i)
+    {
+        envArray[i] = new char[env[i].size() + 1];
+        std::strcpy(envArray[i], env[i].c_str());
+    }
+    return (envArray);
+}
+
+ //TODO : adapt code with newly made request class

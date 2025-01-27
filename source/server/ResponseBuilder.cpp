@@ -1,6 +1,8 @@
 #include "ResponseBuilder.hpp"
 
 #include "Response.hpp"
+#include "Request.hpp"
+#include "Cgi.hpp"
 
 ResponseBuilder::~ResponseBuilder() {}
 
@@ -60,6 +62,7 @@ ResponseBuilder::ResponseBuilder(
 }
 
 void ResponseBuilder::treatAPost() {
+  CgiHandler cgi(*request, "/home/rvan-den/webserv/var/www/cgi-bin", request->getBody());
   if (!findMatchingLocation()) {
     setStatusCode(404);
   }
