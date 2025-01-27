@@ -18,6 +18,7 @@ class Response;
 class ResponseBuilder {
  private:
   ResponseBuilder();
+  ResponseBuilder(const ResponseBuilder& src);
 
   Request* request;
   Response& response;
@@ -25,6 +26,7 @@ class ResponseBuilder {
   const VirtualHost& virtualHost;
   Location matchingLocation;
   std::string determinedPath;
+  std::ifstream file;
 
   void checkRequest();
   void treatAPost();

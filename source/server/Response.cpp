@@ -10,7 +10,7 @@ Response::Response(Request* request,
       contentLength(""),
       transferEncoding(""),
       contentType(""),
-      body(),
+      body(std::vector<char>()),
       location(""),
       allow(""),
       retryAfter(""),
@@ -18,7 +18,8 @@ Response::Response(Request* request,
       bytesSent(0),
       bytesLoad(0),
       bytesTotal(0),
-      fullResponse(),
+      fullHeader(std::vector<char>()),
+      fullResponse(std::vector<char>()),
       builder(new ResponseBuilder(request, *this, virtualHosts,
                                   defaultVirtualHostName)) {}
 
@@ -27,16 +28,20 @@ void Response::clearForChunked() {
   setDate("");
   setTransferEncoding("");
   setContentType("");
-  setBody(std::vector<char>());
+  this->body.clear();
   setLocation("");
   setAllow("");
   setRetryAfter("");
   setConnection("");
-  setFullHeader("");
-  setFullResponse(std::vector<char>());
+  this->fullHeader.clear();
+  this->fullResponse.clear();
 }
 
-bool Response::isResponseFullySend() const { return bytesSent == bytesTotal; }
+bool Response::isResponseFullySend() const {
+  std::cout << "bytesSent: " << bytesSent << " bytesTotal: " << bytesTotal
+            << std::endl;
+  return bytesSent == bytesTotal;
+}
 
 void Response::setStatusLine(const std::string& statusLine) {
   this->statusLine = statusLine;
@@ -80,11 +85,11 @@ void Response::setBytesTotal(size_t bytesTotal) {
   this->bytesTotal = bytesTotal;
 }
 
-void Response::setFullHeader(const std::string& fullHeader) {
+void Response::setFullHeader(std::vector<char> fullHeader) {
   this->fullHeader = fullHeader;
 }
 
-void Response::setFullResponse(const std::vector<char> fullResponse) {
+void Response::setFullResponse(std::vector<char> fullResponse) {
   this->fullResponse = fullResponse;
 }
 
@@ -116,7 +121,7 @@ size_t Response::getBytesLoad() const { return bytesLoad; }
 
 size_t Response::getBytesTotal() const { return bytesTotal; }
 
-const std::string& Response::getFullHeader() const { return fullHeader; }
+const std::vector<char> Response::getFullHeader() const { return fullHeader; }
 
 const std::vector<char> Response::getFullResponse() const {
   return fullResponse;

@@ -26,7 +26,7 @@ class Response {
   size_t bytesSent;
   size_t bytesLoad;
   size_t bytesTotal;
-  std::string fullHeader;
+  std::vector<char> fullHeader;
   std::vector<char> fullResponse;
   ResponseBuilder* builder;
 
@@ -52,8 +52,8 @@ class Response {
   void setBytesSent(size_t bytesSent);
   void setBytesLoad(size_t bytesLoad);
   void setBytesTotal(size_t bytesTotal);
-  void setFullHeader(const std::string& fullHeader);
-  void setFullResponse(const std::vector<char> fullResponse);
+  void setFullHeader(std::vector<char> fullHeader);
+  void setFullResponse(std::vector<char> fullResponse);
 
   const std::string& getStatusLine() const;
   const std::string& getDate() const;
@@ -68,7 +68,7 @@ class Response {
   size_t getBytesSent() const;
   size_t getBytesLoad() const;
   size_t getBytesTotal() const;
-  const std::string& getFullHeader() const;
+  const std::vector<char> getFullHeader() const;
   const std::vector<char> getFullResponse() const;
   ResponseBuilder* getResponseBuilder() const;
 

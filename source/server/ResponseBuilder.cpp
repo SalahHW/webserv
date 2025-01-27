@@ -23,7 +23,6 @@ ResponseBuilder::ResponseBuilder(
       setStatusCode(404);
     }
     determinedPath = determinePath();
-    std::cout << "determinedPath: " << determinedPath << std::endl;
     determineStatusCode();
     buildStatusLine();
     buildContentType();
@@ -164,15 +163,11 @@ std::string ResponseBuilder::determinePath() {
 const VirtualHost& ResponseBuilder::findMatchingVirtualHost(
     const std::map<std::string, VirtualHost>& virtualHosts,
     const std::string& defaultVirtualHostName) {
-  std::cout << "TO FIND HOST = " << request->getHostName() << std::endl;
   std::map<std::string, VirtualHost>::const_iterator it =
       virtualHosts.find(request->getHostName());
   if (it != virtualHosts.end()) {
     return it->second;
   } else {
-    std::cout << "Virtual host not found" << std::endl;
-    std::cout << "Default virtual host: " << defaultVirtualHostName
-              << std::endl;
     return virtualHosts.find(defaultVirtualHostName)->second;
   }
 }
@@ -190,9 +185,9 @@ void ResponseBuilder::determineStatusCode() {
 }
 
 bool ResponseBuilder::isRessourceAvailable() {
-  std::ifstream file(determinedPath.c_str());
-  if (file.is_open()) {
-    file.close();
+  std::ifstream fileToTest(determinedPath.c_str());
+  if (fileToTest.is_open()) {
+    fileToTest.close();
     return true;
   }
   return false;
@@ -242,7 +237,6 @@ bool ResponseBuilder::findMatchingLocation() {
     }
   }
 
-  std::cout << "matchingLocation: " << matchingLocation.getPath() << std::endl;
   return found;
 }
 
@@ -356,8 +350,6 @@ void ResponseBuilder::buildContentType() {
     response.setContentType("Content-Type: text/html");
   } else {
     response.setContentType("Content-Type: " + findContentType(determinedPath));
-    std::cout << "Content-Type: " << findContentType(determinedPath)
-              << std::endl;
   }
 }
 
@@ -408,57 +400,67 @@ const std::string ResponseBuilder::findContentType(
 }
 
 void ResponseBuilder::buildBody() {
-  std::ifstream file(determinedPath.c_str(), std::ios::in | std::ios::binary);
-  if (!file.is_open() && !determinedPath.empty()) {
-    setStatusCode(404);
-    // throw HttpException(404, "File not found");
+  if (!file.is_open()) {
+    file.open(determinedPath.c_str(), std::ios::binary);
+    if (!file.is_open()) {
+      setStatusCode(404);
+      return;
+    }
   }
 
-  std::size_t offset = response.getBytesLoad();
-  if (offset > response.getFullHeader().size()) {
+  if (response.getBytesLoad() > response.getFullHeader().size()) {
     response.clearForChunked();
   }
-  file.seekg(offset, std::ios::beg);
-  size_t bufferSize = BUFFER - response.getFullHeader().size() - 4;
-  if ((!response.getTransferEncoding().empty()) || offset != 0) {
-    bufferSize -= 3;
-  }
+  size_t bufferSize = BUFFER - response.getFullHeader().size();
 
   std::vector<char> buffer(bufferSize);
-  file.read(&buffer[0], bufferSize);
+  file.read(buffer.data(), bufferSize);
   std::streamsize bytesRead = file.gcount();
+  std::cout << "BYTES READ: " << bytesRead << std::endl;
+  if (bytesRead < 1024) {
+    buffer.resize(bytesRead);
+  }
   if (bytesRead <= 0) {
     if (file.eof()) {
       if (response.getContentLength().empty()) {
-        std::vector<char> endChunkedBody = {'0', '\r', '\n', '\r', '\n'};
+        std::vector<char> endChunkedBody;
+        endChunkedBody.push_back('0');
+        endChunkedBody.push_back('\r');
+        endChunkedBody.push_back('\n');
+        endChunkedBody.push_back('\r');
+        endChunkedBody.push_back('\n');
         response.setBody(endChunkedBody);
         response.setBytesLoad(response.getBytesTotal());
-        response.setBytesSent(response.getBytesTotal() - endChunkedBody.size());
+        request->setIsTreated(true);
       }
+      file.close();
     } else {
+      file.close();
       throw HttpException(500, "Error reading file");
     }
     file.close();
-    response.setFullResponse(response.getBody());
     return;
   }
-  std::vector<char> content(buffer.begin(), buffer.begin() + bytesRead);
-  if (!response.getContentLength().empty()) {
-    response.setBody(content);
-  } else {
-    std::ostringstream oss;
-    oss << std::hex << bytesRead << "\r\n";
-    std::string chunkHeader = oss.str();
-    std::vector<char> chunkBody(chunkHeader.begin(), chunkHeader.end());
-    chunkBody.insert(chunkBody.end(), content.begin(), content.end());
-    chunkBody.insert(chunkBody.end(), {'\r', '\n'});
-  }
-  response.setBytesLoad(response.getFullHeader().size() + offset + bytesRead);
-  file.close();
-  if (offset != 0) {
-    response.setFullResponse(response.getFullHeader() + response.getBody());
-  }
+  response.setBody(buffer);
+
+  response.setBytesLoad(response.getFullHeader().size() + bytesRead);
 }
+
+// std::vector<char> ResponseBuilder::toHexVector(std::size_t value) {
+//   static const char* digits = "0123456789abcdef";
+//   std::vector<char> result;
+//   if (value == 0) {
+//     result.push_back('0');
+//     return result;
+//   }
+//   while (value > 0) {
+//     std::size_t digit = value % 16;
+//     value /= 16;
+//     result.push_back(digits[digit]);
+//   }
+//   std::reverse(result.begin(), result.end());
+//   return result;
+// }
 
 void ResponseBuilder::buildLocation() {}
 
@@ -482,22 +484,101 @@ void ResponseBuilder::buildBytesTotal() {
 }
 
 void ResponseBuilder::buildFullHeader() {
+  std::vector<char> fullHeader;
+
   if (response.getContentLength().empty()) {
-    response.setFullHeader(response.getStatusLine() + "\r\n" +
-                           response.getContentType() + "\r\n" +
-                           response.getTransferEncoding() + response.getDate() +
-                           "\r\n" + response.getConnection() + "\r\n\r\n");
+    const std::string& statusLine = response.getStatusLine();
+    fullHeader.insert(fullHeader.end(), statusLine.begin(), statusLine.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& contentType = response.getContentType();
+    fullHeader.insert(fullHeader.end(), contentType.begin(), contentType.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& transferEncoding = response.getTransferEncoding();
+    fullHeader.insert(fullHeader.end(), transferEncoding.begin(),
+                      transferEncoding.end());
+
+    const std::string& date = response.getDate();
+    fullHeader.insert(fullHeader.end(), date.begin(), date.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& connection = response.getConnection();
+    fullHeader.insert(fullHeader.end(), connection.begin(), connection.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
   } else {
-    response.setFullHeader(response.getStatusLine() + "\r\n" +
-                           response.getContentType() + "\r\n" +
-                           response.getTransferEncoding() + response.getDate() +
-                           "\r\n" + response.getContentLength() + "\r\n" +
-                           response.getConnection() + "\r\n\r\n");
+    const std::string& statusLine = response.getStatusLine();
+    fullHeader.insert(fullHeader.end(), statusLine.begin(), statusLine.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& contentType = response.getContentType();
+    fullHeader.insert(fullHeader.end(), contentType.begin(), contentType.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& transferEncoding = response.getTransferEncoding();
+    fullHeader.insert(fullHeader.end(), transferEncoding.begin(),
+                      transferEncoding.end());
+
+    const std::string& date = response.getDate();
+    fullHeader.insert(fullHeader.end(), date.begin(), date.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& contentLength = response.getContentLength();
+    fullHeader.insert(fullHeader.end(), contentLength.begin(),
+                      contentLength.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& connection = response.getConnection();
+    fullHeader.insert(fullHeader.end(), connection.begin(), connection.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
   }
+
+  response.setFullHeader(fullHeader);
 }
 
+// void ResponseBuilder::buildFullHeader() {
+//   if (response.getContentLength().empty()) {
+
+//     response.setFullHeader(response.getStatusLine() + "\r\n" +
+//                            response.getContentType() + "\r\n" +
+//                            response.getTransferEncoding() +
+//                            response.getDate() +
+//                            "\r\n" + response.getConnection() + "\r\n\r\n");
+//   } else {
+//     response.setFullHeader(response.getStatusLine() + "\r\n" +
+//                            response.getContentType() + "\r\n" +
+//                            response.getTransferEncoding() +
+//                            response.getDate() +
+//                            "\r\n" + response.getContentLength() + "\r\n" +
+//                            response.getConnection() + "\r\n\r\n");
+//   }
+// }
+
 void ResponseBuilder::buildFullResponse() {
-  std::string fullResponse = response.getFullHeader() + response.getBody();
+  size_t size = response.getFullHeader().size();
+  std::cout << "Full header size = " << size << std::endl;
+  std::cout << "Body size = " << response.getBody().size() << std::endl;
+  size += response.getBody().size();
+  std::vector<char> fullResponse = response.getFullHeader();
+  std::vector<char> body = response.getBody();
+  fullResponse.insert(fullResponse.end(), response.getBody().begin(),
+                      response.getBody().end());
+  fullResponse.resize(size);
+  std::cout << "Full response size = " << fullResponse.size() << std::endl;
   response.setFullResponse(fullResponse);
 }
 
