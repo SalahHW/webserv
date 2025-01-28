@@ -60,72 +60,16 @@ CgiHandler::CgiHandler(const CgiHandler &other) {
 	(void)other;
 }
 
-//void CgiHandler::cgiExecution(Request &request, int outputFd) {
- //   (void)outputFd;
- //   if (this->envVec.empty())
- //       this->buildEnv(request);
- //   std::vector<std::string> env = this->getEnvVec();
- //   this->printEnv(env);
- //   // pas clean, fix later
- //   const std::string scriptDirAss = "/home/rvan-den/webserv/var/www/cgi-bin";
- //   const char *scriptDir = scriptDirAss.c_str();
- //   std::cout << "[DEBUG] : cgi hardDIr" << scriptDir << std::endl;
- //   const char *scriptName = "serve_terminal.py";
- //   char *const args[] = {const_cast<char *>(PY_INTERP), 
- //   const_cast<char *>(scriptName), NULL};
- //   char **envArray;
- //   pid_t pid;
- //   int status;
-
- //   try
- //   {
- //       envArray = this->allocateEnvArray(env);
- //       pid = fork();
- //       if (pid < 0)
- //       {
- //           throw std::runtime_error(FORK_ERR);
- //       }
- //       else if (pid == 0)
- //       {
- //           // Change to the script directory
- //           if (chdir(scriptDir) < 0)
- //               throw std::runtime_error(CGI_DIR_ERR);
-
- //           // Execute the Python interpreter with the script
- //           if (execve(PY_INTERP, args, envArray) < 0)
- //               throw std::runtime_error(PY_INTERP);
- //       }
- //       else
- //       {
- //           // Parent process waits for the child process to complete
- //           if (waitpid(pid, &status, 0) < 0)
- //               throw std::runtime_error(WAITPID_ERR);
- //       }
- //   }
- //   catch (const std::exception &e)
- //   {
- //       std::cerr << "Error : " << e.what() << std::endl;
- //       std::cout << "READY TO CLEAN" << std::endl;
- //       this->cleanupEnvArray(env, envArray);
- //       return;
- //   }
-
- //   this->cleanupEnvArray(env, envArray);
- //   return ;
-//}
 void CgiHandler::cgiExecution(Request &request, int outputFd) {
     if (this->envVec.empty())
         this->buildEnv(request);
     std::vector<std::string> env = this->getEnvVec();
     this->printEnv(env);
 
-//    const std::string scriptDirAss = "/home/rvan-den/webserv/var/www/cgi-bin";
     const std::string scriptDirAss = "/home/sickest-one/Travail/webserv/var/www/cgi-bin";
     const char *scriptDir = scriptDirAss.c_str();
     std::cout << "[DEBUG] : cgi hardDir: " << scriptDir << std::endl;
     const char *scriptName = "serve_terminal.py";
-    //const std::string scriptname = this->extractPyFile(request.getUri());
-    //const char *scriptName = scriptname.c_str();
     char *const args[] = {const_cast<char *>(PY_INTERP), const_cast<char *>(scriptName), NULL};
     char **envArray;
     pid_t pid;
