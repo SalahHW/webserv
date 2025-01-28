@@ -120,12 +120,12 @@ void CgiHandler::cgiExecution(Request &request, int outputFd) {
     this->printEnv(env);
 
 //    const std::string scriptDirAss = "/home/rvan-den/webserv/var/www/cgi-bin";
-    const std::string scriptDirAss = "/home/sickest_one/Travail/webserv/var/www/cgi-bin";
+    const std::string scriptDirAss = "/home/sickest-one/Travail/webserv/var/www/cgi-bin";
     const char *scriptDir = scriptDirAss.c_str();
     std::cout << "[DEBUG] : cgi hardDir: " << scriptDir << std::endl;
-    //const char *scriptName = "serve_terminal.py";
-    const std::string scriptname = this->extractPyFile(request.getUri());
-    const char *scriptName = this->extractPyFile(request.getUri()).c_str();
+    const char *scriptName = "serve_terminal.py";
+    //const std::string scriptname = this->extractPyFile(request.getUri());
+    //const char *scriptName = scriptname.c_str();
     char *const args[] = {const_cast<char *>(PY_INTERP), const_cast<char *>(scriptName), NULL};
     char **envArray;
     pid_t pid;
