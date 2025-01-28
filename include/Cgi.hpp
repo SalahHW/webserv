@@ -25,7 +25,7 @@ class CgiHandler
 {
 	public:
 		CgiHandler();
-		CgiHandler(Request &request, const std::string &scriptPath, const std::string &content);
+		CgiHandler(Request &request, int outputFd);
 		~CgiHandler();
 		CgiHandler (const CgiHandler &other);
 
@@ -48,7 +48,7 @@ class CgiHandler
 		const std::string genHttpSecFetchSite(const std::string &httpSecFetchSite);
 		const std::string genHttpPriority(const std::string &httpPriority);
 
-		void cgiExecution(Request &request, const std::string &scriptLoc, const std::string &content);
+		void cgiExecution(Request &request, int outputFd);
 		//////////FD,  pid_t
 		void buildEnv(Request &requestForEnv);
 		char **allocateEnvArray(const std::vector<std::string> &env);

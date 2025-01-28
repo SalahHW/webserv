@@ -62,8 +62,8 @@ ResponseBuilder::ResponseBuilder(
 size_t ResponseBuilder::getStatusCode() const { return statusCode; }
 
 void ResponseBuilder::treatAPost() {
-  CgiHandler cgi(*request, "/home/sickest-one/Travail/webserv/var/www/cgi-bin",
-                 request->getBody());
+  //CgiHandler cgi(*request, "/home/sickest-one/Travail/webserv/var/www/cgi-bin",
+  //               request->getBody());
   if (!findMatchingLocation()) {
     setStatusCode(404);
   }

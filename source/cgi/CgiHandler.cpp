@@ -6,7 +6,7 @@
 /*   By: rvan-den <rvan-den@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 17:00:31 by rvan-den          #+#    #+#             */
-/*   Updated: 2025/01/27 15:22:19 by rvan-den         ###   ########.fr       */
+/*   Updated: 2025/01/28 13:59:21 by rvan-den         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ CgiHandler::CgiHandler() {
 	//request.version = "HTTP/1.1";
 }
 
-CgiHandler::CgiHandler(Request &request, const std::string &scriptLoc, const std::string &content) {
-    this->cgiExecution(request, scriptLoc, content);
+CgiHandler::CgiHandler(Request &request, int outputFd) {
+    this->cgiExecution(request, outputFd);
 }
 
 CgiHandler::~CgiHandler()
@@ -60,19 +60,20 @@ CgiHandler::CgiHandler(const CgiHandler &other) {
 	(void)other;
 }
 
-void CgiHandler::cgiExecution(Request &request, const std::string &scriptLoc, const std::string &content) {
-    (void)content;
-    this->buildEnv(request);
+void CgiHandler::cgiExecution(Request &request, int outputFd) {
+    (void)outputFd;
+    std::cout << "IN exec 1" << std::endl;
+    if (this->envVec.empty())
+        this->buildEnv(request);
+    std::cout << "IN exec 2" << std::endl;
     std::vector<std::string> env = this->getEnvVec();
-    //const char *scriptDir = this->genScriptPath().c_str();
-    const char *scriptDir = scriptLoc.c_str();
+    const char *scriptDir = request.getUri().c_str();
     const char *scriptName = "cgi.py";
     char *const args[] = {const_cast<char *>(PY_INTERP), 
     const_cast<char *>(scriptName), NULL};
     char **envArray;
     pid_t pid;
     int status;
-    std::cout << "ALLAAAAAAAAAAAAAAAAH" << std::endl;
 
     try
     {

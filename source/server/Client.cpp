@@ -1,5 +1,5 @@
 #include "Client.hpp"
-
+#include "Cgi.hpp"
 #include "Sender.hpp"
 
 Client::~Client() {
@@ -88,19 +88,23 @@ void Client::requestRoutine() {
     eventToOut();
     size_t pos = buffer.find("\r\n\r\n");
     std::string header = buffer.substr(0, pos + 4);
+    
     Request* request = new Request(getBuffer());
     // if if the request is invalid send response
-    if (request->getUri().find("/cgi-bin/") != std::string::npos) {
-      request->setIsInTreatment(true);
-      request->setIsACgi(true);
-      CgiHandler cgiHandler(request, connectionFd);
-    }
     requests.push_back(*request);
     buffer.erase(0, pos + 4);
     eventToIn();
   } else if (buffer.find("\r\n\r\n")) {
     eventToOut();
     Request* request = new Request(getBuffer());
+    std::cout << "URI " << request->getUri() << std::endl;
+    if (request->getUri().find("/cgi-bin/") != std::string::npos) {
+      request->setIsInTreatment(true);
+      request->setIsACgi(true);
+      std::cout << "YEZEBI ICI YEZBI" << std::endl;
+      //ICI HMAR
+      CgiHandler cgiHandler(*request, this->getConnectionFd());
+    }
     requests.push_back(*request);
     clearBuffer();  // clear only before the \r\n\r\n and before
   }

@@ -30,11 +30,6 @@ Request::Request(const std::string& request)
   connectionGood = RequestValidator::validateConnection(Connection);
   isRequestGood = RequestValidator::validateRequest(*this);
   isParsed = true;
-  if (uri.find("/cgi-bin/") != std::string::npos) {
-    setIsInTreatment(true);
-    setIsACgi(true);
-    //CgiHandler cgiHandler(*this);
-  }
 }
 
 Request::Request() {}
