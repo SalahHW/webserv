@@ -36,7 +36,6 @@ ResponseBuilder::ResponseBuilder(
     buildFullHeader();
     buildBytesTotal();
     buildBody();
-    buildFullResponse();
   } catch (const HttpException& e) {
     statusCode = e.getCode();
     buildErrorPage(statusCode);
@@ -54,7 +53,6 @@ ResponseBuilder::ResponseBuilder(
     if (!determinedPath.empty()) {
       buildBody();
     }
-    buildFullResponse();
   }
 }
 
@@ -570,19 +568,16 @@ void ResponseBuilder::buildFullHeader() {
 //   }
 // }
 
-void ResponseBuilder::buildFullResponse() {
-  size_t size = response.getFullHeader().size();
-  std::cout << "Full header size = " << size << std::endl;
-  std::cout << "Body size = " << response.getBody().size() << std::endl;
-  size += response.getBody().size();
-  std::vector<char> fullResponse = response.getFullHeader();
-  std::vector<char> body = response.getBody();
-  fullResponse.insert(fullResponse.end(), response.getBody().begin(),
-                      response.getBody().end());
-  fullResponse.resize(size);
-  std::cout << "Full response size = " << fullResponse.size() << std::endl;
-  response.setFullResponse(fullResponse);
-}
+// void ResponseBuilder::buildFullResponse() {
+//   size_t size = response.getFullHeader().size();
+//   size += response.getBody().size();
+//   std::vector<char> fullResponse = response.getFullHeader();
+//   std::vector<char> body = response.getBody();
+//   fullResponse.insert(fullResponse.end(), response.getBody().begin(),
+//                       response.getBody().end());
+//   fullResponse.resize(size);
+//   response.setFullResponse(fullResponse);
+// }
 
 const std::string ResponseBuilder::to_string(size_t value) {
   std::ostringstream oss;

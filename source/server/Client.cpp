@@ -114,6 +114,11 @@ void Client::responsesRoutine() {
         } else if (it->getIsInTreatment() &&
                    it->getResponse()->getResponseBuilder()->getStatusCode() !=
                        200) {
+          it->getResponse()->getResponseBuilder()->buildErrorPage(
+              it->getResponse()
+                  ->getResponseBuilder()
+                  ->getStatusCode());  // EN GROS SI CEST UNE PAGE DERREUR FAUT
+                                       // AGIR DIFFEREMENT
         } else {
           it->setIsInTreatment(true);
           it->setResponse(associatedPort->getVirtualHosts(),

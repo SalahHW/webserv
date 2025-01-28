@@ -27,7 +27,6 @@ class Response {
   size_t bytesLoad;
   size_t bytesTotal;
   std::vector<char> fullHeader;
-  std::vector<char> fullResponse;
   ResponseBuilder* builder;
 
  public:

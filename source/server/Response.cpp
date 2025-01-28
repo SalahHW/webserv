@@ -19,7 +19,6 @@ Response::Response(Request* request,
       bytesLoad(0),
       bytesTotal(0),
       fullHeader(std::vector<char>()),
-      fullResponse(std::vector<char>()),
       builder(new ResponseBuilder(request, *this, virtualHosts,
                                   defaultVirtualHostName)) {}
 
@@ -34,7 +33,6 @@ void Response::clearForChunked() {
   setRetryAfter("");
   setConnection("");
   this->fullHeader.clear();
-  this->fullResponse.clear();
 }
 
 bool Response::isResponseFullySend() const {
@@ -89,10 +87,6 @@ void Response::setFullHeader(std::vector<char> fullHeader) {
   this->fullHeader = fullHeader;
 }
 
-void Response::setFullResponse(std::vector<char> fullResponse) {
-  this->fullResponse = fullResponse;
-}
-
 const std::string& Response::getStatusLine() const { return statusLine; }
 
 const std::string& Response::getDate() const { return date; }
@@ -122,10 +116,6 @@ size_t Response::getBytesLoad() const { return bytesLoad; }
 size_t Response::getBytesTotal() const { return bytesTotal; }
 
 const std::vector<char> Response::getFullHeader() const { return fullHeader; }
-
-const std::vector<char> Response::getFullResponse() const {
-  return fullResponse;
-}
 
 ResponseBuilder* Response::getResponseBuilder() const { return builder; }
 
