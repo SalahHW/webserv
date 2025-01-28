@@ -1,5 +1,7 @@
 #include "ResponseBuilder.hpp"
 
+#include "Cgi.hpp"
+#include "Request.hpp"
 #include "Response.hpp"
 
 ResponseBuilder::~ResponseBuilder() {}
@@ -14,7 +16,7 @@ ResponseBuilder::ResponseBuilder(
       virtualHost(
           findMatchingVirtualHost(virtualHosts, defaultVirtualHostName)) {
   try {
-    checkRequest();
+    // checkRequest();
     if (request->getMethod() == "POST") {
       treatAPost();
       return;
@@ -50,7 +52,8 @@ ResponseBuilder::ResponseBuilder(
     buildDate();
     buildFullHeader();
     buildBytesTotal();
-    if (!determinedPath.empty()) {
+    std::ifstream file(determinedPath.c_str());
+    if (file.is_open()) {
       buildBody();
     }
   }
@@ -59,6 +62,8 @@ ResponseBuilder::ResponseBuilder(
 size_t ResponseBuilder::getStatusCode() const { return statusCode; }
 
 void ResponseBuilder::treatAPost() {
+  CgiHandler cgi(*request, "/home/sickest-one/Travail/webserv/var/www/cgi-bin",
+                 request->getBody());
   if (!findMatchingLocation()) {
     setStatusCode(404);
   }
@@ -276,6 +281,7 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
     appendToVector(responseChar, "</html>");
 
     response.setBody(responseChar);
+    request->setIsTreated(true);
   }
 }
 

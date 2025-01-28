@@ -50,7 +50,7 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
     ret = send(sockfd, "\r\n", 2, MSG_NOSIGNAL);
   }
 
-  // std::cout << "What is sended: " << hexStr;
-  // std::cout.write(Response.data(), responseSize) << "\r\n" << std::endl;
-  // std::cout << "test" << std::endl;
+  std::cout << "What is sended: " << hexStr;
+  std::cout.write(Response.data(), responseSize) << "\r\n" << std::endl;
+  std::cout << "test" << std::endl;
 }

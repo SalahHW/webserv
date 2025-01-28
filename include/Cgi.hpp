@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <cstdlib>
-//#include "ParseRequest.hpp"
+#include "Request.hpp"
 #include "Server.hpp"
 #include <algorithm>
 #include <utility>
@@ -25,31 +25,32 @@ class CgiHandler
 {
 	public:
 		CgiHandler();
+		CgiHandler(Request &request, const std::string &scriptPath, const std::string &content);
 		~CgiHandler();
 		CgiHandler (const CgiHandler &other);
 
 		const std::string convertSizetToString(size_t value);
-		const std::string genContentLenght();
-		const std::string genQueryString();
-		const std::string genRequestMethod();
-		const std::string genServerProtocol();
+		const std::string genContentLenght(const std::string &contentLenght);
+		const std::string genQueryString(const std::string &queryString);
+		const std::string genRequestMethod(const std::string &requestMethod);
+		const std::string genServerProtocol(const std::string &serverProtocol);
 		const std::string &genScriptPath() const ;
 		const std::string genPathInfo(const std::string &input);
-		const std::string genHttpUserAgent();
-		const std::string genHttpAccept();
-		const std::string genHttpHost();
-		const std::string genHttpAcceptLanguage();
-		const std::string genHttpAcceptEncoding();
-		const std::string genHttpConnexion();
-		const std::string genHttpUpgradeInsecureRequests();
-		const std::string genHttpSecFetchDest();
-		const std::string genHttpSecFetchMode();
-		const std::string genHttpSecFetchSite();
-		const std::string genHttpPriority();
+		const std::string genHttpUserAgent(const std::string &httpUserAgent);
+		const std::string genHttpAccept(const std::string &httpAccept);
+		const std::string genHttpHost(const std::string &httpHost);
+		const std::string genHttpAcceptLanguage(const std::string &acceptLanguage);
+		const std::string genHttpAcceptEncoding(const std::string &acceptEncoding);
+		const std::string genHttpConnexion(const std::string &httpConnexion);
+		const std::string genHttpUpgradeInsecureRequests(const std::string &httpUpgradeInsecureRequests);
+		const std::string genHttpSecFetchDest(const std::string &httpSecFetchDest);
+		const std::string genHttpSecFetchMode(const std::string &htppSecFetchMode);
+		const std::string genHttpSecFetchSite(const std::string &httpSecFetchSite);
+		const std::string genHttpPriority(const std::string &httpPriority);
 
-		std::pair<int, pid_t> cgiExecution();
+		void cgiExecution(Request &request, const std::string &scriptLoc, const std::string &content);
 		//////////FD,  pid_t
-		void buildEnv();
+		void buildEnv(Request &requestForEnv);
 		char **allocateEnvArray(const std::vector<std::string> &env);
 		void cleanupEnvArray(const std::vector<std::string> &env, char **envArray);
 		const std::vector<std::string>& getEnvVec() const;
