@@ -244,6 +244,7 @@ void CgiHandler::buildEnv(Request &request)
     //envVec.push_back(this->genHttpSecFetchSite());
     //envVec.push_back(this->genHttpPriority());
 
+    envVec.push_back(request.getUri());
     envVec.push_back(request.getMethod());
     envVec.push_back(request.getAccept());
     envVec.push_back(request.getHost());

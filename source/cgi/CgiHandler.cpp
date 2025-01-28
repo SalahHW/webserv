@@ -6,7 +6,7 @@
 /*   By: rvan-den <rvan-den@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 17:00:31 by rvan-den          #+#    #+#             */
-/*   Updated: 2025/01/28 13:59:21 by rvan-den         ###   ########.fr       */
+/*   Updated: 2025/01/28 15:06:30 by rvan-den         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,29 +60,98 @@ CgiHandler::CgiHandler(const CgiHandler &other) {
 	(void)other;
 }
 
+//void CgiHandler::cgiExecution(Request &request, int outputFd) {
+ //   (void)outputFd;
+ //   if (this->envVec.empty())
+ //       this->buildEnv(request);
+ //   std::vector<std::string> env = this->getEnvVec();
+ //   this->printEnv(env);
+ //   // pas clean, fix later
+ //   const std::string scriptDirAss = "/home/rvan-den/webserv/var/www/cgi-bin";
+ //   const char *scriptDir = scriptDirAss.c_str();
+ //   std::cout << "[DEBUG] : cgi hardDIr" << scriptDir << std::endl;
+ //   const char *scriptName = "serve_terminal.py";
+ //   char *const args[] = {const_cast<char *>(PY_INTERP), 
+ //   const_cast<char *>(scriptName), NULL};
+ //   char **envArray;
+ //   pid_t pid;
+ //   int status;
+
+ //   try
+ //   {
+ //       envArray = this->allocateEnvArray(env);
+ //       pid = fork();
+ //       if (pid < 0)
+ //       {
+ //           throw std::runtime_error(FORK_ERR);
+ //       }
+ //       else if (pid == 0)
+ //       {
+ //           // Change to the script directory
+ //           if (chdir(scriptDir) < 0)
+ //               throw std::runtime_error(CGI_DIR_ERR);
+
+ //           // Execute the Python interpreter with the script
+ //           if (execve(PY_INTERP, args, envArray) < 0)
+ //               throw std::runtime_error(PY_INTERP);
+ //       }
+ //       else
+ //       {
+ //           // Parent process waits for the child process to complete
+ //           if (waitpid(pid, &status, 0) < 0)
+ //               throw std::runtime_error(WAITPID_ERR);
+ //       }
+ //   }
+ //   catch (const std::exception &e)
+ //   {
+ //       std::cerr << "Error : " << e.what() << std::endl;
+ //       std::cout << "READY TO CLEAN" << std::endl;
+ //       this->cleanupEnvArray(env, envArray);
+ //       return;
+ //   }
+
+ //   this->cleanupEnvArray(env, envArray);
+ //   return ;
+//}
 void CgiHandler::cgiExecution(Request &request, int outputFd) {
-    (void)outputFd;
-    std::cout << "IN exec 1" << std::endl;
     if (this->envVec.empty())
         this->buildEnv(request);
-    std::cout << "IN exec 2" << std::endl;
     std::vector<std::string> env = this->getEnvVec();
-    const char *scriptDir = request.getUri().c_str();
-    const char *scriptName = "cgi.py";
-    char *const args[] = {const_cast<char *>(PY_INTERP), 
-    const_cast<char *>(scriptName), NULL};
+    this->printEnv(env);
+
+    const std::string scriptDirAss = "/home/rvan-den/webserv/var/www/cgi-bin";
+    const char *scriptDir = scriptDirAss.c_str();
+    std::cout << "[DEBUG] : cgi hardDir: " << scriptDir << std::endl;
+    const char *scriptName = "serve_terminal.py";
+    char *const args[] = {const_cast<char *>(PY_INTERP), const_cast<char *>(scriptName), NULL};
     char **envArray;
     pid_t pid;
     int status;
+    int pipefd[2];
 
-    try
-    {
+    try {
+        // Create a pipe for interprocess communication
+        if (pipe(pipefd) < 0) {
+            throw std::runtime_error("Failed to create pipe");
+        }
+
         envArray = this->allocateEnvArray(env);
         pid = fork();
         if (pid < 0) {
             throw std::runtime_error(FORK_ERR);
         }
         else if (pid == 0) {
+            // Child process: redirect STDOUT to the pipe
+            close(pipefd[0]); // Close read end
+            if (dup2(pipefd[1], STDOUT_FILENO) < 0) {
+                throw std::runtime_error("Failed to redirect STDOUT");
+            }
+            if (dup2(pipefd[1], STDERR_FILENO) < 0) { // Optional: Redirect STDERR as well
+                throw std::runtime_error("Failed to redirect STDERR");
+            }
+            close(pipefd[1]); // Close write end
+
+            // Change directory and execute the script
             if (chdir(scriptDir) < 0) {
                 throw std::runtime_error(CGI_DIR_ERR);
             }
@@ -91,20 +160,32 @@ void CgiHandler::cgiExecution(Request &request, int outputFd) {
             }
         }
         else {
+            // Parent process: read from the pipe and send output
+            close(pipefd[1]); // Close write end
+
+            char buffer[1024];
+            ssize_t bytesRead;
+            while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer))) > 0) {
+                if (send(outputFd, buffer, bytesRead, MSG_NOSIGNAL) < 0) {
+                    throw std::runtime_error("Failed to send data to outputFd");
+                }
+            }
+            close(pipefd[0]); // Close read end after reading
+
+            // Wait for the child process to finish
             if (waitpid(pid, &status, 0) < 0) {
                 throw std::runtime_error(WAITPID_ERR);
             }
         }
-    }
-    catch (const std::exception &e) {
-        std::cerr << "Error : " << e.what() << std::endl;
-        std::cout << "READY TO CLEAN" << std::endl;
+    } catch (const std::exception &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
         this->cleanupEnvArray(env, envArray);
-        return ;
+        return;
     }
+
     this->cleanupEnvArray(env, envArray);
-    return ;
 }
+
 
 void CgiHandler::printEnv(std::vector<std::string> &env)
 {

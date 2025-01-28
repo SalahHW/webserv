@@ -20,6 +20,8 @@
 #include <sys/wait.h>
 #include <cstring>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 class CgiHandler
 {
