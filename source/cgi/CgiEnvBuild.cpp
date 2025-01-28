@@ -18,6 +18,18 @@ const std::string CgiHandler::convertSizetToString(size_t value) {
     return oss.str();
 }
 
+const std::string CgiHandler::extractPyFile(const std::string &input) {
+    if (input.length() < 2 || input.substr(input.length() - 2) != "py") {
+        return "";
+    }
+    for (std::string::size_type i = input.length() - 3; i != std::string::npos; --i) {
+        if (input[i] == '/') {
+            return (input.substr(i + 1));
+        }
+    }
+    return (input);
+}
+
 //const std::string CgiHandler::genQueryString(const std::string &queryString) {
 //    std::string::const_iterator it = std::find(request.uri.begin(), request.uri.end(), '?');
 //    if (it != request.uri.end()) {
@@ -186,21 +198,21 @@ const std::string CgiHandler::convertSizetToString(size_t value) {
 //    return ("HTTP_PRIORITY=");
 //}
 
-//const std::string CgiHandler::genPathInfo(const std::string &input)
-//{
-//    const std::string marker = "cgi-bin/";
-//    std::string pathInfo;
-//
-//    std::string::size_type markerPos = input.find(marker);
-//    if (markerPos != std::string::npos) {
-//        std::string::size_type nextSlashPos = input.find('/', markerPos + marker.length());
-//        if (nextSlashPos != std::string::npos) {
-//            pathInfo = input.substr(nextSlashPos + 1);
-//            return ("PATH_INFO=" + pathInfo);
-//        }
-//    }
-//    return ("PATH_INFO=");
-//}
+const std::string CgiHandler::genPathInfo(const std::string &input)
+{
+    const std::string marker = "cgi-bin/";
+    std::string pathInfo;
+
+    std::string::size_type markerPos = input.find(marker);
+    if (markerPos != std::string::npos) {
+        std::string::size_type nextSlashPos = input.find('/', markerPos + marker.length());
+        if (nextSlashPos != std::string::npos) {
+            pathInfo = input.substr(nextSlashPos + 1);
+            return ("PATH_INFO=" + pathInfo);
+        }
+    }
+    return ("PATH_INFO=");
+}
 
 //const std::string CgiHandler::genContentLenght(const std::string &contentLenght)
 //{

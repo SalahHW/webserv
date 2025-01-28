@@ -116,6 +116,8 @@ void Client::responsesRoutine() {
   if (!requests.empty()) {
     for (std::deque<Request>::iterator it = requests.begin();
          it != requests.end(); ++it) {
+          if(it->getUri().find("cgi") != std::string::npos)
+          {return;}
       if (it->getIsParsed()) {
         if (it->getIsInTreatment() &&
             it->getResponse()->getResponseBuilder()->getStatusCode() == 200) {

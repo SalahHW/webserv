@@ -12,7 +12,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "Request.hpp"
-#include "Server.hpp"
+//#include "Server.hpp"
 #include <algorithm>
 #include <utility>
 #include <vector>
@@ -32,6 +32,7 @@ class CgiHandler
 		CgiHandler (const CgiHandler &other);
 
 		const std::string convertSizetToString(size_t value);
+		const std::string extractPyFile(const std::string &path);
 		const std::string genContentLenght(const std::string &contentLenght);
 		const std::string genQueryString(const std::string &queryString);
 		const std::string genRequestMethod(const std::string &requestMethod);

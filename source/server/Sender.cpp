@@ -16,7 +16,7 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
 
   std::vector<char> Response = response.getBody();
   size_t responseSize = Response.size();
-  size_t ret = 0;
+  int ret = 0;
   std::stringstream hex;
   std::string hexStr;
 
