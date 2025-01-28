@@ -40,6 +40,7 @@ class Request {
   bool isParsed;
   bool isTreated;
   bool isInTreatment;
+  bool isACgi;
   Response* response;
 
  public:
@@ -73,6 +74,7 @@ class Request {
   void setIsTreated(bool isTreated);
   void setIsInTreatment(bool isInProcess);
   void setIsParsed(bool isParsed);
+  void setIsACgi(bool isACgi);
 
   const std::string& getMethod() const;
   const std::string& getUri() const;
@@ -102,6 +104,7 @@ class Request {
   bool getIsTreated() const;
   bool getIsInTreatment() const;
   bool getIsParsed() const;
+  bool getIsACgi() const;
 
   void displayRequest() const;
 };

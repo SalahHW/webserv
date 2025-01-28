@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Terminal</title>
+    <style>
+        /* Styles similaires à la version précédente */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e;
+            color: #00ff00;
+            font-family: monospace;
+            font-size: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .terminal {
+            width: 80%;
+            height: 70%;
+            background-color: #000000;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            height: 30px;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .terminal-header div {
+            width: 12px;
+            height: 12px;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+
+        .close {
+            background-color: #ff5f56;
+        }
+
+        .minimize {
+            background-color: #ffbd2e;
+        }
+
+        .maximize {
+            background-color: #27c93f;
+        }
+
+        .terminal-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            outline: none;
+            white-space: pre-wrap;
+        }
+
+        .input-bar {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .input-bar input {
+            flex-grow: 1;
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 5px;
+        }
+
+        .input-bar button {
+            background-color: #333;
+            color: #00ff00;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="terminal">
+        <div class="terminal-header">
+            <div class="close"></div>
+            <div class="minimize"></div>
+            <div class="maximize"></div>
+        </div>
+        <div id="output" class="terminal-content">
+            Welcome to the interactive terminal.\n\nType a command below.
+        </div>
+        <div class="input-bar">
+            <input type="text" id="command" placeholder="Enter command here...">
+            <button onclick="sendCommand()">Run</button>
+        </div>
+    </div>
+    <script>
+        function sendCommand() {
+            const command = document.getElementById('command').value;
+            fetch('/cgi-bin/terminal.cgi', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `command=${encodeURIComponent(command)}`
+            })
+                .then(response => response.text())
+                .then(output => {
+                    const terminalOutput = document.getElementById('output');
+                    terminalOutput.textContent += `\n> ${command}\n${output}`;
+                    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                    document.getElementById('command').value = '';
+                });
+        }
+    </script>
+</body>
+
+</html>
