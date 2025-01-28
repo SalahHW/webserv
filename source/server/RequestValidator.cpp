@@ -19,6 +19,7 @@ bool RequestValidator::validateRequest(const Request& request) {
 }
 
 bool RequestValidator::validateMethod(const std::string& method) {
+  std::cout << "Method: " << method << std::endl;
   return method == "GET" || method == "POST" || method == "DELETE";
 }
 

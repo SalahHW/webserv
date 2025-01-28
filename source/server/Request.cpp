@@ -29,6 +29,8 @@ Request::Request(const std::string& request)
   connectionGood = RequestValidator::validateConnection(Connection);
   isRequestGood = RequestValidator::validateRequest(*this);
   isParsed = true;
+  std::cout << "request = " << request << std::endl;
+  displayRequest();
 }
 
 Request::Request() {}

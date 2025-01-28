@@ -42,6 +42,7 @@ void Client::closeConnection() {
 }
 
 void Client::appendToBuffer(const char* data, size_t len) {
+  std::cout << "Appending to buffer: " << data << std::endl;
   buffer.append(data, len);
 }
 
@@ -157,6 +158,10 @@ void Client::responsesRoutine() {
         eventToIn();
         requests.erase(it);
         return;
+      }
+      if (it->getMethod() == "POST") {
+        std::cout << "POST" << std::endl;
+        sleep(100000);
       }
       if (it->getIsParsed()) {
         if (it->getIsInTreatment()) {

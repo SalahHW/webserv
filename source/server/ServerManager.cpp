@@ -123,11 +123,7 @@ void ServerManager::handleEvent(int fd, uint32_t events) {
 }
 
 void ServerManager::handleEpollIn(int listenFd) {
-  if (isListeningSocket(listenFd)) {
-    acceptConnection(listenFd);
-  } else {
-    clients.find(listenFd)->second->requestRoutine();
-  }
+  clients.find(listenFd)->second->requestRoutine();
 }
 
 void ServerManager::handleEpollOut(int listenFd) {

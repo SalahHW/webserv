@@ -250,6 +250,7 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
     std::map<size_t, std::string>::const_iterator it =
         virtualHost.getErrorPages().find(errorCode);
 
+    // Vérification d'une page d'erreur personnalisée
     if (it != virtualHost.getErrorPages().end()) {
       const std::string& errorPagePath = it->second;
       if (!errorPagePath.empty()) {
@@ -261,27 +262,58 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
       }
     }
 
-    std::vector<char> responseChar;
+    // Vecteurs pour les en-têtes et le corps
+    std::vector<char> headersChar;
+    std::vector<char> bodyChar;
 
+    // Conversion de l'erreur en chaîne
     std::ostringstream oss;
     oss << errorCode;
     std::string errorCodeStr = oss.str();
 
-    appendToVector(responseChar, "<html>\r\n");
-    appendToVector(responseChar, "<head>\r\n");
-    appendToVector(responseChar, "    <title>Error ");
-    appendToVector(responseChar, "/title>\r\n");
-    appendToVector(responseChar, "</head>\r\n");
-    appendToVector(responseChar, "<body>\r\n");
-    appendToVector(responseChar, "    <h1>Error " + errorCodeStr + "</h1>\r\n");
-    appendToVector(responseChar,
-                   "    <p>The requested page could not be "
-                   "found.</p>\r\n");
-    appendToVector(responseChar, "</body>\r\n");
-    appendToVector(responseChar, "</html>");
+    // Construction du corps HTML
+    std::ostringstream bodyStream;
+    bodyStream << "<html>\r\n"
+               << "<head>\r\n"
+               << "    <title>Error " << errorCodeStr << "</title>\r\n"
+               << "</head>\r\n"
+               << "<body>\r\n"
+               << "    <h1>Error " << errorCodeStr << "</h1>\r\n"
+               << "    <p>The requested page could not be found.</p>\r\n"
+               << "</body>\r\n"
+               << "</html>\r\n";
+    std::string body = bodyStream.str();
 
+    // Remplir le vecteur du corps
+    bodyChar.insert(bodyChar.end(), body.begin(), body.end());
+
+    // Calcul de la longueur du corps
+    std::ostringstream contentLengthStream;
+    contentLengthStream << "Content-Length: " << body.size() << "\r\n";
+
+    // Construction des en-têtes HTTP
+    std::ostringstream headersStream;
+    headersStream << "HTTP/1.1 " << errorCodeStr << " "
+                  << getReasonPhraseForCode(errorCode) << "\r\n"
+                  << "Content-Type: text/html\r\n"
+                  << contentLengthStream.str() << "\r\n";
+    std::string headers = headersStream.str();
+
+    // Remplir le vecteur des en-têtes
+    headersChar.insert(headersChar.end(), headers.begin(), headers.end());
+
+    // Fusionner les deux vecteurs pour la réponse complète
+    std::vector<char> responseChar;
+    responseChar.insert(responseChar.end(), bodyChar.begin(), bodyChar.end());
+
+    // Finalisation de la réponse
     response.setBody(responseChar);
+    response.setFullHeader(headersChar);
     request->setIsTreated(true);
+
+    // Debugging ou manipulation supplémentaire des vecteurs (si besoin)
+    // - headersChar : contient uniquement les en-têtes
+    // - bodyChar : contient uniquement le corps HTML
   }
 }
 
@@ -452,22 +484,6 @@ void ResponseBuilder::buildBody() {
   response.setBytesLoad(response.getFullHeader().size() + bytesRead);
 }
 
-// std::vector<char> ResponseBuilder::toHexVector(std::size_t value) {
-//   static const char* digits = "0123456789abcdef";
-//   std::vector<char> result;
-//   if (value == 0) {
-//     result.push_back('0');
-//     return result;
-//   }
-//   while (value > 0) {
-//     std::size_t digit = value % 16;
-//     value /= 16;
-//     result.push_back(digits[digit]);
-//   }
-//   std::reverse(result.begin(), result.end());
-//   return result;
-// }
-
 void ResponseBuilder::buildLocation() {}
 
 void ResponseBuilder::buildAllow() {}
@@ -555,35 +571,6 @@ void ResponseBuilder::buildFullHeader() {
 
   response.setFullHeader(fullHeader);
 }
-
-// void ResponseBuilder::buildFullHeader() {
-//   if (response.getContentLength().empty()) {
-
-//     response.setFullHeader(response.getStatusLine() + "\r\n" +
-//                            response.getContentType() + "\r\n" +
-//                            response.getTransferEncoding() +
-//                            response.getDate() +
-//                            "\r\n" + response.getConnection() + "\r\n\r\n");
-//   } else {
-//     response.setFullHeader(response.getStatusLine() + "\r\n" +
-//                            response.getContentType() + "\r\n" +
-//                            response.getTransferEncoding() +
-//                            response.getDate() +
-//                            "\r\n" + response.getContentLength() + "\r\n" +
-//                            response.getConnection() + "\r\n\r\n");
-//   }
-// }
-
-// void ResponseBuilder::buildFullResponse() {
-//   size_t size = response.getFullHeader().size();
-//   size += response.getBody().size();
-//   std::vector<char> fullResponse = response.getFullHeader();
-//   std::vector<char> body = response.getBody();
-//   fullResponse.insert(fullResponse.end(), response.getBody().begin(),
-//                       response.getBody().end());
-//   fullResponse.resize(size);
-//   response.setFullResponse(fullResponse);
-// }
 
 const std::string ResponseBuilder::to_string(size_t value) {
   std::ostringstream oss;
