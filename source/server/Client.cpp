@@ -1,5 +1,9 @@
 #include "Client.hpp"
 
+#include <cstdlib>
+#include <sstream>
+#include <string>
+
 #include "Sender.hpp"
 
 Client::~Client() {
@@ -29,6 +33,7 @@ int Client::getConnectionFd() const { return this->connectionFd; }
 void Client::closeConnection() {
   for (std::deque<Request>::iterator it = requests.begin();
        it != requests.end(); ++it) {
+    delete (*it).getResponse()->getResponseBuilder();
     delete (*it).getResponse();
     delete &(*it);
   }
@@ -78,33 +83,64 @@ double Client::getCurrentTime(void) {
   return (double)(tv.tv_sec) + (double)(tv.tv_usec) / 1e6;
 }
 
+void Client::treatAPost() {
+  std::cout << "Treat a post" << std::endl;
+  if (buffer.find("Content-Length: ")) {
+    size_t contentLength = parseContentLength(buffer);
+    char buffer[contentLength];
+    recv(connectionFd, buffer, contentLength, 0);
+    appendToBuffer(buffer, contentLength);
+    Request* request = new Request(buffer);
+    requests.push_back(*request);
+    clearBuffer();
+    eventToOut();
+  } else {
+    Request* request = new Request(buffer);
+    requests.push_back(*request);
+    clearBuffer();
+    eventToOut();
+  }
+}
+
+size_t Client::parseContentLength(const std::string& headers) {
+  const std::string contentLengthKey = "Content-Length:";
+  std::string::size_type pos = headers.find(contentLengthKey);
+  if (pos == std::string::npos) {
+    return 0;
+  }
+  pos += contentLengthKey.size();
+  while (pos < headers.size() &&
+         (headers[pos] == ' ' || headers[pos] == '\t')) {
+    ++pos;
+  }
+  std::string numberStr;
+  while (pos < headers.size() && std::isdigit(headers[pos])) {
+    numberStr.push_back(headers[pos]);
+    ++pos;
+  }
+  if (numberStr.empty()) {
+    return 0;
+  }
+  size_t result = 0;
+  for (std::string::size_type i = 0; i < numberStr.size(); ++i) {
+    result = result * 10 + (numberStr[i] - '0');
+  }
+  return result;
+}
+
 void Client::requestRoutine() {
   if (readFromClient() <= 0) {
     this->lastActivity = getCurrentTime();
     return;
   }
-  if (buffer.find("POST") != std::string::npos &&
-      buffer.find("\r\n\r\n") != std::string::npos) {
-    eventToOut();
-    size_t pos = buffer.find("\r\n\r\n");
-    std::string header = buffer.substr(0, pos + 4);
-    Request* request = new Request(getBuffer());
-    // if if the request is invalid send response
-    if (request->getUri().find("/cgi-bin/") != std::string::npos) {
-      request->setIsInTreatment(true);
-      request->setIsACgi(true);
-      CgiHandler cgiHandler(request, connectionFd);
-    }
-    requests.push_back(*request);
-    buffer.erase(0, pos + 4);
-    eventToIn();
-  } else if (buffer.find("\r\n\r\n")) {
+  if (buffer.find("POST") != std::string::npos) {
+    treatAPost();
+  } else if (buffer.find("\r\n\r\n") != std::string::npos) {
     eventToOut();
     Request* request = new Request(getBuffer());
     requests.push_back(*request);
     clearBuffer();  // clear only before the \r\n\r\n and before
   }
-
   this->lastActivity = getCurrentTime();
 }
 
@@ -112,30 +148,25 @@ void Client::responsesRoutine() {
   if (!requests.empty()) {
     for (std::deque<Request>::iterator it = requests.begin();
          it != requests.end(); ++it) {
+      if (it->getIsTreated() &&
+          it->getConnection() == "Connection: close\r\n") {
+        eventToErr();
+        return;
+      }
+      if (it->getIsTreated()) {
+        eventToIn();
+        requests.erase(it);
+        return;
+      }
       if (it->getIsParsed()) {
-        if (it->getIsInTreatment() &&
-            it->getResponse()->getResponseBuilder()->getStatusCode() == 200) {
+        if (it->getIsInTreatment()) {
           it->getResponse()->getResponseBuilder()->buildBody();
-        } else if (it->getIsInTreatment() &&
-                   it->getResponse()->getResponseBuilder()->getStatusCode() !=
-                       200) {
-          it->getResponse()->getResponseBuilder()->buildErrorPage(
-              it->getResponse()
-                  ->getResponseBuilder()
-                  ->getStatusCode());  // EN GROS SI CEST UNE PAGE DERREUR FAUT
-                                       // AGIR DIFFEREMENT
         } else {
           it->setIsInTreatment(true);
           it->setResponse(associatedPort->getVirtualHosts(),
                           associatedPort->getDefaultVirtualHostName());
         }
         Sender sender(*it->getResponse(), connectionFd, *it);
-      }
-      if (it->getIsTreated()) {
-        eventToIn();
-        requests.erase(it);  // delete request and you have to delete all what
-        // is new in like the associated response
-        break;
       }
     }
   }

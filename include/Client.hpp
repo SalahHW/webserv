@@ -36,11 +36,13 @@ class Client {
   void eventToIn();
   void eventToErr();
   double getCurrentTime(void);
+  void treatAPost();
+  size_t parseContentLength(const std::string& headers);
 
   int epollFd;
   double lastActivity;
 
-  private:
+ private:
   struct epoll_event ev;
   int listenFd;
   int connectionFd;
