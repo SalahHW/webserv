@@ -149,7 +149,7 @@ void Client::responsesRoutine() {
   if (!requests.empty()) {
     for (std::deque<Request>::iterator it = requests.begin();
          it != requests.end(); ++it) {
-      if (it->getIsTreated() &&
+            if (it->getIsTreated() &&
           it->getConnection() == "Connection: close\r\n") {
         eventToErr();
         return;

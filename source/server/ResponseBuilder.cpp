@@ -250,7 +250,6 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
     std::map<size_t, std::string>::const_iterator it =
         virtualHost.getErrorPages().find(errorCode);
 
-    // Vérification d'une page d'erreur personnalisée
     if (it != virtualHost.getErrorPages().end()) {
       const std::string& errorPagePath = it->second;
       if (!errorPagePath.empty()) {
@@ -262,16 +261,13 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
       }
     }
 
-    // Vecteurs pour les en-têtes et le corps
     std::vector<char> headersChar;
     std::vector<char> bodyChar;
 
-    // Conversion de l'erreur en chaîne
     std::ostringstream oss;
     oss << errorCode;
     std::string errorCodeStr = oss.str();
 
-    // Construction du corps HTML
     std::ostringstream bodyStream;
     bodyStream << "<html>\r\n"
                << "<head>\r\n"
@@ -284,14 +280,11 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
                << "</html>\r\n";
     std::string body = bodyStream.str();
 
-    // Remplir le vecteur du corps
     bodyChar.insert(bodyChar.end(), body.begin(), body.end());
 
-    // Calcul de la longueur du corps
     std::ostringstream contentLengthStream;
     contentLengthStream << "Content-Length: " << body.size() << "\r\n";
 
-    // Construction des en-têtes HTTP
     std::ostringstream headersStream;
     headersStream << "HTTP/1.1 " << errorCodeStr << " "
                   << getReasonPhraseForCode(errorCode) << "\r\n"
@@ -299,21 +292,14 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
                   << contentLengthStream.str() << "\r\n";
     std::string headers = headersStream.str();
 
-    // Remplir le vecteur des en-têtes
     headersChar.insert(headersChar.end(), headers.begin(), headers.end());
 
-    // Fusionner les deux vecteurs pour la réponse complète
     std::vector<char> responseChar;
     responseChar.insert(responseChar.end(), bodyChar.begin(), bodyChar.end());
 
-    // Finalisation de la réponse
     response.setBody(responseChar);
     response.setFullHeader(headersChar);
     request->setIsTreated(true);
-
-    // Debugging ou manipulation supplémentaire des vecteurs (si besoin)
-    // - headersChar : contient uniquement les en-têtes
-    // - bodyChar : contient uniquement le corps HTML
   }
 }
 
