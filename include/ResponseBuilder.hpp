@@ -18,6 +18,7 @@ class Response;
 class ResponseBuilder {
  private:
   ResponseBuilder();
+  ResponseBuilder(const ResponseBuilder& src);
 
   Request* request;
   Response& response;
@@ -25,6 +26,7 @@ class ResponseBuilder {
   const VirtualHost& virtualHost;
   Location matchingLocation;
   std::string determinedPath;
+  std::ifstream file;
 
   void checkRequest();
   void treatAPost();
@@ -40,9 +42,9 @@ class ResponseBuilder {
   bool doesVhostExist();
   bool doesUriExist();
   bool isRessourceAvailable();
+  void appendToVector(std::vector<char>& vec, const std::string& str);
 
   void buildErrorContentLength();
-  void buildErrorPage(size_t errorCode);
   void buildStatusLine();
   void buildDate();
   void buildContentLength();
@@ -55,7 +57,6 @@ class ResponseBuilder {
   void buildBytesSent();
   void buildBytesTotal();
   void buildFullHeader();
-  void buildFullResponse();
   const std::string to_string(size_t number);
   const std::string findContentType(const std::string& fileName);
   size_t getFileSize(const std::string& fileName);
@@ -66,4 +67,6 @@ class ResponseBuilder {
                   const std::string& defaultVirtualHostName);
   ~ResponseBuilder();
   void buildBody();
+  void buildErrorPage(size_t errorCode);
+  size_t getStatusCode() const;
 };

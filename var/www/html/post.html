@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Upload a File</title>
+    <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        p,
+        a {
+            color: #e0e2f4;
+        }
+
+        body,
+        p {
+            font: normal 20px/1.25rem 'VT323', monospace;
+        }
+
+        h1 {
+            font: normal 2.75rem/1.05em 'VT323', monospace;
+        }
+
+        h2 {
+            font: normal 2.25rem/1.25em 'VT323', monospace;
+        }
+
+        h3 {
+            font: lighter 1.5rem/1.25em 'VT323', monospace;
+        }
+
+        h4 {
+            font: lighter 1.125rem/1.2222222em 'VT323', monospace;
+        }
+
+        body {
+            background: #0414a7;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+            max-width: 640px;
+        }
+
+        .main-content {
+            padding-top: 10%;
+            text-align: center;
+        }
+
+        .main-content .title {
+            margin-bottom: 50px;
+        }
+
+        /* Barre de progression (statique) */
+        #uploadProgress {
+            width: 80%;
+            max-width: 300px;
+            height: 20px;
+            margin: 20px auto;
+            display: block;
+            background: #aaa;
+            border: 1px solid #e0e2f4;
+        }
+
+        #uploadProgressBar {
+            width: 0%;
+            height: 100%;
+            background: #e0e2f4;
+        }
+
+        /* Boutons */
+        .file-input-button,
+        .upload-button {
+            display: inline-block;
+            margin: 15px 10px;
+            padding: 10px 20px;
+            font: normal 20px 'VT323', monospace;
+            color: #0414a7;
+            background: #e0e2f4;
+            border: none;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .file-input-button:hover,
+        .file-input-button:focus,
+        .upload-button:hover,
+        .upload-button:focus {
+            background: #aaaaaa;
+        }
+
+        /* Masquer le champ input file par défaut */
+        #fileToUpload {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main-content">
+            <h1 class="title">Upload a File</h1>
+            <p>Select a file from your computer, then click the upload button to send it to the server.</p>
+
+            <!-- Remplacez /cgi-bin/upload.cgi par le chemin de votre CGI -->
+            <form action="/cgi-bin/upload.cgi" method="POST" enctype="multipart/form-data">
+                <!-- Champ de sélection de fichier masqué (on clique sur le label pour l'ouvrir) -->
+                <label for="fileToUpload" class="file-input-button" id="chooseButton">Choose a File</label>
+                <input type="file" id="fileToUpload" name="fileToUpload">
+
+                <!-- Bouton de soumission -->
+                <button type="submit" class="upload-button">Upload</button>
+
+                <!-- Barre de progression (statique sans JS + CGI spécial) -->
+                <div id="uploadProgress">
+                    <div id="uploadProgressBar"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Quand un fichier est sélectionné, on passe le bouton en vert
+        const fileInput = document.getElementById('fileToUpload');
+        const chooseButton = document.getElementById('chooseButton');
+
+        fileInput.addEventListener('change', function () {
+            if (fileInput.files.length > 0) {
+                // Fichier choisi : on met le bouton en vert
+                chooseButton.style.backgroundColor = '#55aa55';
+                chooseButton.style.color = '#ffffff';
+            } else {
+                // Si plus de fichier choisi (cas rare) : on réinitialise le style
+                chooseButton.style.backgroundColor = '#e0e2f4';
+                chooseButton.style.color = '#0414a7';
+            }
+        });
+    </script>
+</body>
+
+</html>

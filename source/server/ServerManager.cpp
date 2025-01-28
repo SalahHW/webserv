@@ -43,34 +43,31 @@ void ServerManager::runRoutine() {
   struct epoll_event events[1000];
 
   while (isRunning) {
-    // Attente des événements sur l'ensemble des descripteurs enregistrés
     int eventCount = epoll_wait(eventReporter.getEpollFd(), events, 1000, -1);
     if (eventCount < 0) {
-      // En cas d'erreur, afficher et éventuellement sortir de la boucle
       perror("epoll_wait");
-      // Selon l'erreur, vous pouvez choisir de sortir ou de continuer
       if (errno == EINTR) {
         continue;
       }
       break;
     }
 
-    // Traitement de chaque événement retourné
     for (int i = 0; i < eventCount; ++i) {
       int fd = events[i].data.fd;
       uint32_t eventFlags = events[i].events;
+      if (clients.find(fd) != clients.end()) {
+        if (clients[fd]->getCurrentTime() - clients[fd]->lastActivity >
+            TIMEOUT) {
+          closeConnection(fd);
+          continue;
+        }
+      }
 
-      // Vérifier si le fd appartient aux sockets d'écoute
       if (listeningSockets.find(fd) != listeningSockets.end()) {
-        // C'est un socket d'écoute : accepter de nouvelles connexions
         if (eventFlags & EPOLLIN) {
           acceptConnection(fd);
         }
-        // Vous pouvez aussi gérer d'autres cas éventuels (EPOLLERR, EPOLLHUP,
-        // etc.)
       } else {
-        // Sinon, c'est un client existant
-        // Vous pouvez décider de traiter en lecture et/ou écriture
         handleEvent(fd, eventFlags);
       }
     }
@@ -139,6 +136,7 @@ void ServerManager::handleEpollOut(int listenFd) {
 }
 
 void ServerManager::handleEpollErr(int listenFd) {
+  closeConnection(clients.find(listenFd)->second->getConnectionFd());
   std::cerr << "Socket " << listenFd << ": Error occurred" << std::endl;
 }
 
@@ -174,6 +172,7 @@ void ServerManager::acceptConnection(int listenFd) {
 
 void ServerManager::closeConnection(int clientFd) {
   if (clients.find(clientFd) != clients.end()) {
+    epoll_ctl(eventReporter.getEpollFd(), EPOLL_CTL_DEL, clientFd, NULL);
     clients[clientFd]->closeConnection();
     delete clients[clientFd];
     clients.erase(clientFd);

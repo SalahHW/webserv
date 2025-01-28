@@ -8,32 +8,30 @@ Sender::Sender(Response& response, int sockfd, Request& request) {
 
 Sender::~Sender() {}
 
-// void Sender::sendOnFd(Response& response, int sockfd) {
-//   const std::string& fullResponse = response.getFullResponse();
-//   size_t offset = response.getBytesSent();
-//   size_t totalSize = response.getBytesTotal();
-//   if (offset >= totalSize) {
-//     return;
-//   }
-//   size_t remain = totalSize - offset;
-//   if (remain > 1024) {
-//     remain = 1024;
-//   }
-//   ssize_t ret = send(sockfd, fullResponse.c_str() + offset, remain, 0);
-//   if (ret > 0) {
-//     response.setBytesSent(offset + ret);
-//   } else if (ret < 0) {
-//     perror("send");
-//   }
-// }
 void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
-  const std::string& Response = response.getFullResponse();
+  if (!response.getFullHeader().empty()) {
+    send(sockfd, response.getFullHeader().data(),
+         response.getFullHeader().size(), MSG_NOSIGNAL);
+  }
+
+  std::vector<char> Response = response.getBody();
   size_t responseSize = Response.size();
+  size_t ret = 0;
+  std::stringstream hex;
+  std::string hexStr;
+
   if (Response.empty()) {
     std::cerr << "Response is empty, nothing to send." << std::endl;
     return;
   }
-  ssize_t ret = send(sockfd, Response.c_str(), responseSize, MSG_NOSIGNAL);
+  if (!request.getIsTreated() && response.getContentLength().empty()) {
+    hex << std::hex << responseSize;
+    hexStr = hex.str() + "\r\n";
+
+    ret = send(sockfd, hexStr.c_str(), hexStr.size(), MSG_NOSIGNAL);
+  }
+  ret = send(sockfd, Response.data(), responseSize, MSG_NOSIGNAL);
+
   if (ret > 0) {
     response.setBytesSent(response.getBytesSent() + ret);
   } else if (ret < 0) {
@@ -48,11 +46,11 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
       std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
     }
   }
-  if (response.isResponseFullySend()) {
-    request.setIsTreated(true);
+  if (response.getContentLength().empty() && !request.getIsTreated()) {
+    ret = send(sockfd, "\r\n", 2, MSG_NOSIGNAL);
   }
-  if (Response == "0\r\n\r\n") {
-    request.setIsTreated(true);
-  }
-  //std::cout << "What is send = " << Response << std::endl;
+
+  // std::cout << "What is sended: " << hexStr;
+  // std::cout.write(Response.data(), responseSize) << "\r\n" << std::endl;
+  // std::cout << "test" << std::endl;
 }

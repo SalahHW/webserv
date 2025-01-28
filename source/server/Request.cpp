@@ -1,5 +1,7 @@
 #include "Request.hpp"
 
+#include "Cgi.hpp"
+
 Request::Request(const std::string& request)
     : methodGood(false),
       uriGood(false),
@@ -27,6 +29,11 @@ Request::Request(const std::string& request)
   connectionGood = RequestValidator::validateConnection(Connection);
   isRequestGood = RequestValidator::validateRequest(*this);
   isParsed = true;
+  if (uri.find("/cgi-bin/") != std::string::npos) {
+    setIsInTreatment(true);
+    setIsACgi(true);
+    //CgiHandler cgiHandler(*this);
+  }
 }
 
 Request::Request() {}
@@ -115,6 +122,8 @@ void Request::setIsInTreatment(bool isInProcess) {
   this->isInTreatment = isInProcess;
 }
 
+void Request::setIsACgi(bool isACgi) { this->isACgi = isACgi; }
+
 void Request::setIsParsed(bool isParsed) { this->isParsed = isParsed; }
 
 const std::string& Request::getMethod() const { return this->method; }
@@ -170,6 +179,8 @@ bool Request::getIsTreated() const { return isTreated; }
 bool Request::getIsInTreatment() const { return isInTreatment; }
 
 bool Request::getIsParsed() const { return isParsed; }
+
+bool Request::getIsACgi() const { return isACgi; }
 
 void Request::displayRequest() const {
   std::cout << "Method: " << this->method << std::endl;

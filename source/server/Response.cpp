@@ -10,7 +10,7 @@ Response::Response(Request* request,
       contentLength(""),
       transferEncoding(""),
       contentType(""),
-      body(""),
+      body(std::vector<char>()),
       location(""),
       allow(""),
       retryAfter(""),
@@ -18,7 +18,7 @@ Response::Response(Request* request,
       bytesSent(0),
       bytesLoad(0),
       bytesTotal(0),
-      fullResponse(""),
+      fullHeader(std::vector<char>()),
       builder(new ResponseBuilder(request, *this, virtualHosts,
                                   defaultVirtualHostName)) {}
 
@@ -27,18 +27,17 @@ void Response::clearForChunked() {
   setDate("");
   setTransferEncoding("");
   setContentType("");
-  setBody("");
+  this->body.clear();
   setLocation("");
   setAllow("");
   setRetryAfter("");
   setConnection("");
-  setFullHeader("");
-  setFullResponse("");
+  this->fullHeader.clear();
 }
 
 bool Response::isResponseFullySend() const {
-  std::cout << "Response::isResponseFullySend: " << bytesSent
-            << " == " << bytesTotal << std::endl;
+  std::cout << "bytesSent: " << bytesSent << " bytesTotal: " << bytesTotal
+            << std::endl;
   return bytesSent == bytesTotal;
 }
 
@@ -50,8 +49,6 @@ void Response::setDate(const std::string& date) { this->date = date; }
 
 void Response::setContentLength(const std::string& contentLength) {
   this->contentLength = contentLength;
-
-  std::cout << "CONTENT LENGTH = " << this->contentLength << std::endl;
 }
 
 void Response::setTransferEncoding(const std::string& transferEncoding) {
@@ -62,7 +59,7 @@ void Response::setContentType(const std::string& contentType) {
   this->contentType = contentType;
 }
 
-void Response::setBody(const std::string& body) { this->body = body; }
+void Response::setBody(const std::vector<char> body) { this->body = body; }
 
 void Response::setLocation(const std::string& location) {
   this->location = location;
@@ -84,15 +81,10 @@ void Response::setBytesLoad(size_t bytesLoad) { this->bytesLoad = bytesLoad; }
 
 void Response::setBytesTotal(size_t bytesTotal) {
   this->bytesTotal = bytesTotal;
-  std::cout << "bytesTotal: " << bytesTotal << std::endl;
 }
 
-void Response::setFullHeader(const std::string& fullHeader) {
+void Response::setFullHeader(std::vector<char> fullHeader) {
   this->fullHeader = fullHeader;
-}
-
-void Response::setFullResponse(const std::string& fullResponse) {
-  this->fullResponse = fullResponse;
 }
 
 const std::string& Response::getStatusLine() const { return statusLine; }
@@ -107,7 +99,7 @@ const std::string& Response::getTransferEncoding() const {
 
 const std::string& Response::getContentType() const { return contentType; }
 
-const std::string& Response::getBody() const { return body; }
+const std::vector<char> Response::getBody() const { return body; }
 
 const std::string& Response::getLocation() const { return location; }
 
@@ -123,12 +115,8 @@ size_t Response::getBytesLoad() const { return bytesLoad; }
 
 size_t Response::getBytesTotal() const { return bytesTotal; }
 
-const std::string& Response::getFullHeader() const { return fullHeader; }
-
-const std::string& Response::getFullResponse() const { return fullResponse; }
+const std::vector<char> Response::getFullHeader() const { return fullHeader; }
 
 ResponseBuilder* Response::getResponseBuilder() const { return builder; }
 
-void Response::printResponseAttributes() const {
-  std::cout << "Full Response: " << fullResponse << std::endl;
-}
+void Response::printResponseAttributes() const {}
