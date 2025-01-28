@@ -37,6 +37,7 @@ private:
     std::string defaultServerName;
     std::string defaultServerRoot;
     std::string defaultServerIndex;
+    std::string defaultServerClientBodyTempPath;
     int defaultServerPort;
     int defaultServerClientMaxBodySize;
 

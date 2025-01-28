@@ -35,6 +35,7 @@ SRCS					=	main.cpp											\
 							directive/ListenDirective.cpp						\
 							directive/ServerNameDirective.cpp					\
 							directive/ClientMaxBodySizeDirective.cpp			\
+							directive/ClientBodyTempPathDirective.cpp			\
 							directive/ErrorPageDirective.cpp					\
 							directive/RootDirective.cpp							\
 							directive/IndexDirective.cpp						\

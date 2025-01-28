@@ -26,6 +26,7 @@ public:
     bool good() const;
     const Block& getMainBlock() const;
     std::map<int, Port*> getPortMap() const;
+    void displayInfo() const;
 
 private:
     // Disable default constructor, copy constructor, and assignment operator

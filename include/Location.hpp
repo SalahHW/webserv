@@ -16,6 +16,7 @@ class Location {
   void setRootDirectory(const std::string& rootDirectoryValue);
   void setIndexFile(const std::string& indexFileValue);
   void setRedirectionPath(const std::string& redirectionPathValue);
+  void setClientBodyTempPath(const std::string& clientBodyTempPath);
   void setAutoIndex(bool autoIndexValue);
   void setGetAccepted(bool getAcceptedValue);
   void setPostAccepted(bool postAcceptedValue);
@@ -29,6 +30,7 @@ class Location {
   const std::string& getRootDirectory() const;
   const std::string& getIndexFile() const;
   const std::string& getRedirectionPath() const;
+  const std::string& getClientBodyTempPath() const;
   bool getAutoIndex() const;
   bool getGetAccepted() const;
   bool getPostAccepted() const;
@@ -41,6 +43,7 @@ class Location {
   bool isRootDirectoryDefined() const { return hasRootDirectory; }
   bool isIndexFileDefined() const { return hasIndexFile; }
   bool isRedirectionPathDefined() const { return hasRedirectionPath; }
+  bool isClientBodyTempPathDefined() const { return hasClientBodyTempPath; }
   bool isAutoIndexDefined() const { return hasAutoIndex; }
   bool isGetAcceptedDefined() const { return hasGetAccepted; }
   bool isPostAcceptedDefined() const { return hasPostAccepted; }
@@ -56,6 +59,7 @@ class Location {
   std::string rootDirectory;
   std::string indexFile;
   std::string redirectionPath;
+  std::string clientBodyTempPath;
   bool autoIndex;
   bool getAccepted;
   bool postAccepted;
@@ -68,6 +72,7 @@ class Location {
   bool hasRootDirectory;
   bool hasIndexFile;
   bool hasRedirectionPath;
+  bool hasClientBodyTempPath;
   bool hasAutoIndex;
   bool hasGetAccepted;
   bool hasPostAccepted;
