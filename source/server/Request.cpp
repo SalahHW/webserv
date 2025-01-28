@@ -1,6 +1,7 @@
 #include "Request.hpp"
 
 #include "Cgi.hpp"
+#include "Cgi.hpp"
 
 Request::Request(const std::string& request)
     : methodGood(false),

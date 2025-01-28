@@ -83,12 +83,6 @@ void Client::requestRoutine() {
     this->lastActivity = getCurrentTime();
     return;
   }
-  if (buffer.find("\r\n\r\n")) {
-    eventToOut();
-    Request* request = new Request(getBuffer());
-    requests.push_back(*request);
-    clearBuffer();  // clear only before the \r\n\r\n and before
-  }
   if (buffer.find("POST") != std::string::npos &&
       buffer.find("\r\n\r\n") != std::string::npos) {
     eventToOut();
@@ -96,10 +90,21 @@ void Client::requestRoutine() {
     std::string header = buffer.substr(0, pos + 4);
     Request* request = new Request(getBuffer());
     // if if the request is invalid send response
+    if (request->getUri().find("/cgi-bin/") != std::string::npos) {
+      request->setIsInTreatment(true);
+      request->setIsACgi(true);
+      CgiHandler cgiHandler(request, connectionFd);
+    }
     requests.push_back(*request);
     buffer.erase(0, pos + 4);
     eventToIn();
+  } else if (buffer.find("\r\n\r\n")) {
+    eventToOut();
+    Request* request = new Request(getBuffer());
+    requests.push_back(*request);
+    clearBuffer();  // clear only before the \r\n\r\n and before
   }
+
   this->lastActivity = getCurrentTime();
 }
 
