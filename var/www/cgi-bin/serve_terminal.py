@@ -1,4 +1,7 @@
 html_content = """
+HTTP/1.1 200 OK
+Content-Length: 3445
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -124,6 +127,8 @@ html_content = """
 </body>
 
 </html>
+
+
 """
 
 print(html_content)
