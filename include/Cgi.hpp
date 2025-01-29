@@ -36,7 +36,7 @@
 class CgiHandler {
  public:
   CgiHandler();
-  CgiHandler(Request &request);
+  CgiHandler(const Request &request);
   ~CgiHandler();
   CgiHandler(const CgiHandler &other);
 
