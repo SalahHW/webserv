@@ -67,9 +67,47 @@ ResponseBuilder::ResponseBuilder(
 size_t ResponseBuilder::getStatusCode() const { return statusCode; }
 
 void ResponseBuilder::treatAPost() {
-  std::cout << "POST" << std::endl;
-  // std::cout << "UPLOAD LOCATION: " << matchingLocation.getUploadLocation()
-  //           << std::endl;
+  // determinedPath = matchingLocation.getRootDirectory() + request->getUri();
+  // if (determinedPath[determinedPath.size() - 1] == '/') {
+  //   determinedPath = determinedPath.substr(0, determinedPath.size() - 1);
+  // }
+  // if (!request->getIsInTreatment()) {
+  //   if (virtualHost.getLocations().find(request->getUri()) ==
+  //       virtualHost.getLocations().end()) {
+  //     setStatusCode(404);
+  //   } else if (findMatchingLocation() &&
+  //   !matchingLocation.isUploadLocation()) {
+  //     setStatusCode(404);
+  //   } else if (matchingLocation.isUploadLocation() &&
+  //              !matchingLocation.getPostAccepted()) {
+  //     setStatusCode(405);
+  //   } else if (stat(matchingLocation.getRootDirectory().c_str(), NULL) != 0)
+  //   {
+  //     setStatusCode(404);
+  //   } else {
+  //     if (determinedPath.find("..") != std::string::npos) {
+  //       setStatusCode(403);
+  //     } else {
+  //       struct stat info;
+  //       if (stat(determinedPath.c_str(), &info) == 0) {
+  //         setStatusCode(409);
+  //       } else {
+  //         std::ofstream file(determinedPath.c_str(), std::ios::binary);
+  //         if (!file.is_open()) {
+  //           setStatusCode(403);
+  //         } else {
+  //           file.write(request->getBody().data(), request->getBody().size());
+  //           file.close();
+  //         }
+  //       }
+  //     }
+  //   }
+  // } else {
+  //   std::ofstream file(determinedPath.c_str(),
+  //                      std::ios::binary | std::ios::app);
+  //   file.write(request->getBody().data(), request->getBody().size());
+  //   file.close();
+  // }
 }
 
 void ResponseBuilder::buildErrorContentLength() {
