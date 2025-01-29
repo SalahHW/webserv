@@ -35,7 +35,7 @@ void ConfigFile::displayInfo() const
 {
   std::vector<Server>::const_iterator itServer;
 
-  std::cout << "Number of servers: " << servers.size() << std::endl;
+  std::cout << "Number of servers in configuration: " << servers.size() << std::endl;
   for (itServer = servers.begin(); itServer != servers.end(); ++itServer)
   {
     itServer->displayServerInfo();
