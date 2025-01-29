@@ -140,6 +140,17 @@ void Client::responsesRoutine() {
         requests.erase(it);
         return;
       }
+      if (it->getUri().find("cgi-bin") != std::string::npos) {
+        it->setIsACgi(true);
+        if (it->getIsInTreatment()) {
+          it->getResponse()->getResponseBuilder();
+        } else {
+          it->setIsInTreatment(true);
+          it->setResponse(associatedPort->getVirtualHosts(),
+                          associatedPort->getDefaultVirtualHostName());
+        }
+        return;
+      }
       if (it->getMethod() == "POST") {
         std::cout << "POST" << std::endl;
         if (it->getIsParsed()) {
