@@ -4,14 +4,13 @@
 
 bool RequestValidator::validateRequest(const Request& request) {
   if (request.getHostGood() && request.getMethodGood() &&
-      request.getUriGood() && request.getVersionGood() &&
-      request.getUserAgentGood() && request.getAcceptGood() &&
-      request.getAcceptLanguageGood() && request.getAcceptEncodingGood() &&
-      request.getConnectionGood()) {
+      request.getUriGood() && request.getVersionGood()) {
     // test
     std::cout << "Request is valid" << std::endl;
-    std::cout << "[DEBUG] : Request METHOD = " << request.getMethod() << std::endl;
-    std::cout << "[DEBUG] : BODY SIZE = " << request.getBody().size() << std::endl;
+    std::cout << "[DEBUG] : Request METHOD = " << request.getMethod()
+              << std::endl;
+    std::cout << "[DEBUG] : BODY SIZE = " << request.getBody().size()
+              << std::endl;
     return true;
   } else {
     // test
