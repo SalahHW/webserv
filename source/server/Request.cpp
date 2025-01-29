@@ -165,6 +165,8 @@ Response* Request::getResponse() const { return response; }
 
 const std::string& Request::getHostName() const { return this->hostName; }
 
+size_t Request::getFd() const { return this->fd; }
+
 bool Request::getMethodGood() const { return this->methodGood; }
 
 bool Request::getUriGood() const { return this->uriGood; }

@@ -98,6 +98,7 @@ class Request {
   const std::string& getContentType() const;
   const std::string& getContentLength() const;
   const std::string& getPostData() const;
+  size_t getFd() const;
 
   bool getHostGood() const;
   bool getUserAgentGood() const;

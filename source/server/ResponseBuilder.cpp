@@ -582,5 +582,5 @@ size_t ResponseBuilder::getFileSize(const std::string& filePath) {
 
 void ResponseBuilder::handleCgi() {
   // if(request->)
-  CgiHandler cgiHandler(request);
+  CgiHandler cgiHandler(*request);
 }
