@@ -99,6 +99,7 @@ VirtualHost Port::createVirtualHost(const Server& server) {
   VirtualHost newHost;
 
   newHost.setName(server.getName());
+  newHost.setClientBodyTempPath(server.getClientBodyTempPath());
   newHost.setClientMaxBodySize(server.getClientMaxBodySize());
   newHost.setErrorPages(server.getErrorPages());
   newHost.setLocations(server.getLocations());
