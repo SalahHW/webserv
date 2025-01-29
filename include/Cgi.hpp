@@ -21,7 +21,17 @@
 #include <vector>
 
 #include "Request.hpp"
-#include "Server.hpp"
+// #include "Server.hpp"
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include <algorithm>
+#include <cstring>
+#include <string>
+#include <utility>
+#include <vector>
 
 class CgiHandler {
  public:
@@ -31,6 +41,7 @@ class CgiHandler {
   CgiHandler(const CgiHandler &other);
 
   const std::string convertSizetToString(size_t value);
+  const char *extractScriptName(const std::string &path);
   const std::string genContentLenght(const std::string &contentLenght);
   const std::string genQueryString(const std::string &queryString);
   const std::string genRequestMethod(const std::string &requestMethod);

@@ -10,6 +10,8 @@ bool RequestValidator::validateRequest(const Request& request) {
       request.getConnectionGood()) {
     // test
     std::cout << "Request is valid" << std::endl;
+    std::cout << "[DEBUG] : Request METHOD = " << request.getMethod() << std::endl;
+    std::cout << "[DEBUG] : BODY SIZE = " << request.getBody().size() << std::endl;
     return true;
   } else {
     // test

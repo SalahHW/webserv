@@ -18,6 +18,14 @@ const std::string CgiHandler::convertSizetToString(size_t value) {
     return oss.str();
 }
 
+const char* CgiHandler::extractScriptName(const std::string &path) {
+    std::size_t pos = path.find_last_of('/');
+    if (pos == std::string::npos)
+        return (""); // If no '/' is found, return the whole string
+
+    return (path.c_str() + pos + 1); // Return pointer to filename
+}
+
 //const std::string CgiHandler::genQueryString(const std::string &queryString) {
 //    std::string::const_iterator it = std::find(request.uri.begin(), request.uri.end(), '?');
 //    if (it != request.uri.end()) {
@@ -186,21 +194,21 @@ const std::string CgiHandler::convertSizetToString(size_t value) {
 //    return ("HTTP_PRIORITY=");
 //}
 
-//const std::string CgiHandler::genPathInfo(const std::string &input)
-//{
-//    const std::string marker = "cgi-bin/";
-//    std::string pathInfo;
-//
-//    std::string::size_type markerPos = input.find(marker);
-//    if (markerPos != std::string::npos) {
-//        std::string::size_type nextSlashPos = input.find('/', markerPos + marker.length());
-//        if (nextSlashPos != std::string::npos) {
-//            pathInfo = input.substr(nextSlashPos + 1);
-//            return ("PATH_INFO=" + pathInfo);
-//        }
-//    }
-//    return ("PATH_INFO=");
-//}
+const std::string CgiHandler::genPathInfo(const std::string &input)
+{
+    const std::string marker = "cgi-bin/";
+    std::string pathInfo;
+
+    std::string::size_type markerPos = input.find(marker);
+    if (markerPos != std::string::npos) {
+        std::string::size_type nextSlashPos = input.find('/', markerPos + marker.length());
+        if (nextSlashPos != std::string::npos) {
+            pathInfo = input.substr(nextSlashPos + 1);
+            return ("PATH_INFO=" + pathInfo);
+        }
+    }
+    return ("PATH_INFO=");
+}
 
 //const std::string CgiHandler::genContentLenght(const std::string &contentLenght)
 //{
@@ -244,6 +252,7 @@ void CgiHandler::buildEnv(Request &request)
     //envVec.push_back(this->genHttpSecFetchSite());
     //envVec.push_back(this->genHttpPriority());
 
+    envVec.push_back(request.getUri());
     envVec.push_back(request.getMethod());
     envVec.push_back(request.getAccept());
     envVec.push_back(request.getHost());
