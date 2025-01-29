@@ -21,7 +21,7 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
   std::string hexStr;
 
   if (Response.empty()) {
-    std::cerr << "Response is empty, nothing to send." << std::endl;
+    //std::cerr << "Response is empty, nothing to send." << std::endl;
     return;
   }
   if (!request.getIsTreated() && response.getContentLength().empty()) {
