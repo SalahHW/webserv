@@ -18,16 +18,12 @@ const std::string CgiHandler::convertSizetToString(size_t value) {
     return oss.str();
 }
 
-const std::string CgiHandler::extractPyFile(const std::string &input) {
-    if (input.length() < 2 || input.substr(input.length() - 2) != "py") {
-        return "";
-    }
-    for (std::string::size_type i = input.length() - 3; i != std::string::npos; --i) {
-        if (input[i] == '/') {
-            return (input.substr(i + 1));
-        }
-    }
-    return (input);
+const char* CgiHandler::extractScriptName(const std::string &path) {
+    std::size_t pos = path.find_last_of('/');
+    if (pos == std::string::npos)
+        return (""); // If no '/' is found, return the whole string
+
+    return (path.c_str() + pos + 1); // Return pointer to filename
 }
 
 //const std::string CgiHandler::genQueryString(const std::string &queryString) {

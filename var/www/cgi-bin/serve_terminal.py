@@ -1,6 +1,6 @@
 html_content = """
 HTTP/1.1 200 OK
-Content-Length: 3445
+Content-Length: 2720
 
 <!DOCTYPE html>
 <html lang="en">
@@ -94,41 +94,18 @@ Content-Length: 3445
     <div class="terminal">
         <div class="terminal-header">Welcome to the Terminal</div>
         <div class="terminal-body" id="output">
-            <p>Type a command below and press Enter to send.</p>
         </div>
-        <div class="input-section">
-            <label for="command-input">$</label>
-            <input type="text" id="command-input" placeholder="Enter your command here..." />
-            <button onclick="sendCommand()">Send</button>
-        </div>
+        <form method="POST" action="/cgi-bin/your_cgi_script.py">
+            <div class="input-section">
+                <label for="command-input">$</label>
+                <input type="text" id="command-input" name="command" placeholder="Enter your command here..." />
+                <button type="submit">Send</button>
+            </div>
+        </form>
     </div>
-
-    <script>
-        const output = document.getElementById("output");
-
-        function sendCommand() {
-            const input = document.getElementById("command-input");
-            const command = input.value.trim();
-            if (command) {
-                const newLine = document.createElement("p");
-                newLine.textContent = `$ ${command}`;
-                output.appendChild(newLine);
-                input.value = ""; // Clear input
-                output.scrollTop = output.scrollHeight; // Scroll to bottom
-            }
-        }
-
-        document.getElementById("command-input").addEventListener("keydown", function (event) {
-            if (event.key === "Enter") {
-                sendCommand();
-            }
-        });
-    </script>
 </body>
 
 </html>
-
-
 """
 
 print(html_content)

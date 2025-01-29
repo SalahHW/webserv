@@ -43,10 +43,6 @@
 #include "Cgi.hpp"
 
 CgiHandler::CgiHandler() {
-    //this->setScriptPath("/home/sickest-one/Travail/webserv/www/cgi-bin/"); // modif to getCgiLocation (isCgiLocation ?)
-	//request.method = "GET";
-	//request.uri = "http://example.com/cgi-bin/cgi.py";
-	//request.version = "HTTP/1.1";
 }
 
 CgiHandler::CgiHandler(Request &request, int outputFd) {
@@ -66,10 +62,9 @@ void CgiHandler::cgiExecution(Request &request, int outputFd) {
     std::vector<std::string> env = this->getEnvVec();
     this->printEnv(env);
 
-    const std::string scriptDirAss = "/home/sickest-one/Travail/webserv/var/www/cgi-bin";
-    const char *scriptDir = scriptDirAss.c_str();
-    std::cout << "[DEBUG] : cgi hardDir: " << scriptDir << std::endl;
-    const char *scriptName = "serve_terminal.py";
+    const std::string scriptDirAss = "/home/sickest_one/Travail/webserv/var/www/cgi-bin";
+    const char *scriptDir = scriptDirAss.c_str(); // supposed to have the full path via location (salah ?)
+    const char *scriptName = this->extractScriptName(request.getUri());
     char *const args[] = {const_cast<char *>(PY_INTERP), const_cast<char *>(scriptName), NULL};
     char **envArray;
     pid_t pid;
