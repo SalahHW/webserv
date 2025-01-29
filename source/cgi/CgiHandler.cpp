@@ -10,36 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-    //AUTH_TYPE
-    //CONTENT_LENGTH
-    //CONTENT_TYPE
-    //GATEWAY_INTERFACE
-    //HTTP_*
-    //PATH_INFO
-    //PATH_TRANSLATED
-    //QUERY_STRING
-    //REMOTE_ADDR
-    //REMOTE_HOST
-    //REMOTE_IDENT
-    //REMOTE_USER
-    //REQUEST_METHOD
-    //SCRIPT_NAME
-    //SERVER_NAME
-    //SERVER_PORT
-    //SERVER_PROTOCOL
-    //SERVER_SOFTWARE
-
-    //  [virtual path][extra path information]?[query string]
-
-    // ! GET/POST -> content body (size/write) -> execve
-    // try / catch for exec -> malloc protec + wcs handling
-    // if POST request -> FD_IN body_html
-    // handle delete[] on CgiHandler class destruction
-    //  chier guele chemin physique parse dans requete / truc de salah ????? uri no during search
-    // TODO : close all pipes
-
-    // NEW TODO : adapt code to newly made request class, handle new cgi construction
-
 #include "Cgi.hpp"
 
 CgiHandler::CgiHandler() {
@@ -113,7 +83,6 @@ void CgiHandler::cgiExecution(Request &request, int outputFd) {
                 }
             }
             close(pipefd[0]); // Close read end after reading
-
             // Wait for the child process to finish
             if (waitpid(pid, &status, 0) < 0) {
                 throw std::runtime_error(WAITPID_ERR);
