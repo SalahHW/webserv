@@ -15,6 +15,11 @@ ResponseBuilder::ResponseBuilder(
       statusCode(0),
       virtualHost(
           findMatchingVirtualHost(virtualHosts, defaultVirtualHostName)) {
+  if (request->getIsRequestGood() &&
+      request->getUri().find("cgi-bin") != std::string::npos) {
+    handleCgi();
+    return;
+  }
   try {
     // checkRequest();
     if (request->getMethod() == "POST") {
@@ -62,11 +67,9 @@ ResponseBuilder::ResponseBuilder(
 size_t ResponseBuilder::getStatusCode() const { return statusCode; }
 
 void ResponseBuilder::treatAPost() {
-  CgiHandler cgi(*request, "/home/sickest-one/Travail/webserv/var/www/cgi-bin",
-                 request->getBody());
-  if (!findMatchingLocation()) {
-    setStatusCode(404);
-  }
+  std::cout << "POST" << std::endl;
+  // std::cout << "UPLOAD LOCATION: " << matchingLocation.getUploadLocation()
+  //           << std::endl;
 }
 
 void ResponseBuilder::buildErrorContentLength() {
@@ -440,7 +443,6 @@ void ResponseBuilder::buildBody() {
   std::vector<char> buffer(bufferSize);
   file.read(buffer.data(), bufferSize);
   std::streamsize bytesRead = file.gcount();
-  std::cout << "BYTES READ: " << bytesRead << std::endl;
   if (bytesRead < 1024) {
     buffer.resize(bytesRead);
   }
@@ -576,4 +578,9 @@ size_t ResponseBuilder::getFileSize(const std::string& filePath) {
   file.seekg(0, std::ios::end);
   size_t size = static_cast<std::size_t>(file.tellg());
   return size;
+}
+
+void ResponseBuilder::handleCgi() {
+  // if(request->)
+  CgiHandler cgiHandler(request);
 }

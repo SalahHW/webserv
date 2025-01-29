@@ -62,14 +62,7 @@ void ServerManager::runRoutine() {
           continue;
         }
       }
-
-      if (listeningSockets.find(fd) != listeningSockets.end()) {
-        if (eventFlags & EPOLLIN) {
-          acceptConnection(fd);
-        }
-      } else {
-        handleEvent(fd, eventFlags);
-      }
+      handleEvent(fd, eventFlags);
     }
   }
 
@@ -123,11 +116,17 @@ void ServerManager::handleEvent(int fd, uint32_t events) {
 }
 
 void ServerManager::handleEpollIn(int listenFd) {
+  if (isListeningSocket(listenFd)) {
+    std::cout << "Socket " << listenFd << ": Ready to accept connection"
+              << std::endl;
+    acceptConnection(listenFd);
+    return;
+  }
   clients.find(listenFd)->second->requestRoutine();
 }
 
 void ServerManager::handleEpollOut(int listenFd) {
-  std::cout << "Socket " << listenFd << ": Ready to write" << std::endl;
+  // std::cout << "Socket " << listenFd << ": Ready to write" << std::endl;
   clients.find(listenFd)->second->responsesRoutine();
 }
 

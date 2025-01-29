@@ -88,6 +88,10 @@ void RequestParser::parseHeaders(std::string::size_type& bodyStartPos) {
         parseAcceptEncoding(value);
       } else if (lowerKey == "connection") {
         parseConnection(value);
+      } else if (lowerKey == "content-type") {
+        requestToFill.setContentType(value);
+      } else if (lowerKey == "content-length") {
+        requestToFill.setContentLength(value);
       }
     }
 
@@ -99,6 +103,9 @@ void RequestParser::parseBody(std::string::size_type bodyStartPos) {
   if (bodyStartPos < request.size()) {
     std::string body = request.substr(bodyStartPos);
     requestToFill.setBody(body);
+    if (requestToFill.getMethod() == "POST") {
+      requestToFill.setPostData(body);
+    }
   }
 }
 

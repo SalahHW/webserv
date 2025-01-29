@@ -2,8 +2,9 @@
 
 #include "Cgi.hpp"
 
-Request::Request(const std::string& request)
-    : methodGood(false),
+Request::Request(const std::string& request, size_t fd)
+    : fd(fd),
+      methodGood(false),
       uriGood(false),
       versionGood(false),
       hostGood(false),
@@ -29,7 +30,6 @@ Request::Request(const std::string& request)
   connectionGood = RequestValidator::validateConnection(Connection);
   isRequestGood = RequestValidator::validateRequest(*this);
   isParsed = true;
-  std::cout << "request = " << request << std::endl;
   displayRequest();
 }
 
@@ -123,6 +123,20 @@ void Request::setIsACgi(bool isACgi) { this->isACgi = isACgi; }
 
 void Request::setIsParsed(bool isParsed) { this->isParsed = isParsed; }
 
+void Request::setContentType(const std::string& type) { contentType = type; }
+
+void Request::setContentLength(const std::string& length) {
+  contentLength = length;
+}
+
+void Request::setPostData(const std::string& data) { postData = data; }
+
+const std::string& Request::getContentType() const { return contentType; }
+
+const std::string& Request::getContentLength() const { return contentLength; }
+
+const std::string& Request::getPostData() const { return postData; }
+
 const std::string& Request::getMethod() const { return this->method; }
 
 const std::string& Request::getUri() const { return this->uri; }
@@ -191,4 +205,7 @@ void Request::displayRequest() const {
   std::cout << "Connection: " << this->Connection << std::endl;
   std::cout << "Body: " << this->body << std::endl;
   std::cout << "Host Name: " << this->hostName << std::endl;
+  std::cout << "Content Type: " << this->contentType << std::endl;
+  std::cout << "Content Length: " << this->contentLength << std::endl;
+  std::cout << "Post Data: " << this->postData << std::endl;
 }

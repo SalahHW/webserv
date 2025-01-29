@@ -31,18 +31,11 @@ int Client::getListenFd() const { return this->listenFd; }
 int Client::getConnectionFd() const { return this->connectionFd; }
 
 void Client::closeConnection() {
-  for (std::deque<Request>::iterator it = requests.begin();
-       it != requests.end(); ++it) {
-    delete (*it).getResponse()->getResponseBuilder();
-    delete (*it).getResponse();
-    delete &(*it);
-  }
   close(connectionFd);
   clearBuffer();
 }
 
 void Client::appendToBuffer(const char* data, size_t len) {
-  std::cout << "Appending to buffer: " << data << std::endl;
   buffer.append(data, len);
 }
 
@@ -85,22 +78,10 @@ double Client::getCurrentTime(void) {
 }
 
 void Client::treatAPost() {
-  std::cout << "Treat a post" << std::endl;
-  if (buffer.find("Content-Length: ")) {
-    size_t contentLength = parseContentLength(buffer);
-    char buffer[contentLength];
-    recv(connectionFd, buffer, contentLength, 0);
-    appendToBuffer(buffer, contentLength);
-    Request* request = new Request(buffer);
-    requests.push_back(*request);
-    clearBuffer();
-    eventToOut();
-  } else {
-    Request* request = new Request(buffer);
-    requests.push_back(*request);
-    clearBuffer();
-    eventToOut();
-  }
+  Request* request = new Request(getBuffer(), connectionFd);
+  requests.push_back(*request);
+  clearBuffer();
+  eventToOut();
 }
 
 size_t Client::parseContentLength(const std::string& headers) {
@@ -138,7 +119,7 @@ void Client::requestRoutine() {
     treatAPost();
   } else if (buffer.find("\r\n\r\n") != std::string::npos) {
     eventToOut();
-    Request* request = new Request(getBuffer());
+    Request* request = new Request(getBuffer(), connectionFd);
     requests.push_back(*request);
     clearBuffer();  // clear only before the \r\n\r\n and before
   }
@@ -149,7 +130,7 @@ void Client::responsesRoutine() {
   if (!requests.empty()) {
     for (std::deque<Request>::iterator it = requests.begin();
          it != requests.end(); ++it) {
-            if (it->getIsTreated() &&
+      if (it->getIsTreated() &&
           it->getConnection() == "Connection: close\r\n") {
         eventToErr();
         return;
@@ -161,7 +142,19 @@ void Client::responsesRoutine() {
       }
       if (it->getMethod() == "POST") {
         std::cout << "POST" << std::endl;
-        sleep(100000);
+        if (it->getIsParsed()) {
+          if (it->getIsInTreatment()) {
+            it->getResponse()->getResponseBuilder();
+          } else {
+            it->setIsInTreatment(true);
+            it->setResponse(associatedPort->getVirtualHosts(),
+                            associatedPort->getDefaultVirtualHostName());
+          }
+          if (it->getIsTreated()) {
+            Sender sender(*it->getResponse(), connectionFd, *it);
+          }
+        }
+        it->getResponse()->getResponseBuilder();
       }
       if (it->getIsParsed()) {
         if (it->getIsInTreatment()) {
