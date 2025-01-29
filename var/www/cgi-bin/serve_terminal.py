@@ -95,7 +95,7 @@ Content-Length: 2720
         <div class="terminal-header">Welcome to the Terminal</div>
         <div class="terminal-body" id="output">
         </div>
-        <form method="POST" action="/cgi-bin/your_cgi_script.py">
+        <form method="POST" action="/cgi-bin/terminal_exec.py">
             <div class="input-section">
                 <label for="command-input">$</label>
                 <input type="text" id="command-input" name="command" placeholder="Enter your command here..." />
