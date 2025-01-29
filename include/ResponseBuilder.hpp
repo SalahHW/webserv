@@ -60,6 +60,7 @@ class ResponseBuilder {
   const std::string to_string(size_t number);
   const std::string findContentType(const std::string& fileName);
   size_t getFileSize(const std::string& fileName);
+  void handleCgi();
 
  public:
   ResponseBuilder(Request* request, Response& response,

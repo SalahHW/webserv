@@ -15,6 +15,11 @@ ResponseBuilder::ResponseBuilder(
       statusCode(0),
       virtualHost(
           findMatchingVirtualHost(virtualHosts, defaultVirtualHostName)) {
+  if (request->getIsRequestGood() &&
+      request->getUri().find("cgi-bin") != std::string::npos) {
+    handleCgi();
+    return;
+  }
   try {
     // checkRequest();
     if (request->getMethod() == "POST") {
@@ -62,11 +67,9 @@ ResponseBuilder::ResponseBuilder(
 size_t ResponseBuilder::getStatusCode() const { return statusCode; }
 
 void ResponseBuilder::treatAPost() {
-  //CgiHandler cgi(*request, "/home/sickest-one/Travail/webserv/var/www/cgi-bin",
-  //               request->getBody());
-  if (!findMatchingLocation()) {
-    setStatusCode(404);
-  }
+  std::cout << "POST" << std::endl;
+  // std::cout << "UPLOAD LOCATION: " << matchingLocation.getUploadLocation()
+  //           << std::endl;
 }
 
 void ResponseBuilder::buildErrorContentLength() {
@@ -261,26 +264,44 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
       }
     }
 
-    std::vector<char> responseChar;
+    std::vector<char> headersChar;
+    std::vector<char> bodyChar;
 
     std::ostringstream oss;
     oss << errorCode;
     std::string errorCodeStr = oss.str();
 
-    appendToVector(responseChar, "<html>\r\n");
-    appendToVector(responseChar, "<head>\r\n");
-    appendToVector(responseChar, "    <title>Error ");
-    appendToVector(responseChar, "/title>\r\n");
-    appendToVector(responseChar, "</head>\r\n");
-    appendToVector(responseChar, "<body>\r\n");
-    appendToVector(responseChar, "    <h1>Error " + errorCodeStr + "</h1>\r\n");
-    appendToVector(responseChar,
-                   "    <p>The requested page could not be "
-                   "found.</p>\r\n");
-    appendToVector(responseChar, "</body>\r\n");
-    appendToVector(responseChar, "</html>");
+    std::ostringstream bodyStream;
+    bodyStream << "<html>\r\n"
+               << "<head>\r\n"
+               << "    <title>Error " << errorCodeStr << "</title>\r\n"
+               << "</head>\r\n"
+               << "<body>\r\n"
+               << "    <h1>Error " << errorCodeStr << "</h1>\r\n"
+               << "    <p>The requested page could not be found.</p>\r\n"
+               << "</body>\r\n"
+               << "</html>\r\n";
+    std::string body = bodyStream.str();
+
+    bodyChar.insert(bodyChar.end(), body.begin(), body.end());
+
+    std::ostringstream contentLengthStream;
+    contentLengthStream << "Content-Length: " << body.size() << "\r\n";
+
+    std::ostringstream headersStream;
+    headersStream << "HTTP/1.1 " << errorCodeStr << " "
+                  << getReasonPhraseForCode(errorCode) << "\r\n"
+                  << "Content-Type: text/html\r\n"
+                  << contentLengthStream.str() << "\r\n";
+    std::string headers = headersStream.str();
+
+    headersChar.insert(headersChar.end(), headers.begin(), headers.end());
+
+    std::vector<char> responseChar;
+    responseChar.insert(responseChar.end(), bodyChar.begin(), bodyChar.end());
 
     response.setBody(responseChar);
+    response.setFullHeader(headersChar);
     request->setIsTreated(true);
   }
 }
@@ -422,7 +443,6 @@ void ResponseBuilder::buildBody() {
   std::vector<char> buffer(bufferSize);
   file.read(buffer.data(), bufferSize);
   std::streamsize bytesRead = file.gcount();
-  std::cout << "BYTES READ: " << bytesRead << std::endl;
   if (bytesRead < 1024) {
     buffer.resize(bytesRead);
   }
@@ -451,22 +471,6 @@ void ResponseBuilder::buildBody() {
 
   response.setBytesLoad(response.getFullHeader().size() + bytesRead);
 }
-
-// std::vector<char> ResponseBuilder::toHexVector(std::size_t value) {
-//   static const char* digits = "0123456789abcdef";
-//   std::vector<char> result;
-//   if (value == 0) {
-//     result.push_back('0');
-//     return result;
-//   }
-//   while (value > 0) {
-//     std::size_t digit = value % 16;
-//     value /= 16;
-//     result.push_back(digits[digit]);
-//   }
-//   std::reverse(result.begin(), result.end());
-//   return result;
-// }
 
 void ResponseBuilder::buildLocation() {}
 
@@ -556,35 +560,6 @@ void ResponseBuilder::buildFullHeader() {
   response.setFullHeader(fullHeader);
 }
 
-// void ResponseBuilder::buildFullHeader() {
-//   if (response.getContentLength().empty()) {
-
-//     response.setFullHeader(response.getStatusLine() + "\r\n" +
-//                            response.getContentType() + "\r\n" +
-//                            response.getTransferEncoding() +
-//                            response.getDate() +
-//                            "\r\n" + response.getConnection() + "\r\n\r\n");
-//   } else {
-//     response.setFullHeader(response.getStatusLine() + "\r\n" +
-//                            response.getContentType() + "\r\n" +
-//                            response.getTransferEncoding() +
-//                            response.getDate() +
-//                            "\r\n" + response.getContentLength() + "\r\n" +
-//                            response.getConnection() + "\r\n\r\n");
-//   }
-// }
-
-// void ResponseBuilder::buildFullResponse() {
-//   size_t size = response.getFullHeader().size();
-//   size += response.getBody().size();
-//   std::vector<char> fullResponse = response.getFullHeader();
-//   std::vector<char> body = response.getBody();
-//   fullResponse.insert(fullResponse.end(), response.getBody().begin(),
-//                       response.getBody().end());
-//   fullResponse.resize(size);
-//   response.setFullResponse(fullResponse);
-// }
-
 const std::string ResponseBuilder::to_string(size_t value) {
   std::ostringstream oss;
   oss << value;
@@ -603,4 +578,9 @@ size_t ResponseBuilder::getFileSize(const std::string& filePath) {
   file.seekg(0, std::ios::end);
   size_t size = static_cast<std::size_t>(file.tellg());
   return size;
+}
+
+void ResponseBuilder::handleCgi() {
+  // if(request->)
+  CgiHandler cgiHandler(*request);
 }

@@ -15,8 +15,8 @@
 CgiHandler::CgiHandler() {
 }
 
-CgiHandler::CgiHandler(Request &request, int outputFd) {
-    this->cgiExecution(request, outputFd);
+CgiHandler::CgiHandler(Request &request) {
+    this->cgiExecution(request);
 }
 
 CgiHandler::~CgiHandler()

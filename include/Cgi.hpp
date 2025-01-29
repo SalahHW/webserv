@@ -27,7 +27,7 @@ class CgiHandler
 {
 	public:
 		CgiHandler();
-		CgiHandler(Request &request, int outputFd);
+		CgiHandler(Request &request);
 		~CgiHandler();
 		CgiHandler (const CgiHandler &other);
 

@@ -34,18 +34,18 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
 
   if (ret > 0) {
     response.setBytesSent(response.getBytesSent() + ret);
-  } else if (ret < 0) {
-    perror("send error");
-    std::cerr << "Errno: " << errno << std::endl;
+  }  // else if (ret < 0) {
+  //   perror("send error");
+  //   std::cerr << "Errno: " << errno << std::endl;
 
-    if (errno == EPIPE) {
-      std::cerr << "Connection closed by peer (EPIPE)." << std::endl;
-    } else if (errno == ECONNRESET) {
-      std::cerr << "Connection reset by peer (ECONNRESET)." << std::endl;
-    } else if (errno == ENOTCONN) {
-      std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
-    }
-  }
+  //   if (errno == EPIPE) {
+  //     std::cerr << "Connection closed by peer (EPIPE)." << std::endl;
+  //   } else if (errno == ECONNRESET) {
+  //     std::cerr << "Connection reset by peer  (ECONNRESET)." << std::endl;
+  //   } else if (errno == ENOTCONN) {
+  //     std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
+  //   }
+  // }
   if (response.getContentLength().empty() && !request.getIsTreated()) {
     ret = send(sockfd, "\r\n", 2, MSG_NOSIGNAL);
   }

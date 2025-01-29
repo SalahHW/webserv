@@ -15,6 +15,7 @@ class VirtualHost;
 
 class Request {
  private:
+  size_t fd;
   std::string buffer;
   std::string method;
   std::string uri;
@@ -27,6 +28,9 @@ class Request {
   std::string Connection;
   std::string body;
   std::string hostName;
+  std::string contentType;
+  std::string contentLength;
+  std::string postData;
   bool methodGood;
   bool uriGood;
   bool versionGood;
@@ -45,7 +49,7 @@ class Request {
 
  public:
   Request();
-  Request(const std::string& request);
+  Request(const std::string& request, size_t fd);
   ~Request();
   void setMethod(const std::string& method);
   void setUri(const std::string& uri);
@@ -60,6 +64,9 @@ class Request {
   void setHostName(const std::string& hostName);
   void setResponse(const std::map<std::string, VirtualHost>& virtualHosts,
                    const std::string& defaultVirtualHostName);
+  void setContentType(const std::string& type);
+  void setContentLength(const std::string& length);
+  void setPostData(const std::string& data);
 
   void setMethodGood(bool methodGood);
   void setUriGood(bool uriGood);
@@ -88,6 +95,9 @@ class Request {
   const std::string& getBody() const;
   const std::string& getHostName() const;
   Response* getResponse() const;
+  const std::string& getContentType() const;
+  const std::string& getContentLength() const;
+  const std::string& getPostData() const;
 
   bool getHostGood() const;
   bool getUserAgentGood() const;
