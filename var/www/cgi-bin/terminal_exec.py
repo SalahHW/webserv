@@ -14,7 +14,7 @@ for line in form_data.split('&'):
         command = command.replace('+', ' ')  # Replace '+' with spaces
         command = command.replace('%20', ' ')  # Replace URL-encoded spaces
         break
-print(f"[DEBUG] Command: {command}", file=sys.stderr)
+
 # Execute the command in the terminal
 try:
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -22,7 +22,6 @@ try:
 except Exception as e:
     output = f"Error executing command: {str(e)}"
 
-print(f"[DEBUG] Output: {output}", file=sys.stderr)
 # Generate the updated HTML content
 html_body = f"""
 <!DOCTYPE html>
@@ -126,11 +125,17 @@ html_body = f"""
         </form>
     </div>
 </body>
-
 </html>
 """
-# Calculate the total length of the response (headers + body)
-response = f"HTTP/1.1 200 OK\r\nContent-Length: {len(html_body)}\r\n\r\n{html_body}"
+
+# Construct the full HTTP response
+response = (
+    "HTTP/1.1 200 OK\r\n"
+    "Content-Type: text/html\r\n"  # Add the Content-Type header
+    f"Content-Length: {len(html_body)}\r\n"
+    "\r\n"  # End of headers
+    f"{html_body}"
+)
 
 # Print the entire response
-print(response) 
+print(response)

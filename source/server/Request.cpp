@@ -1,7 +1,6 @@
 #include "Request.hpp"
 
 #include "Cgi.hpp"
-#include "Cgi.hpp"
 
 Request::Request(const std::string& request, size_t fd)
     : fd(fd),
