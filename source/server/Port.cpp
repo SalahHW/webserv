@@ -1,13 +1,15 @@
 #include "Port.hpp"
 
-Port::~Port() {}
+Port::~Port() { }
 
 Port::Port()
-    : isValid(true),
-      port(-1),
-      listenFd(-1),
-      hasVirtualHost(false),
-      hasDefaultVirtualHost(false) {}
+    : isValid(true)
+    , port(-1)
+    , listenFd(-1)
+    , hasVirtualHost(false)
+    , hasDefaultVirtualHost(false)
+{
+}
 
 // Port::Port(const Port& src) { *this = src; }
 
@@ -23,69 +25,84 @@ Port::Port()
 //     return *this;
 // }
 
-void Port::initialize() {
+void Port::initialize()
+{
   memset(&addr, 0, sizeof(addr));
   setupSocket();
   bindSocket();
   makeSocketNonBlocking();
 }
 
-void Port::setupSocket() {
+void Port::setupSocket()
+{
   this->listenFd = socket(AF_INET, SOCK_STREAM, 0);
-  if (this->listenFd == -1) {
+  if (this->listenFd == -1)
+  {
     std::cerr << "Error: Socket creation failed" << std::endl;
     this->isValid = false;
   }
   int optval = 1;
   if (setsockopt(this->listenFd, SOL_SOCKET, SO_REUSEADDR, &optval,
-                 sizeof(optval)) == -1) {
+          sizeof(optval))
+      == -1)
+  {
     std::cerr << "Error: setsockopt" << std::endl;
     this->isValid = false;
   }
 }
 
-void Port::bindSocket() {
+void Port::bindSocket()
+{
   addr.sin_family = AF_INET;
   addr.sin_port = htons(this->port);
   addr.sin_addr.s_addr = INADDR_ANY;
   int bindResult = bind(this->listenFd, (struct sockaddr*)&addr, sizeof(addr));
-  if (bindResult == -1) {
+  if (bindResult == -1)
+  {
     std::cerr << "Error: Port binding failed on port " << this->port
               << std::endl;
     this->isValid = false;
   }
 }
 
-void Port::makeSocketNonBlocking() {
+void Port::makeSocketNonBlocking()
+{
   int flags = fcntl(this->listenFd, F_GETFL, 0);
-  if (flags == -1) {
+  if (flags == -1)
+  {
     std::cerr << "Error: fcntl" << std::endl;
     this->isValid = false;
   }
   flags |= O_NONBLOCK;
-  if (fcntl(this->listenFd, F_SETFL, flags) == -1) {
+  if (fcntl(this->listenFd, F_SETFL, flags) == -1)
+  {
     std::cerr << "Error: fcntl flags" << std::endl;
     this->isValid = false;
   }
 }
 
-void Port::startListening() {
-  if (listen(this->listenFd, SOMAXCONN) == -1) {
+void Port::startListening()
+{
+  if (listen(this->listenFd, SOMAXCONN) == -1)
+  {
     std::cerr << "Error: Failed to listen on port " << this->port << std::endl;
     this->isValid = false;
   }
 }
 
-void Port::processClientData(Client& client) {
-  Request request(client.getBuffer());  // add as an attribute of each client
+void Port::processClientData(Client& client)
+{
+  Request request(client.getBuffer()); // add as an attribute of each client
   request.displayRequest();
   Response response(request, getVirtualHosts(), getDefaultVirtualHostName());
 }
 
-void Port::addVirtualHost(const Server& server) {
+void Port::addVirtualHost(const Server& server)
+{
   const std::string& serverName = server.getName();
 
-  if (virtualHosts.find(serverName) != virtualHosts.end()) {
+  if (virtualHosts.find(serverName) != virtualHosts.end())
+  {
     std::cerr << "Warning: VirtualHost \"" << serverName
               << "\" already exists on port " << port << std::endl;
   }
@@ -95,12 +112,14 @@ void Port::addVirtualHost(const Server& server) {
   hasVirtualHost = true;
 }
 
-VirtualHost Port::createVirtualHost(const Server& server) {
+VirtualHost Port::createVirtualHost(const Server& server)
+{
   VirtualHost newHost;
 
   newHost.setName(server.getName());
   newHost.setClientBodyTempPath(server.getClientBodyTempPath());
   newHost.setClientMaxBodySize(server.getClientMaxBodySize());
+  newHost.setClientTimeOut(server.getClientTimeOut());
   newHost.setErrorPages(server.getErrorPages());
   newHost.setLocations(server.getLocations());
 
@@ -109,12 +128,14 @@ VirtualHost Port::createVirtualHost(const Server& server) {
 
 bool Port::good() const { return this->isValid; }
 
-void Port::displayHosts() const {
+void Port::displayHosts() const
+{
   std::cout << "Printing virtual Hosts on port " << port << ":" << std::endl;
   std::cout << "Default Hostname: " << defaultVirtualHostName << std::endl;
   std::map<std::string, VirtualHost>::const_iterator itHost;
 
-  for (itHost = virtualHosts.begin(); itHost != virtualHosts.end(); ++itHost) {
+  for (itHost = virtualHosts.begin(); itHost != virtualHosts.end(); ++itHost)
+  {
     const VirtualHost host = itHost->second;
 
     std::cout << "File Descriptor: " << this->getListenFd() << std::endl;
@@ -131,17 +152,20 @@ int Port::getPort() const { return this->port; }
 
 int Port::getListenFd() const { return this->listenFd; }
 
-const std::map<std::string, VirtualHost>& Port::getVirtualHosts() const {
+const std::map<std::string, VirtualHost>& Port::getVirtualHosts() const
+{
   return this->virtualHosts;
 }
 
 bool Port::getHasVirtualHost() const { return this->hasVirtualHost; }
 
-bool Port::getHasDefaultVirtualHost() const {
+bool Port::getHasDefaultVirtualHost() const
+{
   return this->hasDefaultVirtualHost;
 }
 
-const std::string& Port::getDefaultVirtualHostName() const {
+const std::string& Port::getDefaultVirtualHostName() const
+{
   return this->defaultVirtualHostName;
 }
 
@@ -149,10 +173,12 @@ void Port::setPort(int port) { this->port = port; }
 
 void Port::setListenFd(int fd) { this->listenFd = fd; }
 
-void Port::setDefaultVirtualHostName(const std::string& hostName) {
+void Port::setDefaultVirtualHostName(const std::string& hostName)
+{
   this->defaultVirtualHostName = hostName;
 }
 
-void Port::setHasDefaultVirtualHostName(bool value) {
+void Port::setHasDefaultVirtualHostName(bool value)
+{
   this->hasDefaultVirtualHost = value;
 }

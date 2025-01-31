@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
-class Location {
- public:
+class Location
+{
+  public:
   ~Location();
   Location();
   Location(const Location& src);
@@ -22,6 +23,7 @@ class Location {
   void setPostAccepted(bool postAcceptedValue);
   void setDeleteAccepted(bool deleteAcceptedValue);
   void setClientMaxBodySize(int size);
+  void setClientTimeOut(int time);
   void setReturnCode(int returnCodeValue);
   void addPath(const std::string& pathValue);
 
@@ -36,6 +38,7 @@ class Location {
   bool getPostAccepted() const;
   bool getDeleteAccepted() const;
   int getClientMaxBodySize() const;
+  int getClientTimeOut() const;
   int getReturnCode() const;
   const std::vector<std::string>& getPaths() const;
 
@@ -49,12 +52,13 @@ class Location {
   bool isPostAcceptedDefined() const { return hasPostAccepted; }
   bool isDeleteAcceptedDefined() const { return hasDeleteAccepted; }
   bool isClientMaxBodySizeDefined() const { return hasClientMaxBodySize; }
+  bool isClientTimeOutDefined() const { return hasClientTimeOut; }
   bool isReturnCodeDefined() const { return hasReturnCode; }
   bool isPathsDefined() const { return hasPaths; }
 
   void displayLocationInfo() const;
 
- private:
+  private:
   std::string path;
   std::string rootDirectory;
   std::string indexFile;
@@ -65,6 +69,7 @@ class Location {
   bool postAccepted;
   bool deleteAccepted;
   int clientMaxBodySize;
+  int clientTimeOut;
   int returnCode;
   std::vector<std::string> paths;
 
@@ -78,6 +83,7 @@ class Location {
   bool hasPostAccepted;
   bool hasDeleteAccepted;
   bool hasClientMaxBodySize;
+  bool hasClientTimeOut;
   bool hasReturnCode;
   bool hasPaths;
 };

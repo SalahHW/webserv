@@ -19,6 +19,7 @@ class Server
   void setClientMaxBodySize(int size);
   void setName(const std::string& name);
   void setClientBodyTempPath(const std::string& clientBodyTempPath);
+  void setClientTimeOut(int timeOut);
   void setErrorPages(std::map<size_t, std::string> errorPages);
   void setExplicitlyDefault(bool isExplicitlyDefault);
 
@@ -27,6 +28,7 @@ class Server
 
   int getPort() const;
   int getClientMaxBodySize() const;
+  int getClientTimeOut() const;
   const std::string& getName() const;
   const std::string& getClientBodyTempPath() const;
   const std::map<size_t, std::string>& getErrorPages() const;
@@ -36,6 +38,7 @@ class Server
   bool isNameDefined() const { return hasName; };
   bool isClientBodyTempPathDefined() const { return hasClientBodyTempPath; };
   bool isClientMaxBodySizeDefined() const { return hasClientMaxBodySize; };
+  bool isClientTimeOutDefined() const { return hasClientTimeOut; };
   bool isErrorPagesDefined() const { return hasErrorPages; };
   bool isLocationsDefined() const { return hasLocations; };
 
@@ -49,12 +52,14 @@ class Server
   std::string name;
   std::string clientBodyTempPath;
   int clientMaxBodySize;
+  int clientTimeOut;
   bool isDefault;
   bool explicitlyDefault;
   bool hasPort;
   bool hasName;
   bool hasClientBodyTempPath;
   bool hasClientMaxBodySize;
+  bool hasClientTimeOut;
   bool hasErrorPages;
   bool hasLocations;
 

@@ -5,8 +5,9 @@
 
 #include "Location.hpp"
 
-class VirtualHost {
- public:
+class VirtualHost
+{
+  public:
   ~VirtualHost();
   VirtualHost();
   VirtualHost(const VirtualHost& src);
@@ -15,19 +16,22 @@ class VirtualHost {
   void setName(const std::string& name);
   void setClientBodyTempPath(const std::string& path);
   void setClientMaxBodySize(int clientMaxBodySize);
+  void setClientTimeOut(int timeOut);
   void setErrorPages(const std::map<size_t, std::string>& errorPages);
   void setLocations(const std::map<std::string, Location>& locations);
 
   const std::string& getName() const;
   const std::string& getClientBodyTempPath() const;
   int getClientMaxBodySize() const;
+  int getClientTimeOut() const;
   const std::map<size_t, std::string>& getErrorPages() const;
   const std::map<std::string, Location>& getLocations() const;
 
- private:
+  private:
   std::string name;
   std::string clientBodyTempPath;
   int clientMaxBodySize;
+  int clientTimeOut;
   std::map<size_t, std::string> errorPages;
   std::map<std::string, Location> locations;
 };

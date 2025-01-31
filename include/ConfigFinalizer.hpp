@@ -11,41 +11,42 @@
 #include "Port.hpp"
 #include "Server.hpp"
 
-class ConfigFinalizer {
-public:
-    ~ConfigFinalizer();
-    ConfigFinalizer();
-    ConfigFinalizer(const ConfigFinalizer& other);
-    ConfigFinalizer& operator=(const ConfigFinalizer& other);
+class ConfigFinalizer
+{
+  public:
+  ~ConfigFinalizer();
+  ConfigFinalizer();
+  ConfigFinalizer(const ConfigFinalizer& other);
+  ConfigFinalizer& operator=(const ConfigFinalizer& other);
 
-    bool good() const;
-    const std::map<int, Port*>& getPorts() const;
+  bool good() const;
+  const std::map<int, Port*>& getPorts() const;
 
+  void finalizeConfig(std::vector<Server>& servers);
+  void finalizeServer(Server& server);
+  void finalizeLocations(Server& server);
+  void addUsedPort(int port);
+  void createPorts();
+  void assignServersToPorts(const std::vector<Server>& servers);
 
-    void finalizeConfig(std::vector<Server>& servers);
-    void finalizeServer(Server &server);
-    void finalizeLocations(Server &server);
-    void addUsedPort(int port);
-    void createPorts();
-    void assignServersToPorts(const std::vector<Server>& servers);
+  private:
+  // Flags
+  bool isValid;
 
-private:
-    // Flags
-    bool isValid;
+  // Default Server Values
+  std::string defaultServerName;
+  std::string defaultServerRoot;
+  std::string defaultServerIndex;
+  std::string defaultServerClientBodyTempPath;
+  int defaultServerPort;
+  int defaultServerClientMaxBodySize;
+  int defaultServerClientTimeOut;
 
-    // Default Server Values
-    std::string defaultServerName;
-    std::string defaultServerRoot;
-    std::string defaultServerIndex;
-    std::string defaultServerClientBodyTempPath;
-    int defaultServerPort;
-    int defaultServerClientMaxBodySize;
+  // Default Location Values
+  std::string defaultLocationPath;
+  std::string defaultLocationRoot;
 
-    // Default Location Values
-    std::string defaultLocationPath;
-    std::string defaultLocationRoot;
+  std::list<int> usedPorts;
 
-    std::list<int> usedPorts;
-
-    std::map<int, Port*> ports;
+  std::map<int, Port*> ports;
 };

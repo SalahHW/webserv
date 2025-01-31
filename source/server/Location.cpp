@@ -13,6 +13,7 @@ Location::Location()
     , postAccepted(true)
     , deleteAccepted(true)
     , clientMaxBodySize(0)
+    , clientTimeOut(0)
     , returnCode(0)
     , hasPath(false)
     , hasRootDirectory(false)
@@ -23,6 +24,7 @@ Location::Location()
     , hasPostAccepted(false)
     , hasDeleteAccepted(false)
     , hasClientMaxBodySize(false)
+    , hasClientTimeOut(false)
     , hasReturnCode(false)
     , hasPaths(false)
 {
@@ -117,6 +119,12 @@ void Location::setClientMaxBodySize(int size)
   this->hasClientMaxBodySize = true;
 }
 
+void Location::setClientTimeOut(int time)
+{
+  this->clientTimeOut = time;
+  this->hasClientTimeOut = true;
+}
+
 void Location::setReturnCode(int returnCode)
 {
   this->returnCode = returnCode;
@@ -158,6 +166,8 @@ bool Location::getDeleteAccepted() const { return this->deleteAccepted; }
 
 int Location::getClientMaxBodySize() const { return this->clientMaxBodySize; }
 
+int Location::getClientTimeOut() const { return this->clientTimeOut; }
+
 int Location::getReturnCode() const { return this->returnCode; }
 
 const std::vector<std::string>& Location::getPaths() const
@@ -190,4 +200,6 @@ void Location::displayLocationInfo() const
     std::cout << "- Client Body Temp Path: " << clientBodyTempPath << std::endl;
   if (isClientMaxBodySizeDefined())
     std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes" << std::endl;
+  if (isClientTimeOutDefined())
+    std::cout << "- Client TimeOut: " << clientTimeOut << "s" << std::endl;
 }

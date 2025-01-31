@@ -4,6 +4,7 @@ VirtualHost::~VirtualHost() { }
 
 VirtualHost::VirtualHost()
     : clientMaxBodySize(-1)
+    , clientTimeOut(0)
 {
 }
 
@@ -19,6 +20,7 @@ VirtualHost& VirtualHost::operator=(const VirtualHost& other)
     this->name = other.name;
     this->clientBodyTempPath = other.clientBodyTempPath;
     this->clientMaxBodySize = other.clientMaxBodySize;
+    this->clientTimeOut = other.clientTimeOut;
     this->errorPages = other.errorPages;
     this->locations = other.locations;
   }
@@ -40,6 +42,11 @@ void VirtualHost::setClientMaxBodySize(int clientMaxBodySize)
   this->clientMaxBodySize = clientMaxBodySize;
 }
 
+void VirtualHost::setClientTimeOut(int timeOut)
+{
+  this->clientTimeOut = timeOut;
+}
+
 void VirtualHost::setErrorPages(const std::map<size_t, std::string>& errorPages)
 {
   this->errorPages = errorPages;
@@ -55,9 +62,19 @@ const std::string& VirtualHost::getName() const
   return name;
 }
 
+const std::string& VirtualHost::getClientBodyTempPath() const
+{
+  return clientBodyTempPath;
+}
+
 int VirtualHost::getClientMaxBodySize() const
 {
   return clientMaxBodySize;
+}
+
+int VirtualHost::getClientTimeOut() const
+{
+  return clientTimeOut;
 }
 
 const std::map<size_t, std::string>& VirtualHost::getErrorPages() const

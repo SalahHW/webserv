@@ -6,6 +6,7 @@
 #include "AutoIndexDirective.hpp"
 #include "ClientBodyTempPathDirectice.hpp"
 #include "ClientMaxBodySizeDirective.hpp"
+#include "ClientTimeOutDirective.hpp"
 #include "DefaultServerDirective.hpp"
 #include "DenyDirective.hpp"
 #include "Directive.hpp"

@@ -10,6 +10,7 @@ ConfigFinalizer::ConfigFinalizer()
     , defaultServerClientBodyTempPath("/client_temp/")
     , defaultServerPort(80)
     , defaultServerClientMaxBodySize(1 * 1024 * 1024)
+    , defaultServerClientTimeOut(60)
     , defaultLocationPath("/")
     , defaultLocationRoot("/www/")
 {
@@ -31,6 +32,7 @@ ConfigFinalizer& ConfigFinalizer::operator=(const ConfigFinalizer& other)
     this->defaultServerClientBodyTempPath = other.defaultServerClientBodyTempPath;
     this->defaultServerPort = other.defaultServerPort;
     this->defaultServerClientMaxBodySize = other.defaultServerClientMaxBodySize;
+    this->defaultServerClientTimeOut = other.defaultServerClientTimeOut;
     this->defaultLocationPath = other.defaultLocationPath;
     this->defaultLocationRoot = other.defaultLocationRoot;
     this->ports = other.ports;
@@ -73,6 +75,10 @@ void ConfigFinalizer::finalizeServer(Server& server)
   {
     server.setClientMaxBodySize(defaultServerClientMaxBodySize);
   }
+  if (!server.isClientTimeOutDefined())
+  {
+    server.setClientTimeOut(defaultServerClientTimeOut);
+  }
   // TODO: Complete default Server configuration
 }
 
@@ -104,6 +110,10 @@ void ConfigFinalizer::finalizeLocations(Server& server)
     if (!location.isClientBodyTempPathDefined())
     {
       location.setClientBodyTempPath(server.getClientBodyTempPath());
+    }
+    if (!location.isClientTimeOutDefined())
+    {
+      location.setClientTimeOut(server.getClientTimeOut());
     }
     // TODO: Complete default Location configuration
   }

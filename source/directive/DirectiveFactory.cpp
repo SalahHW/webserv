@@ -8,6 +8,7 @@ DirectiveFactory::DirectiveFactory()
   registerDirective<ServerNameDirective>("server_name");
   registerDirective<ClientMaxBodySizeDirective>("client_max_body_size");
   registerDirective<ClientBodyTempPathDirective>("client_body_temp_path");
+  registerDirective<ClientTimeOutDirective>("client_timeout");
   registerDirective<ErrorPageDirective>("error_page");
   registerDirective<RootDirective>("root");
   registerDirective<IndexDirective>("index");

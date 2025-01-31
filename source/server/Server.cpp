@@ -10,11 +10,13 @@ Server::Server()
     , name("")
     , clientBodyTempPath("")
     , clientMaxBodySize(-1)
+    , clientTimeOut(0)
     , explicitlyDefault(false)
     , hasPort(false)
     , hasName(false)
     , hasClientBodyTempPath(false)
     , hasClientMaxBodySize(false)
+    , hasClientTimeOut(false)
     , hasErrorPages(false)
     , hasLocations(false)
 {
@@ -30,6 +32,7 @@ Server& Server::operator=(const Server& src)
     this->name = src.name;
     this->clientBodyTempPath = src.clientBodyTempPath;
     this->clientMaxBodySize = src.clientMaxBodySize;
+    this->clientTimeOut = src.clientTimeOut;
     this->isDefault = src.isDefault;
     this->explicitlyDefault = src.explicitlyDefault;
     this->errorPages = src.errorPages;
@@ -38,6 +41,7 @@ Server& Server::operator=(const Server& src)
     this->hasName = src.hasName;
     this->hasClientBodyTempPath = src.hasClientBodyTempPath;
     this->hasClientMaxBodySize = src.hasClientMaxBodySize;
+    this->hasClientTimeOut = src.hasClientTimeOut;
     this->hasErrorPages = src.hasErrorPages;
     this->hasLocations = src.hasLocations;
   }
@@ -54,6 +58,12 @@ void Server::setClientMaxBodySize(int size)
 {
   this->clientMaxBodySize = size;
   this->hasClientMaxBodySize = true;
+}
+
+void Server::setClientTimeOut(int timeOut)
+{
+  this->clientTimeOut = timeOut;
+  this->hasClientTimeOut = true;
 }
 
 void Server::setName(const std::string& name)
@@ -101,6 +111,11 @@ int Server::getClientMaxBodySize() const
   return this->clientMaxBodySize;
 }
 
+int Server::getClientTimeOut() const
+{
+  return this->clientTimeOut;
+}
+
 const std::string& Server::getName() const
 {
   return this->name;
@@ -142,6 +157,8 @@ void Server::displayServerInfo() const
     std::cout << "- Client Body Temp Path: " << clientBodyTempPath << std::endl;
   if (this->hasClientMaxBodySize)
     std::cout << "- Client Max Body Size: " << clientMaxBodySize << " bytes" << std::endl;
+  if (this->hasClientTimeOut)
+    std::cout << "- Client TimeOut: " << clientTimeOut << "s" << std::endl;
   std::cout << "- Default Server: " << (isDefault ? "true" : "false") << std::endl;
   std::cout << "- Explicitly Default: " << (explicitlyDefault ? "true" : "false") << std::endl;
   if (this->hasErrorPages)
