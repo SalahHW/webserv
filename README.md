@@ -27,7 +27,7 @@ make re 	# Recompiles the entire project
 ```sh
 ./webserv [configuration_file]
 ```
-If no configuration file is provided, the server will use the __default configuration file__ located at `config/webserv.conf`
+_If no configuration file is provided, the server will use the __default configuration file__ located at `config/webserv.conf`_
 
 ## Configuration
 ### Writing a Configuration File
