@@ -35,8 +35,36 @@ The configuration file is structured similarly to Nginx, using blocks and direct
 Each directive must end with a semicolon `;`.
 
 ### Blocks
-- __server:__ Defines a server block that listens on a specific port
-- __location:__ Specifies route handling
+- __server:__ 
+The server block defines the configuration for an entire server instance. It specifies settings for a server that listens on a specific port and handles incoming HTTP requests. Within this block, you configure directives such as the listening port, server name, error pages, and default server settings. Essentially, this block sets the overall behavior for a virtual host.
+- __location:__ 
+The location block is nested within a server block and is used to define configurations for specific routes or URIs. It allows for fine-grained control over how requests to particular paths are handled. Within a location block, you can override or extend server-level directives (such as client_max_body_size or custom error pages) to apply unique rules and behavior for that route.
+
+#### Example
+```nginx
+server {
+	listen 8080;
+	server_name localhost;
+	client_max_body_size 1m;
+
+	# This location block applies to the root URL "/"
+	location / {
+		# Override client_max_body_size for the root path
+		client_max_body_size 2m;
+	}
+
+	# This location block applies to URLs starting with "/images/
+	location /images {
+		# Enable autoindex to list files in the /images directory
+		autoindex on;
+	}
+}
+```
+In this example:
+- The __server__ block sets up a server listening on port `8080` with a specified server name and a maximum request body size of  `1m`.
+- The first __location__ block, matching the root path `/`, overrides the `client_max_body_size` to `1m` specifically for requests to `/`.
+- The second __location__ block, matching `/images`, enables directory listing with the `autoindex` directive.
+
 ---
 ### Directives
 ##### listen
