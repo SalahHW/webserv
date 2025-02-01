@@ -13,14 +13,14 @@ Webserv is an HTTP server written in __C++98__, designed to be compliant with __
 ### Compilation
 
 ```make
-make				# Compiles the project
+make		# Compiles the project
 ```
 
 ### Cleaning
 ```make
-make clean			# Removes object files
-make fclean			# Removes object files and the executable
-make re 			# Recompiles the entire project
+make clean	# Removes object files
+make fclean	# Removes object files and the executable
+make re 	# Recompiles the entire project
 ```
 
 ### Usage
