@@ -65,21 +65,25 @@ Default:	1m
 Context: 	server, location
 ```
 Sets the maximum allowed size of the client request body.
+
 _Valid Range must be any positive integer followed by a size unit (k, m, g). The value will be converted to bytes must not exceed __MAX_INT__._
 
 ---
-### error_page
+#### error_page
 ```
 Syntax:		error_page <code> <uri>;
-Default:
+Default:	None (uses built-in error responses)
 Context: 	server
 ```
+Configures custom error pages for specific HTTP status codes.
 
 ---
-#### root
+#### default_server
 ```
-Syntax:		root <name>;
-Default:	None
-Context: 	location
+Syntax:		default_server;
+Default:	None (first defined host:port will be the default)
+Context: 	server
 ```
-.
+Defines whether the server block should act as the default for a given host:port. This means that if multiple server blocks listen on the same host:port, the default one will handle requests that do not match any other explicitly defined server block.
+
+_If this flag is omitted, no server will be explicitly marked as the default, and the first declared server block for that host:port will be automatically designated as the default._
