@@ -1,6 +1,6 @@
 # 42 School - Webserv
 
-Webserv is an HTTP server written in __C++98__, designed to be compliant with __HTTP/1.1__ specifications. It manages multiple simultaneous connections and supports __GET__, __POST__ and __DELETE__ methods.
+Webserv is a 42 school project that requires implementing an HTTP server written in __C++98__, designed to be compliant with __HTTP/1.1__ specifications. It manages multiple simultaneous connections and supports __GET__, __POST__ and __DELETE__ methods.
 
 ## Features
 - Handle multiple ports and virtual hosts
@@ -39,7 +39,7 @@ Each directive must end with a semicolon `;`.
 - __location:__ Specifies route handling
 ---
 ### Directives
-#### listen
+##### listen
 ```
 Syntax:		listen <port>;
 Default:	80
@@ -49,7 +49,7 @@ Specifies the port number the server will listen on.
 _The valid range is beetwen __1__ and __65535__ Ports below __1024__ requires sudo privileges._
 
 ---
-#### server_name
+##### server_name
 ```
 Syntax:		server_name [name];
 Default:	"_"
@@ -58,7 +58,7 @@ Context: 	server
 Defines a name for the server.
 
 ---
-#### client_max_body_size
+##### client_max_body_size
 ```
 Syntax:		client_max_body_size <size>[k|m|g];
 Default:	1m
@@ -69,7 +69,7 @@ Sets the maximum allowed size of the client request body.
 _Valid Range must be any positive integer followed by a size unit (k, m, g). The value will be converted to bytes must not exceed __MAX_INT__._
 
 ---
-#### error_page
+##### error_page
 ```
 Syntax:		error_page <code> <uri>;
 Default:	None (uses built-in error responses)
@@ -78,7 +78,7 @@ Context: 	server
 Configures custom error pages for specific HTTP status codes.
 
 ---
-#### default_server
+##### default_server
 ```
 Syntax:		default_server;
 Default:	None (first defined host:port will be the default)
