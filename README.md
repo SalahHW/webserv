@@ -4,7 +4,7 @@ Webserv is a 42 school project that requires implementing an HTTP server written
 
 ## Features
 - Handle multiple ports and virtual hosts
-- Support HTTP methods: __GET__, __POST__, __DELETE__
+- Support HTTP methods: __GET__, __POST__ and __DELETE__
 - Custom error pages support
 - CGI support for executing dynamic scripts
 - Configurable via configuraton file inspired by Nginx
