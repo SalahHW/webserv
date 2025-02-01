@@ -66,6 +66,7 @@ Context: 	server, location
 ```
 Sets the maximum allowed size of the client request body.
 _Valid Range must be any positive integer followed by a size unit (k, m, g). The value will be converted to bytes must not exceed __MAX_INT__._
+
 ---
 ### error_page
 ```
