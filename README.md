@@ -28,3 +28,57 @@ make re 	# Recompiles the entire project
 ./webserv [configuration_file]
 ```
 If no configuration file is provided, a default one will be used (config/webserv.conf)
+
+## Configuration
+### Writing a Configuration File
+The configuration file is structured similarly to Nginx, using blocks and directives to define the server's behavior. Each server block specifies settings such as listening ports, domain names, and routes. The configuration is hierarchical, with nested directives for fine-grained control.
+Each directive must end with a semicolon `;`.
+
+### Blocks
+- __server:__ Defines a server block that listens on a specific port
+- __location:__ Specifies route handling
+---
+### Directives
+#### listen
+```
+Syntax:		listen <port>;
+Default:	80
+Context: 	server
+```
+Specifies the port number the server will listen on.
+_The valid range is beetwen __1__ and __65535__ Ports below __1024__ requires sudo privileges._
+
+---
+#### server_name
+```
+Syntax:		server_name [name];
+Default:	"_"
+Context: 	server
+```
+Defines a name for the server.
+
+---
+#### client_max_body_size
+```
+Syntax:		client_max_body_size <size>[k|m|g];
+Default:	1m
+Context: 	server, location
+```
+Sets the maximum allowed size of the client request body.
+_Valid Range must be any positive integer followed by a size unit (k, m, g). The value will be converted to bytes must not exceed __MAX_INT__._
+---
+### error_page
+```
+Syntax:		error_page <code> <uri>;
+Default:
+Context: 	server
+```
+
+---
+#### root
+```
+Syntax:		root <name>;
+Default:	None
+Context: 	location
+```
+.
