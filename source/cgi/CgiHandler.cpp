@@ -157,13 +157,11 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
 
     try
     {
-        // Create a pipe for CGI script output
         if (pipe(pipefd) < 0)
         {
             throw std::runtime_error("Failed to create pipe for CGI output");
         }
 
-        // Create a pipe for request body
         if (pipe(bodyPipefd) < 0)
         {
             throw std::runtime_error("Failed to create pipe for request body");
@@ -177,7 +175,6 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
         }
         else if (pid == 0)
         {
-            // Child process: redirect STDOUT and STDERR to the pipe
             close(pipefd[0]); // Close read end of output pipe
             if (dup2(pipefd[1], STDOUT_FILENO) < 0)
             {

@@ -5,16 +5,9 @@ import sys
 import subprocess
 from urllib.parse import unquote
 
-# Read the request body from stdin
-#for line in sys.stdin:
-#    print(line)
 content_length = int(os.environ.get('CONTENT_LENGTH', 0))
 form_data = sys.stdin.read(content_length)
 
-# Debug: Print the raw form data to stderr
-#print(f"[DEBUG] Form Data: {form_data}", file=sys.stderr)
-
-# Parse the form data to extract the command
 command = ""
 for line in form_data.split('&'):
     if line.startswith('command='):
@@ -24,20 +17,12 @@ for line in form_data.split('&'):
         command = command.replace('%20', ' ')  # Replace URL-encoded spaces
         break
 
-# Debug: Print the extracted command to stderr
-#print(f"[DEBUG] Extracted Command: {command}", file=sys.stderr)
-
-# Execute the command in the terminal
 try:
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
     output = result.stdout if result.returncode == 0 else result.stderr
 except Exception as e:
     output = f"Error executing command: {str(e)}"
 
-# Debug: Print the command output to stderr
-#print(f"[DEBUG] Command Output: {output}", file=sys.stderr)
-
-# Generate the updated HTML content
 html_body = f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -143,7 +128,6 @@ html_body = f"""
 </html>
 """
 
-# Construct the full HTTP response
 response = (
     "HTTP/1.1 200 OK\r\n"
     "Content-Type: text/html\r\n"
@@ -152,5 +136,4 @@ response = (
     f"{html_body}"
 )
 
-# Print the entire response to stdout
 print(response)
