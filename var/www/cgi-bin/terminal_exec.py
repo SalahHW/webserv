@@ -8,11 +8,10 @@ import subprocess
 #for line in sys.stdin:
 #    print(line)
 content_length = int(os.environ.get('CONTENT_LENGTH', 0))
-print(content_length)
 form_data = sys.stdin.read(content_length)
 
 # Debug: Print the raw form data to stderr
-print(f"[DEBUG] Form Data: {form_data}", file=sys.stderr)
+#print(f"[DEBUG] Form Data: {form_data}", file=sys.stderr)
 
 # Parse the form data to extract the command
 command = "echo '"'la bite a dudule '"'"
@@ -24,7 +23,7 @@ for line in form_data.split('&'):
         break
 
 # Debug: Print the extracted command to stderr
-print(f"[DEBUG] Extracted Command: {command}", file=sys.stderr)
+#print(f"[DEBUG] Extracted Command: {command}", file=sys.stderr)
 
 # Execute the command in the terminal
 try:

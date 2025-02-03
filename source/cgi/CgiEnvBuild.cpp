@@ -284,7 +284,7 @@ void CgiHandler::buildEnv(const Request &request) {
   envVec.push_back(request.getAcceptEncoding());
   envVec.push_back(request.getConnection());
   envVec.push_back("BODY=" + request.getBody());
-  envVec.push_back("CONTENT_LENGTH=" + request.getContentLength())
+  envVec.push_back("CONTENT_LENGTH=" + request.getContentLength());
 }
 
 const std::vector<std::string> &CgiHandler::getEnvVec() const {
