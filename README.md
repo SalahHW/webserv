@@ -220,4 +220,4 @@ In this example, the `/secure` location allows only the GET and POST methods. Al
 
 ---
 ##### allowed_methods (TO BE IMPLEMENTED)
-Aims to replace deny directive below, wich is too difficult to use.
+Aims to replace deny directive above, wich is too difficult to use.
