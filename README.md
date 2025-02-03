@@ -103,7 +103,7 @@ Default:	None (uses built-in error responses)
 Context: 	server
 ```
 Configures custom error pages for specific HTTP status codes.  
-_For each HTTP status code, add a separate `error_page` directive on a new line.  
+_For each HTTP status code, add a separate `error_page` directive on a new line._  
 
 Example:
 ```nginx
