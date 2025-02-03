@@ -131,7 +131,7 @@ _Valid Range must be any positive integer followed by a size unit (k, m, g). The
 ```
 Syntax:		client_time_out <time[s]>;
 Default:	60s
-Context		server, location
+Context:	server, location
 ```
 Specifies the maximum duration (in seconds) the server will wait for a client to send data. If the client fails to send data within the specified time frame, the connection is terminated.
 
@@ -140,6 +140,84 @@ Specifies the maximum duration (in seconds) the server will wait for a client to
 ```
 Syntax:		client_body_temp_path <path>;
 Default:	/client_temp
-Context		server, location
+Context:	server, location
 ```
 Specifies the directoriy where the server will store temporary files for client request bodies
+
+---
+##### root
+```
+Syntax:		root <directory>;
+Default:	/www
+Context:	location
+```
+Specifies the root directory from which the server will serve files. All file paths in request will be resolved relative to this directory,
+
+Example:
+```nginx
+location /images {
+	root /var/www/example;
+	# Requests to "/images" will be served from /var/www/example/images
+}
+```
+In this example, a request to `/images/picture.jpg` will be served from the file located at `/var/www/example/images/picture.jpg`.
+
+---
+##### index
+```
+Syntax:		index <file>;
+Default:	index.html
+Context:	location
+```
+Specifies a file to be used as the default index when a directory is requested.
+
+---
+##### autoindex
+```
+Syntax:		autoindex <on|off>;
+Default:	off
+Context:	location
+```
+Specifies whether the server should generate a directory listing when a directory is requested and no index file is found.
+- When set to `on` the server will display a generated listing of the directory contents.
+- When set to `off`, directory listings are disabled.
+
+---
+##### return
+```
+Syntax:		return <status code> <uri>;
+Default:	None
+Context:	location
+```
+The `return` directive immediately sends an HTTP response with the specified status code and a redirect to the provided URI. In this implementation, both the status code and the URI are required.
+
+Example:
+```nginx
+location /old-page {
+	return 301 /new-page;
+}
+```
+In this example, when a client requests `/old-page`, the server responds with a 301 status code and redirect the client to `/new-page`.
+
+---
+##### deny (TO BE UPDATED)
+```
+Syntax:		deny all;
+Default:	None
+Context:	limit_except (within location)
+```
+Specifies that access is denied for all clients.
+
+Example:
+```nginx
+location /secure {
+	limit_except GET POST {
+		deny all;
+	}
+}
+```
+In this example, the `/secure` location allows only the GET and POST methods. All other methods are denied access by the `deny all;` directive within the `limit_except` block.
+
+---
+##### allowed_methods (TO BE IMPLEMENTED)
+Aims to replace deny directive below, wich is too difficult to use.
