@@ -40,7 +40,7 @@ bool Directive::validateContext() const {
   if (std::find(contexts.begin(), contexts.end(), currentContext->getName()) ==
       contexts.end()) {
     std::cerr << "Error: Directive \"" << name << "\" cannot be used in \""
-              << currentContext << "\" block" << std::endl;
+              << currentContext->getName() << "\" block" << std::endl;
     return false;
   }
   return true;
