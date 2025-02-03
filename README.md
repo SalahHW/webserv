@@ -72,7 +72,8 @@ Syntax:		listen <port>;
 Default:	80
 Context: 	server
 ```
-Specifies the port number the server will listen on.
+Specifies the port number the server will listen on.  
+
 _The valid range is beetwen __1__ and __65535__ Ports below __1024__ requires sudo privileges._
 
 ---
@@ -92,6 +93,7 @@ Default:	None (uses built-in error responses)
 Context: 	server
 ```
 Configures custom error pages for specific HTTP status codes.  
+
 _For each HTTP status code, add a separate `error_page` directive on a new line._  
 
 Example:
@@ -110,6 +112,7 @@ Default:	None (first defined host:port will be the default)
 Context: 	server
 ```
 Defines whether the server block should act as the default for a given host:port. This means that if multiple server blocks listen on the same host:port, the default one will handle requests that do not match any other explicitly defined server block.  
+
 _If this flag is omitted, no server will be explicitly marked as the default, and the first declared server block for that host:port will be automatically designated as the default._
 
 ---
@@ -120,16 +123,8 @@ Default:	1m
 Context: 	server, location
 ```
 Sets the maximum allowed size of the client request body.  
-_Valid Range must be any positive integer followed by a size unit (k, m, g). The value will be converted to bytes must not exceed __MAX_INT__._
 
----
-##### client_body_temp_path
-```
-Syntax:		client_body_temp_path <path>;
-Default:	/client_temp
-Context		server, location
-```
-Specifies the directoriy where the server will store temporary files for client request bodies
+_Valid Range must be any positive integer followed by a size unit (k, m, g). The value will be converted to bytes must not exceed __MAX_INT__._
 
 ---
 ##### client_time_out
@@ -139,3 +134,12 @@ Default:	60s
 Context		server, location
 ```
 Specifies the maximum duration (in seconds) the server will wait for a client to send data. If the client fails to send data within the specified time frame, the connection is terminated.
+
+---
+##### client_body_temp_path
+```
+Syntax:		client_body_temp_path <path>;
+Default:	/client_temp
+Context		server, location
+```
+Specifies the directoriy where the server will store temporary files for client request bodies
