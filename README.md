@@ -92,8 +92,7 @@ Syntax:		client_max_body_size <size>[k|m|g];
 Default:	1m
 Context: 	server, location
 ```
-Sets the maximum allowed size of the client request body.
-
+Sets the maximum allowed size of the client request body.  
 _Valid Range must be any positive integer followed by a size unit (k, m, g). The value will be converted to bytes must not exceed __MAX_INT__._
 
 ---
@@ -103,7 +102,16 @@ Syntax:		error_page <code> <uri>;
 Default:	None (uses built-in error responses)
 Context: 	server
 ```
-Configures custom error pages for specific HTTP status codes.
+Configures custom error pages for specific HTTP status codes.  
+_For each HTTP status code, add a separate `error_page` directive on a new line.  
+
+Example:
+```nginx
+server {
+	error_page 404 /error404.html;
+	error_page 500 /error500.html;
+}
+```
 
 ---
 ##### default_server
