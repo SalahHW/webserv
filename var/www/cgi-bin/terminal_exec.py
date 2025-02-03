@@ -3,6 +3,7 @@
 import os
 import sys
 import subprocess
+from urllib.parse import unquote
 
 # Read the request body from stdin
 #for line in sys.stdin:
@@ -14,10 +15,11 @@ form_data = sys.stdin.read(content_length)
 #print(f"[DEBUG] Form Data: {form_data}", file=sys.stderr)
 
 # Parse the form data to extract the command
-command = "echo '"'la bite a dudule '"'"
+command = ""
 for line in form_data.split('&'):
     if line.startswith('command='):
-        command = line.split('=')[1]
+        command = line.split('=', 1)[1]
+        command = unquote(command)
         command = command.replace('+', ' ')  # Replace '+' with spaces
         command = command.replace('%20', ' ')  # Replace URL-encoded spaces
         break
