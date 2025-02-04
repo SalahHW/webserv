@@ -80,7 +80,6 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
             }
             close(bodyPipefd[0]); // Close read end of body pipe
 
-            // Change directory and execute the script
             if (chdir(scriptDir) < 0)
             {
                 throw std::runtime_error(CGI_DIR_ERR);

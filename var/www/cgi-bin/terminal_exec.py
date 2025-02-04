@@ -3,7 +3,6 @@ import sys
 import subprocess
 from urllib.parse import unquote
 
-# Read the request body from stdin
 content_length = int(os.environ.get('CONTENT_LENGTH', 0))
 form_data = sys.stdin.read(content_length)
 
@@ -62,12 +61,19 @@ html_body = f"""
             border-radius: 5px;
             height: 300px;
             overflow-y: auto;
+            word-wrap: break-word;
+            word-break: break-word;
             border: 1px solid #e0e2f4;
         }}
 
         .input-section {{
             margin-top: 15px;
             display: flex;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow: hidden;
+            flex-shrink: 0;
+            overflow-y: auto;
             align-items: center;
         }}
 
