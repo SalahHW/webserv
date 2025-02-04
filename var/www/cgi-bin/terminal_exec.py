@@ -59,8 +59,9 @@ html_body = f"""
             padding: 10px;
             background: #141414;
             border-radius: 5px;
+            overflow: scroll;
+            max-height: 300px;
             height: 300px;
-            overflow-y: auto;
             word-wrap: break-word;
             word-break: break-word;
             border: 1px solid #e0e2f4;
@@ -71,9 +72,8 @@ html_body = f"""
             display: flex;
             word-wrap: break-word;
             word-break: break-word;
-            overflow: hidden;
+            overflow: scroll;
             flex-shrink: 0;
-            overflow-y: auto;
             align-items: center;
         }}
 
@@ -122,6 +122,7 @@ html_body = f"""
         <div class="terminal-body" id="output">
             {output}
         </div>
+        <div>
         <form method="POST" action="/cgi-bin/terminal_exec.py">
             <div class="input-section">
                 <label for="command-input">$</label>
@@ -129,6 +130,7 @@ html_body = f"""
                 <button type="submit">Send</button>
             </div>
         </form>
+        </div>
     </div>
 </body>
 </html>
