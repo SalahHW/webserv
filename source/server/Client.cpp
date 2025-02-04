@@ -152,7 +152,6 @@ void Client::responsesRoutine() {
         return;
       }
       if (it->getMethod() == "POST") {
-        std::cout << "POST" << std::endl;
         if (it->getIsParsed()) {
           if (it->getIsInTreatment()) {
             it->getResponse()->getResponseBuilder();
@@ -165,7 +164,7 @@ void Client::responsesRoutine() {
             Sender sender(*it->getResponse(), connectionFd, *it);
           }
         }
-        it->getResponse()->getResponseBuilder();
+        return;
       }
       if (it->getIsParsed()) {
         if (it->getIsInTreatment()) {

@@ -30,7 +30,9 @@ class Request {
   std::string hostName;
   std::string contentType;
   std::string contentLength;
-  std::string postData;
+  std::string boundary;
+  std::string fileName;
+  std::string fileContent;
   bool methodGood;
   bool uriGood;
   bool versionGood;
@@ -66,7 +68,9 @@ class Request {
                    const std::string& defaultVirtualHostName);
   void setContentType(const std::string& type);
   void setContentLength(const std::string& length);
-  void setPostData(const std::string& data);
+  void setBoundary(const std::string& boundary);
+  void setFileName(const std::string& fileName);
+  void setFileContent(const std::string& fileContent);
 
   void setMethodGood(bool methodGood);
   void setUriGood(bool uriGood);
@@ -99,6 +103,9 @@ class Request {
   const std::string& getContentLength() const;
   const std::string& getPostData() const;
   size_t getFd() const;
+  const std::string& getBoundary() const;
+  const std::string& getFileName() const;
+  const std::string& getFileContent() const;
 
   bool getHostGood() const;
   bool getUserAgentGood() const;

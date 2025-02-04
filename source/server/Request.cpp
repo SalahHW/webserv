@@ -1,7 +1,6 @@
 #include "Request.hpp"
 
 #include "Cgi.hpp"
-#include "Cgi.hpp"
 
 Request::Request(const std::string& request, size_t fd)
     : fd(fd),
@@ -15,8 +14,7 @@ Request::Request(const std::string& request, size_t fd)
       acceptEncodingGood(false),
       connectionGood(false),
       isRequestGood(false),
-      isParsed(false),  // for now true but gonna be false when the test will be
-                        // implemented
+      isParsed(false),
       isTreated(false),
       isInTreatment(false) {
   RequestParser requestParser(request, *this);
@@ -31,7 +29,7 @@ Request::Request(const std::string& request, size_t fd)
   connectionGood = RequestValidator::validateConnection(Connection);
   isRequestGood = RequestValidator::validateRequest(*this);
   isParsed = true;
-  //displayRequest();
+  // displayRequest();
 }
 
 Request::Request() {}
@@ -130,13 +128,21 @@ void Request::setContentLength(const std::string& length) {
   contentLength = length;
 }
 
-void Request::setPostData(const std::string& data) { postData = data; }
+void Request::setBoundary(const std::string& boundary) {
+  this->boundary = boundary;
+}
+
+void Request::setFileName(const std::string& fileName) {
+  this->fileName = fileName;
+}
+
+void Request::setFileContent(const std::string& fileContent) {
+  this->fileContent = fileContent;
+}
 
 const std::string& Request::getContentType() const { return contentType; }
 
 const std::string& Request::getContentLength() const { return contentLength; }
-
-const std::string& Request::getPostData() const { return postData; }
 
 const std::string& Request::getMethod() const { return this->method; }
 
@@ -167,6 +173,12 @@ Response* Request::getResponse() const { return response; }
 const std::string& Request::getHostName() const { return this->hostName; }
 
 size_t Request::getFd() const { return this->fd; }
+
+const std::string& Request::getBoundary() const { return this->boundary; }
+
+const std::string& Request::getFileName() const { return this->fileName; }
+
+const std::string& Request::getFileContent() const { return this->fileContent; }
 
 bool Request::getMethodGood() const { return this->methodGood; }
 
@@ -210,5 +222,7 @@ void Request::displayRequest() const {
   std::cout << "Host Name: " << this->hostName << std::endl;
   std::cout << "Content Type: " << this->contentType << std::endl;
   std::cout << "Content Length: " << this->contentLength << std::endl;
-  std::cout << "Post Data: " << this->postData << std::endl;
+  std::cout << "Boundary: " << this->boundary << std::endl;
+  std::cout << "File Name: " << this->fileName << std::endl;
+  std::cout << "File Content: " << this->fileContent << std::endl;
 }
