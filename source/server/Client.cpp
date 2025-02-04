@@ -81,7 +81,7 @@ void Client::treatAPost() {
   Request* request = new Request(getBuffer(), connectionFd);
   requests.push_back(*request);
   clearBuffer();
-  eventToOut();
+  // eventToOut();
 }
 
 size_t Client::parseContentLength(const std::string& headers) {
@@ -156,7 +156,6 @@ void Client::responsesRoutine() {
           if (it->getIsInTreatment()) {
             it->getResponse()->getResponseBuilder();
           } else {
-            it->setIsInTreatment(true);
             it->setResponse(associatedPort->getVirtualHosts(),
                             associatedPort->getDefaultVirtualHostName());
           }

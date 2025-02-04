@@ -23,6 +23,7 @@ ResponseBuilder::ResponseBuilder(
   try {
     // checkRequest();
     if (request->getMethod() == "POST") {
+      findMatchingLocation();
       treatAPost();
       return;
     }
@@ -81,20 +82,11 @@ void ResponseBuilder::treatAPost() {
   }
   if (virtualHost.getClientMaxBodySize() <
       stringToInt(request->getContentLength())) {
-    std::cout << "Content-Length: " << request->getContentLength() << std::endl;
-    std::cout << "ClientMaxBodySize: " << virtualHost.getClientMaxBodySize()
-              << std::endl;
-    std::cout << "stringToInt(request->getContentLength()): "
-              << stringToInt(request->getContentLength()) << std::endl;
     setStatusCode(413);
   }
   if (!request->getIsInTreatment()) {
-    if (virtualHost.getLocations().find(request->getUri()) ==
-        virtualHost.getLocations().end()) {
-      setStatusCode(404);
-    } else if (findMatchingLocation() &&
-               !((matchingLocation.getPath().find("upload")) !=
-                 std::string::npos)) {
+    request->setIsInTreatment(true);
+    if (matchingLocation.getPath().find("upload") == std::string::npos) {
       setStatusCode(404);
     } else if (!matchingLocation.getPostAccepted()) {
       setStatusCode(405);
@@ -105,15 +97,17 @@ void ResponseBuilder::treatAPost() {
         setStatusCode(403);
       } else {
         struct stat info;
-        if (stat(determinedPath.c_str(), &info) == 0) {
+        if (stat(determinedPath.c_str(), &info) != 0) {
           setStatusCode(409);
         } else {
-          std::ofstream file(determinedPath.c_str(),
-                             std::ios::binary | std::ios::trunc);
+          std::ofstream file(
+              (determinedPath + '/' + request->getFileName()).c_str(),
+              std::ios::binary | std::ios::trunc);
           if (!file.is_open()) {
             setStatusCode(403);
           } else {
-            file.write(request->getBody().data(), request->getBody().size());
+            file.write(request->getFileContent().data(),
+                       request->getFileContent().size());
             file.close();
           }
         }
@@ -517,7 +511,7 @@ void ResponseBuilder::buildBody() {
       file.close();
     } else {
       file.close();
-      throw HttpException(500, "Error reading file");
+      setStatusCode(500);
     }
     file.close();
     return;
