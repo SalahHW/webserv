@@ -38,6 +38,7 @@ class Client {
   double getCurrentTime(void);
   void treatAPost();
   size_t parseContentLength(const std::string& headers);
+  std::string removeFinalBoundary(const std::string& input);
 
   int epollFd;
   double lastActivity;

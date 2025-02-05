@@ -81,7 +81,6 @@ void Client::treatAPost() {
   Request* request = new Request(getBuffer(), connectionFd);
   requests.push_back(*request);
   clearBuffer();
-  // eventToOut();
 }
 
 size_t Client::parseContentLength(const std::string& headers) {
@@ -117,13 +116,42 @@ void Client::requestRoutine() {
   }
   if (buffer.find("POST") != std::string::npos) {
     treatAPost();
+    eventToOut();
   } else if (buffer.find("\r\n\r\n") != std::string::npos) {
     eventToOut();
     Request* request = new Request(getBuffer(), connectionFd);
     requests.push_back(*request);
-    clearBuffer();  // clear only before the \r\n\r\n and before
+    clearBuffer();
   }
   this->lastActivity = getCurrentTime();
+}
+
+std::string Client::removeFinalBoundary(const std::string& input) {
+  static const std::string boundary = "-----------------------------";
+  static const std::string endPattern = "--\r\n";
+
+  if (input.size() < endPattern.size()) {
+    return input;
+  }
+
+  if (input.compare(input.size() - endPattern.size(), endPattern.size(),
+                    endPattern) != 0) {
+    return input;
+  }
+
+  std::string::size_type pos = input.size() - endPattern.size();
+  while (pos > 0 && std::isdigit(static_cast<unsigned char>(input[pos - 1]))) {
+    --pos;
+  }
+
+  if (pos >= boundary.size()) {
+    if (input.compare(pos - boundary.size(), boundary.size(), boundary) == 0) {
+      std::string::size_type startToRemove = pos - boundary.size();
+      return input.substr(0, startToRemove);
+    }
+  }
+
+  return input;
 }
 
 void Client::responsesRoutine() {
@@ -154,17 +182,28 @@ void Client::responsesRoutine() {
       if (it->getMethod() == "POST") {
         if (it->getIsParsed()) {
           if (it->getIsInTreatment()) {
-            it->getResponse()->getResponseBuilder();
+            if (readFromClient() > 0) {
+              buffer = removeFinalBoundary(buffer);
+              it->setFileContent(getBuffer());
+              it->getResponse()->getResponseBuilder()->treatAPost();
+              clearBuffer();
+            } else {
+              it->setIsTreated(true);
+            }
           } else {
+            it->setIsInTreatment(false);
             it->setResponse(associatedPort->getVirtualHosts(),
                             associatedPort->getDefaultVirtualHostName());
-          }
-          if (it->getIsTreated()) {
-            Sender sender(*it->getResponse(), connectionFd, *it);
+            it->setIsInTreatment(true);
           }
         }
+        if (it->getIsTreated()) {
+          Sender sender(*it->getResponse(), connectionFd, *it);
+        }
+        this->lastActivity = getCurrentTime();
         return;
       }
+
       if (it->getIsParsed()) {
         if (it->getIsInTreatment()) {
           it->getResponse()->getResponseBuilder()->buildBody();

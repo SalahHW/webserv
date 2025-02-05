@@ -29,7 +29,6 @@ class ResponseBuilder {
   std::ifstream file;
 
   void checkRequest();
-  void treatAPost();
   const std::string& getReasonPhraseForCode(size_t code);
   void setStatusCode(size_t code);
   std::string determinePath();
@@ -69,5 +68,6 @@ class ResponseBuilder {
   ~ResponseBuilder();
   void buildBody();
   void buildErrorPage(size_t errorCode);
+  void treatAPost();
   size_t getStatusCode() const;
 };

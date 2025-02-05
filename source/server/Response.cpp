@@ -18,9 +18,10 @@ Response::Response(Request* request,
       bytesSent(0),
       bytesLoad(0),
       bytesTotal(0),
-      fullHeader(std::vector<char>()),
-      builder(new ResponseBuilder(request, *this, virtualHosts,
-                                  defaultVirtualHostName)) {}
+      fullHeader(std::vector<char>()) {
+  this->builder =
+      new ResponseBuilder(request, *this, virtualHosts, defaultVirtualHostName);
+}
 
 void Response::clearForChunked() {
   setStatusLine("");

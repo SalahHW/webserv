@@ -85,7 +85,6 @@ void ResponseBuilder::treatAPost() {
     setStatusCode(413);
   }
   if (!request->getIsInTreatment()) {
-    request->setIsInTreatment(true);
     if (matchingLocation.getPath().find("upload") == std::string::npos) {
       setStatusCode(404);
     } else if (!matchingLocation.getPostAccepted()) {
@@ -108,15 +107,21 @@ void ResponseBuilder::treatAPost() {
           } else {
             file.write(request->getFileContent().data(),
                        request->getFileContent().size());
+            std::cout << "File content: " << request->getFileContent()
+                      << std::endl;
             file.close();
           }
         }
       }
     }
   } else {
-    std::ofstream file(determinedPath.c_str(),
+    std::ofstream file((determinedPath + '/' + request->getFileName()).c_str(),
                        std::ios::binary | std::ios::app);
-    file.write(request->getBody().data(), request->getBody().size());
+    if (!file.is_open()) {
+      std::cout << "ALARM AAAALAAAAAARMMM" << std::endl;
+    }
+    file.write(request->getFileContent().data(),
+               request->getFileContent().size());
     file.close();
   }
 }
