@@ -23,10 +23,10 @@ int main(int argc, char** argv)
     return (1);
   }
 
-  server_configuration.displayInfo();
+  // server_configuration.displayInfo();
 
   ServerManager serverManager(server_configuration.getPortMap());
   if (serverManager.good())
-    // serverManager.start();
-    return (0);
+    serverManager.start();
+  return (0);
 }

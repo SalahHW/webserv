@@ -13,7 +13,7 @@ ConfigFinalizer::ConfigFinalizer()
     , defaultServerClientTimeOut(60)
     , defaultLocationPath("/")
     , defaultLocationRoot("/www/")
-    , defaultMethodsAllowed(false)
+    , defaultMethodsAllowed(true)
 {
 }
 
