@@ -46,12 +46,11 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
     char **envArray;
     pid_t pid;
     int status;
-    int pipefd[2]; // Pipe for CGI script output
-    int bodyPipefd[2]; // Pipe for request body
+    int pipefd[2];
+    int bodyPipefd[2];
 
     try
     {
-        // Create pipes
         if (pipe(pipefd) < 0 || pipe(bodyPipefd) < 0)
         {
             throw std::runtime_error("Failed to create pipes");
@@ -65,23 +64,20 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
         }
         else if (pid == 0)
         {
-            // Child process: redirect STDOUT and STDERR to the pipe
-            close(pipefd[0]); // Close read end of output pipe
+            close(pipefd[0]);
             if (dup2(pipefd[1], STDOUT_FILENO) < 0 || dup2(pipefd[1], STDERR_FILENO) < 0)
             {
                 throw std::runtime_error("Failed to redirect STDOUT/STDERR");
             }
-            close(pipefd[1]); // Close write end of output pipe
+            close(pipefd[1]);
 
-            // Redirect STDIN to read from the request body pipe
-            close(bodyPipefd[1]); // Close write end of body pipe
+            close(bodyPipefd[1]);
             if (dup2(bodyPipefd[0], STDIN_FILENO) < 0)
             {
                 throw std::runtime_error("Failed to redirect STDIN");
             }
-            close(bodyPipefd[0]); // Close read end of body pipe
+            close(bodyPipefd[0]);
 
-            // Change directory and execute the script
             if (chdir(scriptDir) < 0)
             {
                 throw std::runtime_error(CGI_DIR_ERR);
@@ -93,8 +89,7 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
         }
         else
         {
-            // Parent process: write the request body to the body pipe
-            close(bodyPipefd[0]); // Close read end of body pipe
+            close(bodyPipefd[0]);
             if (!request.getBody().empty())
             {
                 if (write(bodyPipefd[1], request.getBody().c_str(), request.getBody().size()) < 0)
@@ -102,12 +97,9 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
                     throw std::runtime_error("Failed to write request body to pipe");
                 }
             }
-            close(bodyPipefd[1]); // Close write end of body pipe
+            close(bodyPipefd[1]);
+            close(pipefd[1]);
 
-            // Parent process: read from the output pipe and send output
-            close(pipefd[1]); // Close write end of output pipe
-
-            // Set up a 1-second timeout using select()
             fd_set read_fds;
             FD_ZERO(&read_fds);
             FD_SET(pipefd[0], &read_fds);
@@ -123,15 +115,12 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
             }
             else if (ret == 0)
             {
-                // Timeout occurred
-                std::cerr << "Timeout: CGI script took too long to respond." << std::endl;
                 kill(pid, SIGKILL); // Terminate the child process
                 waitpid(pid, &status, 0); // Wait for the child process to exit
                 throw std::runtime_error("CGI script timeout");
             }
             else
             {
-                // Data is available to read
                 char buffer[4096];
                 ssize_t bytesRead;
                 while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer))) > 0)
@@ -158,7 +147,6 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
         this->cleanupEnvArray(env, envArray);
         return;
     }
-
     this->cleanupEnvArray(env, envArray);
 }
 

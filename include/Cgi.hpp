@@ -10,12 +10,9 @@
 #define ENVARRAY_MALLOC_FAIL "Error : Memory allocation for envArray failed."
 #define CGI_TIMEOUT_MS 500
 
-#include <sys/wait.h>
 #include <sys/time.h>
-#include <unistd.h>
 #include <sys/select.h>
 #include <csignal>
-
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
@@ -23,19 +20,14 @@
 #include <string>
 #include <utility>
 #include <vector>
-
-#include "Request.hpp"
-// #include "Server.hpp"
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include <algorithm>
-#include <cstring>
-#include <string>
-#include <utility>
-#include <vector>
+
+#include "Request.hpp"
+#include "ResponseBuilder.hpp"
 
 class CgiHandler {
  public:
