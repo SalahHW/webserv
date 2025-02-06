@@ -29,7 +29,6 @@ SRCS					=	main.cpp											\
 							block/MainBlock.cpp									\
 							block/ServerBlock.cpp								\
 							block/LocationBlock.cpp								\
-							block/LimitExceptBlock.cpp							\
 							directive/DirectiveFactory.cpp						\
 							directive/Directive.cpp								\
 							directive/AllowMethodsDirective.cpp					\
@@ -42,7 +41,6 @@ SRCS					=	main.cpp											\
 							directive/RootDirective.cpp							\
 							directive/IndexDirective.cpp						\
 							directive/AutoIndexDirective.cpp					\
-							directive/DenyDirective.cpp							\
 							directive/ReturnDirective.cpp						\
 							directive/DefaultServerDirective.cpp				\
 

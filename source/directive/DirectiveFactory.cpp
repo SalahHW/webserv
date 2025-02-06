@@ -14,7 +14,6 @@ DirectiveFactory::DirectiveFactory()
   registerDirective<IndexDirective>("index");
   registerDirective<AutoIndexDirective>("autoindex");
   registerDirective<ReturnDirective>("return");
-  registerDirective<DenyDirective>("deny");
   registerDirective<DefaultServerDirective>("default_server");
   registerDirective<AllowMethodsDirective>("allow_methods");
 }

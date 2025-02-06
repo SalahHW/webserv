@@ -9,7 +9,6 @@
 #include "ClientMaxBodySizeDirective.hpp"
 #include "ClientTimeOutDirective.hpp"
 #include "DefaultServerDirective.hpp"
-#include "DenyDirective.hpp"
 #include "Directive.hpp"
 #include "ErrorPageDirective.hpp"
 #include "IndexDirective.hpp"
@@ -24,8 +23,7 @@ class DirectiveFactory
   ~DirectiveFactory();
   DirectiveFactory();
 
-  Directive* create(const std::string& name, Block* context,
-      const std::string& fullDirectiveline) const;
+  Directive* create(const std::string& name, Block* context, const std::string& fullDirectiveline) const;
 
   template <typename T>
   void registerDirective(const std::string& name)
@@ -38,8 +36,7 @@ class DirectiveFactory
   DirectiveFactory& operator=(const DirectiveFactory& other);
 
   template <typename T>
-  static Directive* createInstance(Block* context,
-      const std::string& fullDirectiveLine)
+  static Directive* createInstance(Block* context, const std::string& fullDirectiveLine)
   {
     return new T(context, fullDirectiveLine);
   }
