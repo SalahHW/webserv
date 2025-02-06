@@ -5,6 +5,8 @@ CXX						=	c++ -Wall -Wextra -Werror -std=c++98 -g
 INCLUDE_DIR				=	include/
 SRCS_DIR				=	source
 OBJ_DIR					=	obj
+SRCS_DIR				=	source
+OBJ_DIR					=	obj
 
 SRCS					=	main.cpp											\
 							parser/ConfigFile.cpp								\
@@ -45,12 +47,15 @@ SRCS					=	main.cpp											\
 							directive/DefaultServerDirective.cpp				\
 
 OBJS					=	$(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
+OBJS					=	$(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 
 all						:	$(NAME)
 
 $(NAME)					:	$(OBJS)
 							$(CXX) $(OBJS) -o $(NAME)
 
+$(OBJ_DIR)/%.o			:	$(SRCS_DIR)/%.cpp
+							@mkdir -p $(dir $@)
 $(OBJ_DIR)/%.o			:	$(SRCS_DIR)/%.cpp
 							@mkdir -p $(dir $@)
 							$(CXX) -I$(INCLUDE_DIR) -c $< -o $@
