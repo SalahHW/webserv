@@ -36,6 +36,14 @@ string utils::removeBraces(const string& line)
   return (line);
 }
 
+void utils::toLowerCase(string& str)
+{
+  for (string::iterator it = str.begin(); it != str.end(); ++it)
+  {
+    *it = tolower(*it);
+  }
+}
+
 bool utils::isIntCompatible(const string& str)
 {
   if (str.empty())

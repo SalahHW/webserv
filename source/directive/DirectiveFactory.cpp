@@ -16,6 +16,7 @@ DirectiveFactory::DirectiveFactory()
   registerDirective<ReturnDirective>("return");
   registerDirective<DenyDirective>("deny");
   registerDirective<DefaultServerDirective>("default_server");
+  registerDirective<AllowMethodsDirective>("allow_methods");
 }
 
 Directive* DirectiveFactory::create(

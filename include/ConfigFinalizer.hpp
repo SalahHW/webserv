@@ -45,6 +45,7 @@ class ConfigFinalizer
   // Default Location Values
   std::string defaultLocationPath;
   std::string defaultLocationRoot;
+  bool defaultMethodsAllowed;
 
   std::list<int> usedPorts;
 

@@ -32,6 +32,7 @@ SRCS					=	main.cpp											\
 							block/LimitExceptBlock.cpp							\
 							directive/DirectiveFactory.cpp						\
 							directive/Directive.cpp								\
+							directive/AllowMethodsDirective.cpp					\
 							directive/ListenDirective.cpp						\
 							directive/ServerNameDirective.cpp					\
 							directive/ClientMaxBodySizeDirective.cpp			\

@@ -13,6 +13,7 @@ ConfigFinalizer::ConfigFinalizer()
     , defaultServerClientTimeOut(60)
     , defaultLocationPath("/")
     , defaultLocationRoot("/www/")
+    , defaultMethodsAllowed(false)
 {
 }
 
@@ -35,6 +36,7 @@ ConfigFinalizer& ConfigFinalizer::operator=(const ConfigFinalizer& other)
     this->defaultServerClientTimeOut = other.defaultServerClientTimeOut;
     this->defaultLocationPath = other.defaultLocationPath;
     this->defaultLocationRoot = other.defaultLocationRoot;
+    this->defaultMethodsAllowed = other.defaultMethodsAllowed;
     this->ports = other.ports;
   }
   return *this;
@@ -79,7 +81,6 @@ void ConfigFinalizer::finalizeServer(Server& server)
   {
     server.setClientTimeOut(defaultServerClientTimeOut);
   }
-  // TODO: Complete default Server configuration
 }
 
 void ConfigFinalizer::finalizeLocations(Server& server)
@@ -115,7 +116,12 @@ void ConfigFinalizer::finalizeLocations(Server& server)
     {
       location.setClientTimeOut(server.getClientTimeOut());
     }
-    // TODO: Complete default Location configuration
+    if (!location.isGetAcceptedDefined() && !location.isPostAcceptedDefined() && !location.isDeleteAcceptedDefined())
+    {
+      location.setGetAccepted(defaultMethodsAllowed);
+      location.setPostAccepted(defaultMethodsAllowed);
+      location.setDeleteAccepted(defaultMethodsAllowed);
+    }
   }
 }
 

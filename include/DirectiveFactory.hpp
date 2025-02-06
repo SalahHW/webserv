@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 
+#include "AllowMethodsDirective.hpp"
 #include "AutoIndexDirective.hpp"
 #include "ClientBodyTempPathDirectice.hpp"
 #include "ClientMaxBodySizeDirective.hpp"
