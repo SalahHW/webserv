@@ -1,23 +1,14 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   DirectiveFactory.hpp                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 13:49:08 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:54:30 by sbouheni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include <map>
 #include <string>
 
+#include "AllowMethodsDirective.hpp"
 #include "AutoIndexDirective.hpp"
+#include "ClientBodyTempPathDirectice.hpp"
 #include "ClientMaxBodySizeDirective.hpp"
-#include "DenyDirective.hpp"
+#include "ClientTimeOutDirective.hpp"
+#include "DefaultServerDirective.hpp"
 #include "Directive.hpp"
 #include "ErrorPageDirective.hpp"
 #include "IndexDirective.hpp"
@@ -26,28 +17,29 @@
 #include "RootDirective.hpp"
 #include "ServerNameDirective.hpp"
 
-class DirectiveFactory {
-public:
-    ~DirectiveFactory();
-    DirectiveFactory();
+class DirectiveFactory
+{
+  public:
+  ~DirectiveFactory();
+  DirectiveFactory();
 
-    Directive* create(const std::string& name, const std::string& context, const std::string& fullDirectiveline) const;
+  Directive* create(const std::string& name, Block* context, const std::string& fullDirectiveline) const;
 
-    template <typename T>
-    void registerDirective(const std::string& name)
-    {
-        factoryMap[name] = &createInstance<T>;
-    }
+  template <typename T>
+  void registerDirective(const std::string& name)
+  {
+    factoryMap[name] = &createInstance<T>;
+  }
 
-private:
-    DirectiveFactory(const DirectiveFactory& other);
-    DirectiveFactory& operator=(const DirectiveFactory& other);
+  private:
+  DirectiveFactory(const DirectiveFactory& other);
+  DirectiveFactory& operator=(const DirectiveFactory& other);
 
-    template <typename T>
-    static Directive* createInstance(const std::string& context, const std::string& fullDirectiveLine)
-    {
-        return new T(context, fullDirectiveLine);
-    }
+  template <typename T>
+  static Directive* createInstance(Block* context, const std::string& fullDirectiveLine)
+  {
+    return new T(context, fullDirectiveLine);
+  }
 
-    std::map<std::string, Directive* (*)(const std::string&, const std::string&)> factoryMap;
+  std::map<std::string, Directive* (*)(Block*, const std::string&)> factoryMap;
 };

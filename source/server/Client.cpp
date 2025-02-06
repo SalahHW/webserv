@@ -1,86 +1,46 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 16:02:27 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/24 16:54:19 by joakoeni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Client.hpp"
-
-Client::Client(int listen_sock_fd, ServerHandler server)
-{
-    try {
-        CreateClientSock(listen_sock_fd);
-        makeSocketNonBlocking();
-        setSocketBufferSize(65536, 65536);
-        server.addToEpoll(this->getClientFd());
-    } catch (const ClientException& excp) {
-        std::cerr << "Client error: " << excp.what() << std::endl;
-    }
-}
 
 Client::~Client()
 {
-    // close(this->client_fd);
+    std::cout << RED << "Client fd " << connectionFd << " connection closed" << RESET << std::endl;
 }
 
-Client::Client(const Client& src)
-    : client_fd(src.client_fd)
-    , client_addr(src.client_addr)
-    , client_len(src.client_len)
-    , flags(src.flags)
+Client::Client(int listenFd, int connectionFd, Port* port)
+    : listenFd(listenFd)
+    , connectionFd(connectionFd)
+    , associatedPort(port)
 {
+    std::cout << GREEN << "New client connected on fd: " RESET << connectionFd << GREEN " port: " RESET
+              << port->getPort() << std::endl;
 }
 
-Client& Client::operator=(const Client& src)
+std::string& Client::getBuffer()
 {
-    this->client_fd = src.client_fd;
-    return *this;
+    return buffer;
 }
 
-const int& Client::getClientFd() const { return this->client_fd; }
-
-const struct sockaddr_in& Client::getClientAddr() const
+int Client::getListenFd() const
 {
-    return this->client_addr;
+    return this->listenFd;
 }
 
-const socklen_t& Client::getClientLen() const { return this->client_len; }
-
-const int& Client::getFlags() const { return this->flags; }
-
-void Client::CreateClientSock(int listen_sock_fd)
+int Client::getConnectionFd() const
 {
-    this->client_len = sizeof(this->client_addr);
-    this->client_fd = accept(
-        listen_sock_fd, (struct sockaddr*)&this->client_addr, &this->client_len);
-    if (this->client_fd == -1)
-        throw ClientException("accept");
+    return this->connectionFd;
 }
 
-void Client::makeSocketNonBlocking()
+void Client::closeConnection()
 {
-    this->flags = fcntl(this->client_fd, F_GETFL, 0);
-    if (flags == -1)
-        throw ClientException("fcntl");
-    flags |= O_NONBLOCK;
-    if (fcntl(this->client_fd, F_SETFL, this->flags) == -1)
-        throw ClientException("fcntl");
+    close(connectionFd);
+    clearBuffer();
 }
 
-void Client::setSocketBufferSize(int recvBufSize, int sendBufSize) const
+void Client::appendToBuffer(const char* data, size_t len)
 {
-    if (setsockopt(this->client_fd, SOL_SOCKET, SO_RCVBUF, &recvBufSize,
-            sizeof(recvBufSize))
-        == -1)
-        throw ClientException("setsockopt SO_RCVBUF");
-    if (setsockopt(this->client_fd, SOL_SOCKET, SO_SNDBUF, &sendBufSize,
-            sizeof(sendBufSize))
-        == -1)
-        throw ClientException("setsockopt SO_SNDBUF");
+    buffer.append(data, len);
+}
+
+void Client::clearBuffer()
+{
+    buffer.clear();
 }

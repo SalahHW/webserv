@@ -1,34 +1,22 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ServerNameDirective.hpp                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 18:05:45 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 16:52:59 by sbouheni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Directive.hpp"
 
-class ServerNameDirective : public Directive {
-public:
-    ~ServerNameDirective();
-    ServerNameDirective(const std::string& currentContext, const std::string& fullDirectiveLine);
-    ServerNameDirective(const ServerNameDirective& other);
-    ServerNameDirective& operator=(const ServerNameDirective& other);
+class ServerNameDirective : public Directive
+{
+  public:
+  ~ServerNameDirective();
+  ServerNameDirective(Block* currentContext, const std::string& fullDirectiveLine);
+  ServerNameDirective(const ServerNameDirective& other);
+  ServerNameDirective& operator=(const ServerNameDirective& other);
 
-    virtual bool validateSpecific();
-    virtual void displayInfo() const;
-    virtual void apply(Server& server);
+  virtual bool validateSpecific();
+  virtual void apply(Server& server);
 
-    void setServerName(const std::string& serverName);
+  void setServerName(const std::string& serverName);
 
-    const std::string& getServername() const;
+  const std::string& getServername() const;
 
-private:
-    ServerNameDirective();
+  private:
+  ServerNameDirective();
 
-    std::string serverName;
+  std::string serverName;
 };

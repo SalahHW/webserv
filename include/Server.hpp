@@ -1,65 +1,68 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/03 13:20:46 by joakoeni          #+#    #+#             */
-/*   Updated: 2024/10/31 14:12:16 by joakoeni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
-#include "Location.hpp"
-#include "SocketException.hpp"
-#include <cstdio> // pour sprintf
-#include <fcntl.h> // Pour fcntl
 #include <iostream> // Pour std::cerr
 #include <map>
-#include <netdb.h> // Pour getaddrinfo, freeaddrinfo, gai_strerror
-#include <netinet/in.h> // Pour sockaddr_in, INADDR_ANY
-#include <stdlib.h> // Pour exit
-#include <string.h> // Pour memset, memcpy
-#include <sys/socket.h> // Pour socket, bind, listen, accept
-#include <unistd.h> // Pour close
+#include <vector>
 
-class Server {
-public:
-    ~Server();
-    Server();
-    Server(const Server& src);
-    Server& operator=(const Server& src);
+class Location;
+class Client;
 
-    void setListenFd();
-    void setPort(int port);
-    void setClientMaxBodySize(int size);
-    void setName(const std::string& name);
-    void setErrorPages(std::map<int, std::string> errorPages);
+class Server
+{
+  public:
+  ~Server();
+  Server();
+  Server(const Server& src);
+  Server& operator=(const Server& src);
 
-    void addLocation(const Location& location);
+  void setPort(int port);
+  void setClientMaxBodySize(int size);
+  void setName(const std::string& name);
+  void setClientBodyTempPath(const std::string& clientBodyTempPath);
+  void setClientTimeOut(int timeOut);
+  void setErrorPages(std::map<size_t, std::string> errorPages);
+  void setExplicitlyDefault(bool isExplicitlyDefault);
 
-    int getListenFd() const;
-    int getPort() const;
-    int getClientMaxBodySize() const;
-    const std::string& getName() const;
-    const std::map<int, std::string>& getErrorPages() const;
+  void addLocation(const Location& location);
+  void addErrorPage(int errorCode, std::string errorPath);
 
-    void displayServerInfo() const;
+  int getPort() const;
+  int getClientMaxBodySize() const;
+  int getClientTimeOut() const;
+  const std::string& getName() const;
+  const std::string& getClientBodyTempPath() const;
+  const std::map<size_t, std::string>& getErrorPages() const;
+  bool isExplicitlyDefault() const;
 
-    void start();
+  bool isPortDefined() const { return hasPort; };
+  bool isNameDefined() const { return hasName; };
+  bool isClientBodyTempPathDefined() const { return hasClientBodyTempPath; };
+  bool isClientMaxBodySizeDefined() const { return hasClientMaxBodySize; };
+  bool isClientTimeOutDefined() const { return hasClientTimeOut; };
+  bool isErrorPagesDefined() const { return hasErrorPages; };
+  bool isLocationsDefined() const { return hasLocations; };
 
-private:
-    int listenFd;
-    int port;
-    std::string name;
-    int clientMaxBodySize;
-    std::map<int, std::string> errorPages;
-    std::vector<Location> locations;
-    struct sockaddr_in addr;
-    void resolveHostName();
-    void bindSocket() const;
-    void setToListen() const;
-    void makeSocketNonBlocking() const;
+  void displayServerInfo() const;
+
+  std::map<std::string, Location>& getLocations();
+  const std::map<std::string, Location>& getLocations() const;
+
+  private:
+  int port;
+  std::string name;
+  std::string clientBodyTempPath;
+  int clientMaxBodySize;
+  int clientTimeOut;
+  bool isDefault;
+  bool explicitlyDefault;
+  bool hasPort;
+  bool hasName;
+  bool hasClientBodyTempPath;
+  bool hasClientMaxBodySize;
+  bool hasClientTimeOut;
+  bool hasErrorPages;
+  bool hasLocations;
+
+  std::map<size_t, std::string> errorPages;
+  std::map<std::string, Location> locations;
 };

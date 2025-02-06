@@ -1,70 +1,59 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ErrorPageDirective.cpp                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 18:21:01 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/10 17:23:39 by sbouheni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "ErrorPageDirective.hpp"
 
 ErrorPageDirective::~ErrorPageDirective() { }
 
-ErrorPageDirective::ErrorPageDirective(const std::string& currentContext, const std::string& fullDirectiveLine)
-	: Directive(currentContext, fullDirectiveLine)
+ErrorPageDirective::ErrorPageDirective(Block* currentContext, const std::string& fullDirectiveLine)
+    : Directive(currentContext, fullDirectiveLine)
 {
-	setName("error_page");
-	setMinArgs(2);
-	//TODO: Look into the max number of arguments for error_page
-	setMaxArgs(100);
-	//TODO: Look for valid contexts for error_page
-	addContext("server");
-	validate();
+  setName("error_page");
+  setMinArgs(2);
+  setMaxArgs(2);
+  addContext("server");
+  validate();
 }
 
 ErrorPageDirective::ErrorPageDirective(const ErrorPageDirective& other)
-	: Directive(other)
-	, errorPages(other.errorPages)
+    : Directive(other)
+    , errorCode(other.errorCode)
+    , errorPath(other.errorPath)
 {
 }
 
 ErrorPageDirective& ErrorPageDirective::operator=(const ErrorPageDirective& other)
 {
-	if (this != &other) {
-		Directive::operator=(other);
-		errorPages = other.errorPages;
-	}
-	return *this;
+  if (this != &other)
+  {
+    Directive::operator=(other);
+    errorCode = other.errorCode;
+    errorPath = other.errorPath;
+  }
+  return *this;
 }
 
 bool ErrorPageDirective::validateSpecific()
 {
-	//TODO: Implement validation
-	return true;
-}
-
-void ErrorPageDirective::displayInfo() const
-{
-	std::cout << "Name : " << this->getName() << std::endl;
+  if (!utils::convertToInt(getArguments()[0].c_str(), errorCode))
+  {
+    std::cerr << "Error: Directive \"" << getName() << "\" has an invalid argument." << std::endl;
+    return false;
+  }
+  errorPath = getArguments()[1];
+  return true;
 }
 
 void ErrorPageDirective::apply(Server& server)
 {
-	server.setErrorPages(errorPages);
+  server.addErrorPage(errorCode, errorPath);
 }
 
 void ErrorPageDirective::setErrorPage(const std::string& errorPage)
 {
-	//TODO: Implement setErrorPage
-	(void)errorPage;
+  // TODO: Implement setErrorPage
+  (void)errorPage;
 }
 
 std::string ErrorPageDirective::getErrorPage() const
 {
-	//TODO: Implement getErrorPage
-	return "";
+  // TODO: Implement getErrorPage
+  return "";
 }

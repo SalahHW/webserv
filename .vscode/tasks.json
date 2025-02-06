@@ -4,9 +4,14 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "build",
+			"label": "re",
 			"type": "shell",
 			"command": "make re"
+		},
+		{
+			"label": "all",
+			"type": "shell",
+			"command": "make all"
 		}
 	]
 }

@@ -1,21 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ConfigFile.hpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sbouheni <sbouheni@student.42mulhouse.fr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/31 00:40:40 by sbouheni          #+#    #+#             */
-/*   Updated: 2024/10/17 16:54:47 by sbouheni         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
-
-#include "Block.hpp"
-#include "BlockFactory.hpp"
-#include "DirectiveFactory.hpp"
-#include "utils.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -25,15 +8,25 @@
 #include <string>
 #include <vector>
 
+#include "Block.hpp"
+#include "BlockFactory.hpp"
+#include "ConfigExtractor.hpp"
+#include "ConfigFinalizer.hpp"
+#include "DirectiveFactory.hpp"
+#include "Port.hpp"
+#include "utils.hpp"
+
 class ConfigFile {
 public:
     // Constructor and destructor
-    ConfigFile(const std::string& configFilePath);
     ~ConfigFile();
+    ConfigFile(const std::string& configFilePath);
 
     // Accessors
-    const Block& getMainBlock() const;
     bool good() const;
+    const Block& getMainBlock() const;
+    std::map<int, Port*> getPortMap() const;
+    void displayInfo() const;
 
 private:
     // Disable default constructor, copy constructor, and assignment operator
@@ -51,16 +44,20 @@ private:
     void processDirective(const std::string& cleanedLine, Block* currentBlock);
 
     // Utility methods
-    bool isOpeningBracePresent(std::size_t openBracePos, std::size_t semiColonPos) const;
     bool findOpeningBrace(std::ifstream& file, Block* currentBlock);
     std::string cleanLine(const std::string& originalLine) const;
     bool isDirective(const std::string& line) const;
     std::string extractBlockName(const std::string& line) const;
     std::string extractDirectiveName(const std::string& line) const;
 
+    void finalizeConfig();
+
     // Member variables
     DirectiveFactory directiveFactory;
     BlockFactory blockFactory;
+    ConfigFinalizer finalizer;
     Block* mainBlock;
     bool isValid;
+    std::map<int, Port*> ports;
+    std::vector<Server> servers;
 };
