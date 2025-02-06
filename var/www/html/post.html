@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Upload a File</title>
+    <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        p,
+        a {
+            color: #e0e2f4;
+        }
+
+        body,
+        p {
+            font: normal 20px/1.25rem 'VT323', monospace;
+        }
+
+        h1 {
+            font: normal 2.75rem/1.05em 'VT323', monospace;
+        }
+
+        h2 {
+            font: normal 2.25rem/1.25em 'VT323', monospace;
+        }
+
+        h3 {
+            font: lighter 1.5rem/1.25em 'VT323', monospace;
+        }
+
+        h4 {
+            font: lighter 1.125rem/1.2222222em 'VT323', monospace;
+        }
+
+        body {
+            background: #0414a7;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+            max-width: 640px;
+        }
+
+        .main-content {
+            padding-top: 10%;
+            text-align: center;
+        }
+
+        .main-content .title {
+            margin-bottom: 50px;
+        }
+
+        #uploadProgress {
+            width: 80%;
+            max-width: 300px;
+            height: 20px;
+            margin: 20px auto;
+            display: block;
+            background: #aaa;
+            border: 1px solid #e0e2f4;
+        }
+
+        #uploadProgressBar {
+            width: 0%;
+            height: 100%;
+            background: #e0e2f4;
+            transition: width 0.2s ease;
+        }
+
+        .file-input-button,
+        .upload-button {
+            display: inline-block;
+            margin: 15px 10px;
+            padding: 10px 20px;
+            font: normal 20px 'VT323', monospace;
+            color: #0414a7;
+            background: #e0e2f4;
+            border: none;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .file-input-button:hover,
+        .file-input-button:focus,
+        .upload-button:hover,
+        .upload-button:focus {
+            background: #aaaaaa;
+        }
+
+        #fileToUpload {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main-content">
+            <h1 class="title">Upload a File</h1>
+            <p>Select a file from your computer, then click the upload button to send it to the server.</p>
+
+            <form id="uploadForm" enctype="multipart/form-data">
+                <label for="fileToUpload" class="file-input-button" id="chooseButton">Choose a File</label>
+                <input type="file" id="fileToUpload" name="fileToUpload">
+
+                <button type="submit" class="upload-button">Upload</button>
+
+                <div id="uploadProgress">
+                    <div id="uploadProgressBar"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('fileToUpload');
+        const chooseButton = document.getElementById('chooseButton');
+        const uploadProgressBar = document.getElementById('uploadProgressBar');
+
+        fileInput.addEventListener('change', function () {
+            if (fileInput.files.length > 0) {
+                chooseButton.style.backgroundColor = '#55aa55';
+                chooseButton.style.color = '#ffffff';
+            } else {
+                chooseButton.style.backgroundColor = '#e0e2f4';
+                chooseButton.style.color = '#0414a7';
+            }
+        });
+
+        uploadForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            if (!fileInput.files.length) {
+                alert('Please choose a file first.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('fileToUpload', file);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload'); // Remplacez /upload par l'URL de votre choix
+
+            xhr.upload.addEventListener('progress', function (e) {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    uploadProgressBar.style.width = percentComplete + '%';
+                }
+            });
+
+            xhr.addEventListener('load', function () {
+                if (xhr.status === 200) {
+                    uploadProgressBar.style.width = '100%';
+                    alert('File uploaded successfully!');
+                } else {
+                    alert('Error uploading file. Server responded with status ' + xhr.status);
+                }
+            });
+
+            xhr.addEventListener('error', function () {
+                alert('An error occurred while uploading the file.');
+            });
+
+            xhr.send(formData);
+        });
+    </script>
+</body>
+
+</html>
