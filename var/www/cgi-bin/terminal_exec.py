@@ -3,6 +3,9 @@ import sys
 import subprocess
 from urllib.parse import unquote
 
+import time
+
+time.sleep(1)
 content_length = int(os.environ.get('CONTENT_LENGTH', 0))
 form_data = sys.stdin.read(content_length)
 

@@ -8,9 +8,13 @@
 #define WAITPID_ERR "Error : waitpid"
 #define QUERY_ERR "Error : Tryed to give query string in child process"
 #define ENVARRAY_MALLOC_FAIL "Error : Memory allocation for envArray failed."
+#define CGI_TIMEOUT_MS 500
 
 #include <sys/wait.h>
+#include <sys/time.h>
 #include <unistd.h>
+#include <sys/select.h>
+#include <csignal>
 
 #include <algorithm>
 #include <cstdlib>
