@@ -1,4 +1,4 @@
-#include "IndexDirective.hpp"
+#include "Directive.hpp"
 
 IndexDirective::~IndexDirective() { }
 

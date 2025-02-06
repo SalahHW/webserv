@@ -1,4 +1,4 @@
-#include "ClientBodyTempPathDirectice.hpp"
+#include "Directive.hpp"
 
 ClientBodyTempPathDirective::~ClientBodyTempPathDirective() { }
 

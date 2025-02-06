@@ -1,4 +1,4 @@
-#include "ClientMaxBodySizeDirective.hpp"
+#include "Directive.hpp"
 
 ClientMaxBodySizeDirective::~ClientMaxBodySizeDirective() { }
 

@@ -1,21 +1,8 @@
 #pragma once
 
+#include "Directive.hpp"
 #include <map>
 #include <string>
-
-#include "AllowMethodsDirective.hpp"
-#include "AutoIndexDirective.hpp"
-#include "ClientBodyTempPathDirectice.hpp"
-#include "ClientMaxBodySizeDirective.hpp"
-#include "ClientTimeOutDirective.hpp"
-#include "DefaultServerDirective.hpp"
-#include "Directive.hpp"
-#include "ErrorPageDirective.hpp"
-#include "IndexDirective.hpp"
-#include "ListenDirective.hpp"
-#include "ReturnDirective.hpp"
-#include "RootDirective.hpp"
-#include "ServerNameDirective.hpp"
 
 class DirectiveFactory
 {

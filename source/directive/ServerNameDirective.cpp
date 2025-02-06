@@ -1,4 +1,4 @@
-#include "ServerNameDirective.hpp"
+#include "Directive.hpp"
 
 ServerNameDirective::~ServerNameDirective()
 {

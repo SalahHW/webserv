@@ -1,4 +1,4 @@
-#include "ErrorPageDirective.hpp"
+#include "Directive.hpp"
 
 ErrorPageDirective::~ErrorPageDirective() { }
 

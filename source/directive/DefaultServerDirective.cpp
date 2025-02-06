@@ -1,4 +1,4 @@
-#include "DefaultServerDirective.hpp"
+#include "Directive.hpp"
 
 DefaultServerDirective::~DefaultServerDirective() { }
 

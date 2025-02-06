@@ -1,4 +1,4 @@
-#include "RootDirective.hpp"
+#include "Directive.hpp"
 
 RootDirective::~RootDirective() { }
 

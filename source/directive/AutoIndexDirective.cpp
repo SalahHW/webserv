@@ -1,4 +1,4 @@
-#include "AutoIndexDirective.hpp"
+#include "Directive.hpp"
 
 AutoIndexDirective::~AutoIndexDirective() { }
 

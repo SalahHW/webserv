@@ -1,4 +1,4 @@
-#include "AllowMethodsDirective.hpp"
+#include "Directive.hpp"
 #include "Block.hpp"
 
 AllowMethodsDirective::~AllowMethodsDirective() { }
