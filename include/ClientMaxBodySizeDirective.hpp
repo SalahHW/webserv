@@ -3,17 +3,15 @@
 #include "Directive.hpp"
 #include "utils.hpp"
 
-class ClientMaxBodySizeDirective : public Directive {
- public:
+class ClientMaxBodySizeDirective : public Directive
+{
+  public:
   ~ClientMaxBodySizeDirective();
-  ClientMaxBodySizeDirective(Block* currentContext,
-                             const std::string& fullDirectiveLine);
+  ClientMaxBodySizeDirective(Block* currentContext, const std::string& fullDirectiveLine);
   ClientMaxBodySizeDirective(const ClientMaxBodySizeDirective& other);
-  ClientMaxBodySizeDirective& operator=(
-      const ClientMaxBodySizeDirective& other);
+  ClientMaxBodySizeDirective& operator=(const ClientMaxBodySizeDirective& other);
 
   virtual bool validateSpecific();
-  virtual void displayInfo() const;
   virtual void apply(Server& server);
   virtual void apply(Location& location);
 
@@ -21,7 +19,7 @@ class ClientMaxBodySizeDirective : public Directive {
 
   size_t getMaxBodySize() const;
 
- private:
+  private:
   ClientMaxBodySizeDirective();
 
   int maxBodySize;

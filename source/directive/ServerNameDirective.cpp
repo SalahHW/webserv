@@ -1,10 +1,14 @@
 #include "ServerNameDirective.hpp"
 
-ServerNameDirective::~ServerNameDirective() {}
+ServerNameDirective::~ServerNameDirective()
+{
+}
 
-ServerNameDirective::ServerNameDirective(Block *currentContext,
-                                         const std::string &fullDirectiveLine)
-    : Directive(currentContext, fullDirectiveLine), serverName("default") {
+ServerNameDirective::ServerNameDirective(Block* currentContext,
+    const std::string& fullDirectiveLine)
+    : Directive(currentContext, fullDirectiveLine)
+    , serverName("default")
+{
   setName("server_name");
   setMinArgs(1);
   setMaxArgs(1);
@@ -12,21 +16,27 @@ ServerNameDirective::ServerNameDirective(Block *currentContext,
   validate();
 }
 
-ServerNameDirective::ServerNameDirective(const ServerNameDirective &other)
-    : Directive(other), serverName(other.serverName) {}
+ServerNameDirective::ServerNameDirective(const ServerNameDirective& other)
+    : Directive(other)
+    , serverName(other.serverName)
+{
+}
 
-ServerNameDirective &ServerNameDirective::operator=(
-    const ServerNameDirective &other) {
-  if (this != &other) {
+ServerNameDirective& ServerNameDirective::operator=(const ServerNameDirective& other)
+{
+  if (this != &other)
+  {
     Directive::operator=(other);
     serverName = other.serverName;
   }
   return *this;
 }
 
-bool ServerNameDirective::validateSpecific() {
+bool ServerNameDirective::validateSpecific()
+{
   serverName = getArguments()[0];
-  if (serverName.empty()) {
+  if (serverName.empty())
+  {
     std::cerr << "Error: Directive 'server_name' in " << getCurrentContext()
               << " has an empty server name." << std::endl;
     return false;
@@ -34,17 +44,17 @@ bool ServerNameDirective::validateSpecific() {
   return true;
 }
 
-void ServerNameDirective::displayInfo() const {
-  std::cout << "Name : " << this->getName() << std::endl
-            << "- server name : " << serverName << std::endl;
+void ServerNameDirective::apply(Server& server)
+{
+  server.setName(serverName);
 }
 
-void ServerNameDirective::apply(Server &server) { server.setName(serverName); }
-
-void ServerNameDirective::setServerName(const std::string &serverName) {
+void ServerNameDirective::setServerName(const std::string& serverName)
+{
   this->serverName = serverName;
 }
 
-const std::string &ServerNameDirective::getServername() const {
+const std::string& ServerNameDirective::getServername() const
+{
   return serverName;
 }

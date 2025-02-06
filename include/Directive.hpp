@@ -11,8 +11,9 @@
 
 class Block;
 
-class Directive {
- public:
+class Directive
+{
+  public:
   virtual ~Directive();
   Directive(Block* currentContext, const std::string& fullDirectiveLine);
   Directive(const Directive& other);
@@ -23,18 +24,17 @@ class Directive {
   bool validateArgsSize() const;
 
   virtual bool validateSpecific() = 0;
-  virtual void displayInfo() const = 0;
   virtual void apply(Server& server);
   virtual void apply(Location& location);
 
   bool getIsValid() const { return isValid; };
   const Block* getCurrentContext() const;
-  const std::string &getFullDirectiveLine() const;
-  const std::string &getName() const;
-  const std::vector<std::string> &getArguments() const;
+  const std::string& getFullDirectiveLine() const;
+  const std::string& getName() const;
+  const std::vector<std::string>& getArguments() const;
   int getMinArgs() const;
   int getMaxArgs() const;
-  const std::vector<std::string> &getContexts() const;
+  const std::vector<std::string>& getContexts() const;
   bool good() const;
 
   void setIsValid(bool valid);
@@ -47,7 +47,7 @@ class Directive {
   void addArgument(const std::string& argument);
   void addContext(const std::string& context);
 
- private:
+  private:
   Directive();
 
   bool isValid;

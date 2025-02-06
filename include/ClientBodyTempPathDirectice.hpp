@@ -11,7 +11,6 @@ class ClientBodyTempPathDirective : public Directive
   ClientBodyTempPathDirective& operator=(const ClientBodyTempPathDirective& other);
 
   virtual bool validateSpecific();
-  virtual void displayInfo() const;
   virtual void apply(Server& server);
   virtual void apply(Location& location);
 

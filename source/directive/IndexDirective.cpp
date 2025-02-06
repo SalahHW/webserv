@@ -36,12 +36,6 @@ bool IndexDirective::validateSpecific()
   return true;
 }
 
-void IndexDirective::displayInfo() const
-{
-  std::cout << "Name : " << this->getName() << std::endl
-            << "- index path : " << indexPath << std::endl;
-}
-
 void IndexDirective::apply(Location& location)
 {
   location.setIndexFile(indexPath);

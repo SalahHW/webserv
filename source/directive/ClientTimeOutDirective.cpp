@@ -60,12 +60,6 @@ bool ClientTimeOutDirective::validateSpecific()
   return true;
 }
 
-void ClientTimeOutDirective::displayInfo() const
-{
-  std::cout << "Name : " << this->getName() << std::endl
-            << "- TimeOut : " << time << "s" << std::endl;
-}
-
 void ClientTimeOutDirective::apply(Server& server)
 {
   server.setClientTimeOut(time);

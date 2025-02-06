@@ -12,7 +12,6 @@ class AllowMethodsDirective : public Directive
   AllowMethodsDirective& operator=(const AllowMethodsDirective& other);
 
   virtual bool validateSpecific();
-//   virtual void displayInfo() const;
   virtual void apply(Location& location);
 
   private:

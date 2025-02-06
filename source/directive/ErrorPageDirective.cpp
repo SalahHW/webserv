@@ -1,9 +1,8 @@
 #include "ErrorPageDirective.hpp"
 
-ErrorPageDirective::~ErrorPageDirective() {}
+ErrorPageDirective::~ErrorPageDirective() { }
 
-ErrorPageDirective::ErrorPageDirective(Block *currentContext,
-                                       const std::string &fullDirectiveLine)
+ErrorPageDirective::ErrorPageDirective(Block* currentContext, const std::string& fullDirectiveLine)
     : Directive(currentContext, fullDirectiveLine)
 {
   setName("error_page");
@@ -13,13 +12,14 @@ ErrorPageDirective::ErrorPageDirective(Block *currentContext,
   validate();
 }
 
-ErrorPageDirective::ErrorPageDirective(const ErrorPageDirective &other)
-    : Directive(other),
-      errorCode(other.errorCode),
-      errorPath(other.errorPath) {}
+ErrorPageDirective::ErrorPageDirective(const ErrorPageDirective& other)
+    : Directive(other)
+    , errorCode(other.errorCode)
+    , errorPath(other.errorPath)
+{
+}
 
-ErrorPageDirective &ErrorPageDirective::operator=(
-    const ErrorPageDirective &other)
+ErrorPageDirective& ErrorPageDirective::operator=(const ErrorPageDirective& other)
 {
   if (this != &other)
   {
@@ -34,25 +34,19 @@ bool ErrorPageDirective::validateSpecific()
 {
   if (!utils::convertToInt(getArguments()[0].c_str(), errorCode))
   {
-    std::cerr << "Error: Directive \"" << getName()
-              << "\" has an invalid argument." << std::endl;
+    std::cerr << "Error: Directive \"" << getName() << "\" has an invalid argument." << std::endl;
     return false;
   }
   errorPath = getArguments()[1];
   return true;
 }
 
-void ErrorPageDirective::displayInfo() const
-{
-  std::cout << "Name : " << this->getName() << std::endl;
-}
-
-void ErrorPageDirective::apply(Server &server)
+void ErrorPageDirective::apply(Server& server)
 {
   server.addErrorPage(errorCode, errorPath);
 }
 
-void ErrorPageDirective::setErrorPage(const std::string &errorPage)
+void ErrorPageDirective::setErrorPage(const std::string& errorPage)
 {
   // TODO: Implement setErrorPage
   (void)errorPage;

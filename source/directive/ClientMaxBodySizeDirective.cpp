@@ -78,12 +78,6 @@ bool ClientMaxBodySizeDirective::validateSpecific()
   return true;
 }
 
-void ClientMaxBodySizeDirective::displayInfo() const
-{
-  std::cout << "Name : " << this->getName() << std::endl
-            << "- max body size : " << maxBodySize << std::endl;
-}
-
 void ClientMaxBodySizeDirective::apply(Server& server)
 {
   server.setClientMaxBodySize(maxBodySize);

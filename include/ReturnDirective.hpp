@@ -3,15 +3,15 @@
 #include "Directive.hpp"
 #include "utils.hpp"
 
-class ReturnDirective : public Directive {
- public:
+class ReturnDirective : public Directive
+{
+  public:
   ~ReturnDirective();
   ReturnDirective(Block* currentContext, const std::string& fullDirectiveLine);
   ReturnDirective(const ReturnDirective& other);
   ReturnDirective& operator=(const ReturnDirective& other);
 
   virtual bool validateSpecific();
-  virtual void displayInfo() const;
   virtual void apply(Location& location);
 
   void setReturnCode(int returnCode);
@@ -20,7 +20,7 @@ class ReturnDirective : public Directive {
   int getReturnCode() const;
   const std::string& getReturnPath() const;
 
- private:
+  private:
   ReturnDirective();
 
   int returnCode;

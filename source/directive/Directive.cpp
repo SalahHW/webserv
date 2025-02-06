@@ -2,25 +2,31 @@
 
 #include "Block.hpp"
 
-Directive::~Directive() {}
+Directive::~Directive() { }
 
-Directive::Directive(Block *currentContext,
-                     const std::string &fullDirectiveLine)
-    : currentContext(currentContext), fullDirectiveLine(fullDirectiveLine) {
+Directive::Directive(Block* currentContext,
+    const std::string& fullDirectiveLine)
+    : currentContext(currentContext)
+    , fullDirectiveLine(fullDirectiveLine)
+{
   tokenizeName();
 }
 
-Directive::Directive(const Directive &other)
-    : currentContext(other.currentContext),
-      fullDirectiveLine(other.fullDirectiveLine),
-      name(other.name),
-      arguments(other.arguments),
-      minArgs(other.minArgs),
-      maxArgs(other.maxArgs),
-      contexts(other.contexts) {}
+Directive::Directive(const Directive& other)
+    : currentContext(other.currentContext)
+    , fullDirectiveLine(other.fullDirectiveLine)
+    , name(other.name)
+    , arguments(other.arguments)
+    , minArgs(other.minArgs)
+    , maxArgs(other.maxArgs)
+    , contexts(other.contexts)
+{
+}
 
-Directive &Directive::operator=(const Directive &other) {
-  if (this != &other) {
+Directive& Directive::operator=(const Directive& other)
+{
+  if (this != &other)
+  {
     fullDirectiveLine = other.fullDirectiveLine;
     name = other.name;
     currentContext = other.currentContext;
@@ -32,13 +38,15 @@ Directive &Directive::operator=(const Directive &other) {
   return *this;
 }
 
-void Directive::validate() {
+void Directive::validate()
+{
   isValid = validateContext() && validateArgsSize() && validateSpecific();
 }
 
-bool Directive::validateContext() const {
-  if (std::find(contexts.begin(), contexts.end(), currentContext->getName()) ==
-      contexts.end()) {
+bool Directive::validateContext() const
+{
+  if (std::find(contexts.begin(), contexts.end(), currentContext->getName()) == contexts.end())
+  {
     std::cerr << "Error: Directive \"" << name << "\" cannot be used in \""
               << currentContext->getName() << "\" block" << std::endl;
     return false;
@@ -46,10 +54,12 @@ bool Directive::validateContext() const {
   return true;
 }
 
-bool Directive::validateArgsSize() const {
+bool Directive::validateArgsSize() const
+{
   int argsSize = static_cast<int>(arguments.size());
 
-  if (argsSize < minArgs || argsSize > maxArgs) {
+  if (argsSize < minArgs || argsSize > maxArgs)
+  {
     std::cerr << "Error: Directive \"" << name
               << "\" has an invalid number of arguments." << std::endl;
     return false;
@@ -57,62 +67,101 @@ bool Directive::validateArgsSize() const {
   return true;
 }
 
-void Directive::apply(Server &server) { (void)server; }
+void Directive::apply(Server& server)
+{
+  (void)server;
+}
 
-void Directive::apply(Location &location) { (void)location; }
+void Directive::apply(Location& location)
+{
+  (void)location;
+}
 
-void Directive::setFullDirectiveLine(const std::string &line) {
+void Directive::setFullDirectiveLine(const std::string& line)
+{
   this->fullDirectiveLine = line;
 }
 
-void Directive::setName(const std::string &name) { this->name = name; }
+void Directive::setName(const std::string& name)
+{
+  this->name = name;
+}
 
-void Directive::setCurrentContext(Block *context) {
+void Directive::setCurrentContext(Block* context)
+{
   this->currentContext = context;
 }
 
-void Directive::addArgument(const std::string &argument) {
+void Directive::addArgument(const std::string& argument)
+{
   this->arguments.push_back(argument);
 }
 
-void Directive::addContext(const std::string &context) {
+void Directive::addContext(const std::string& context)
+{
   this->contexts.push_back(context);
 }
 
-void Directive::setMinArgs(int min) { this->minArgs = min; }
+void Directive::setMinArgs(int min)
+{
+  this->minArgs = min;
+}
 
-void Directive::setMaxArgs(int max) { this->maxArgs = max; }
+void Directive::setMaxArgs(int max)
+{
+  this->maxArgs = max;
+}
 
-const std::string &Directive::getFullDirectiveLine() const {
+const std::string& Directive::getFullDirectiveLine() const
+{
   return fullDirectiveLine;
 }
 
-const std::string &Directive::getName() const { return name; }
+const std::string& Directive::getName() const
+{
+  return name;
+}
 
-const Block *Directive::getCurrentContext() const { return currentContext; }
+const Block* Directive::getCurrentContext() const
+{
+  return currentContext;
+}
 
-const std::vector<std::string> &Directive::getArguments() const {
+const std::vector<std::string>& Directive::getArguments() const
+{
   return arguments;
 }
 
-const std::vector<std::string> &Directive::getContexts() const {
+const std::vector<std::string>& Directive::getContexts() const
+{
   return contexts;
 }
 
-int Directive::getMinArgs() const { return minArgs; }
+int Directive::getMinArgs() const
+{
+  return minArgs;
+}
 
-int Directive::getMaxArgs() const { return maxArgs; }
+int Directive::getMaxArgs() const
+{
+  return maxArgs;
+}
 
-bool Directive::good() const { return isValid; }
+bool Directive::good() const
+{
+  return isValid;
+}
 
-void Directive::tokenizeName() {
+void Directive::tokenizeName()
+{
   std::stringstream ss(fullDirectiveLine);
   std::string token;
 
   ss >> token;
   name = token;
 
-  while (ss >> token) {
+  while (ss >> token)
+  {
     arguments.push_back(token);
   }
 }

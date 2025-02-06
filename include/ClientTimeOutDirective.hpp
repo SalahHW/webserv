@@ -12,7 +12,6 @@ class ClientTimeOutDirective : public Directive
   ClientTimeOutDirective& operator=(const ClientTimeOutDirective& other);
 
   virtual bool validateSpecific();
-  virtual void displayInfo() const;
   virtual void apply(Server& server);
   virtual void apply(Location& location);
 

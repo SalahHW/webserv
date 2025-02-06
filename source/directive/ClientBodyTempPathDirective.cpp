@@ -35,11 +35,6 @@ bool ClientBodyTempPathDirective::validateSpecific()
   return true;
 }
 
-void ClientBodyTempPathDirective::displayInfo() const
-{
-  std::cout << "client_body_temp_path: " << tempPath << std::endl;
-}
-
 void ClientBodyTempPathDirective::apply(Server& server)
 {
   server.setClientBodyTempPath(tempPath);
