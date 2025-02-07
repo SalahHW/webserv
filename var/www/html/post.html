@@ -74,7 +74,8 @@
         }
 
         .file-input-button,
-        .upload-button {
+        .upload-button,
+        .delete-button {
             display: inline-block;
             margin: 15px 10px;
             padding: 10px 20px;
@@ -89,7 +90,9 @@
         .file-input-button:hover,
         .file-input-button:focus,
         .upload-button:hover,
-        .upload-button:focus {
+        .upload-button:focus,
+        .delete-button:hover,
+        .delete-button:focus {
             background: #aaaaaa;
         }
 
@@ -115,6 +118,9 @@
                     <div id="uploadProgressBar"></div>
                 </div>
             </form>
+
+            <!-- Bouton Delete, caché par défaut -->
+            <button type="button" class="delete-button" id="deleteButton" style="display: none;">Delete File</button>
         </div>
     </div>
 
@@ -123,6 +129,10 @@
         const fileInput = document.getElementById('fileToUpload');
         const chooseButton = document.getElementById('chooseButton');
         const uploadProgressBar = document.getElementById('uploadProgressBar');
+        const deleteButton = document.getElementById('deleteButton');
+
+        // On stocke le nom du fichier uploadé pour pouvoir construire l'URL de DELETE
+        let uploadedFileName = '';
 
         fileInput.addEventListener('change', function () {
             if (fileInput.files.length > 0) {
@@ -143,11 +153,15 @@
             }
 
             const file = fileInput.files[0];
+            // On stocke le nom du fichier pour la suppression
+            uploadedFileName = file.name;
+
             const formData = new FormData();
             formData.append('fileToUpload', file);
 
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/upload'); // Remplacez /upload par l'URL de votre choix
+            // Remplacez '/upload' par l'URL adéquate sur votre serveur
+            xhr.open('POST', '/upload');
 
             xhr.upload.addEventListener('progress', function (e) {
                 if (e.lengthComputable) {
@@ -157,9 +171,12 @@
             });
 
             xhr.addEventListener('load', function () {
-                if (xhr.status === 200) {
+                console.log("Upload terminé. Statut :", xhr.status);
+                if (xhr.status === 200 || xhr.status === 201) {
                     uploadProgressBar.style.width = '100%';
                     alert('File uploaded successfully!');
+                    console.log("Upload réussi, affichage du bouton Delete.");
+                    deleteButton.style.display = 'inline-block';
                 } else {
                     alert('Error uploading file. Server responded with status ' + xhr.status);
                 }
@@ -170,6 +187,36 @@
             });
 
             xhr.send(formData);
+        });
+
+        deleteButton.addEventListener('click', function () {
+            if (!uploadedFileName) {
+                alert("No file to delete");
+                return;
+            }
+
+            // Construction de l'URL de suppression (exemple : '/upload/nomDuFichier')
+            const deleteUrl = '/upload/' + encodeURIComponent(uploadedFileName);
+            const xhrDelete = new XMLHttpRequest();
+            xhrDelete.open('DELETE', deleteUrl);
+
+            xhrDelete.addEventListener('load', function () {
+                console.log("Suppression terminée. Statut :", xhrDelete.status);
+                if (xhrDelete.status === 200) {
+                    alert('File deleted successfully!');
+                    deleteButton.style.display = 'none';
+                } else if (xhrDelete.status === 403) {
+                    alert('Deletion forbidden: The file cannot be deleted from this location.');
+                } else {
+                    alert('Error deleting file. Server responded with status ' + xhrDelete.status);
+                }
+            });
+
+            xhrDelete.addEventListener('error', function () {
+                alert('An error occurred while deleting the file.');
+            });
+
+            xhrDelete.send();
         });
     </script>
 </body>

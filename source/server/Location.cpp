@@ -93,7 +93,10 @@ void Location::setClientBodyTempPath(const std::string& clientBodyTempPath)
   this->hasClientBodyTempPath = true;
 }
 
-void Location::setAutoIndex(bool autoIndex) { this->autoIndex = autoIndex; }
+void Location::setAutoIndex(bool autoIndex)
+{
+  this->autoIndex = autoIndex;
+}
 
 void Location::setGetAccepted(bool getAccepted)
 {

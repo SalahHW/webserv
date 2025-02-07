@@ -23,6 +23,8 @@ class RequestParser {
   void parseAcceptLanguage(const std::string& value);
   void parseAcceptEncoding(const std::string& value);
   void parseConnection(const std::string& value);
+  void parseMultipartBody(const std::string& bodyData);
+  void parseSinglePart(const std::string& part);
   std::string trim(const std::string& str) const;
 
  public:

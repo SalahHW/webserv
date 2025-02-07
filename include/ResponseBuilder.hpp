@@ -12,23 +12,24 @@
 
 #define BUFFER 1024
 
-class Response;
 class VirtualHost;
+class Response;
 
 class ResponseBuilder {
  private:
   ResponseBuilder();
+  ResponseBuilder(const ResponseBuilder& src);
 
-  const Request& request;
+  Request* request;
   Response& response;
   size_t statusCode;
   const VirtualHost& virtualHost;
   Location matchingLocation;
   std::string determinedPath;
+  std::ifstream file;
 
   void checkRequest();
   const std::string& getReasonPhraseForCode(size_t code);
-  void setStatusCode(size_t code);
   std::string determinePath();
   const VirtualHost& findMatchingVirtualHost(
       const std::map<std::string, VirtualHost>& virtualHosts,
@@ -39,9 +40,9 @@ class ResponseBuilder {
   bool doesVhostExist();
   bool doesUriExist();
   bool isRessourceAvailable();
+  void appendToVector(std::vector<char>& vec, const std::string& str);
 
   void buildErrorContentLength();
-  void buildErrorPage(size_t errorCode);
   void buildStatusLine();
   void buildDate();
   void buildContentLength();
@@ -54,15 +55,22 @@ class ResponseBuilder {
   void buildBytesSent();
   void buildBytesTotal();
   void buildFullHeader();
-  void buildFullResponse();
+  void buildCreatedPage();
   const std::string to_string(size_t number);
   const std::string findContentType(const std::string& fileName);
   size_t getFileSize(const std::string& fileName);
+  void handleCgi();
 
  public:
-  ResponseBuilder(const Request& request, Response& response,
+  ResponseBuilder(Request* request, Response& response,
                   const std::map<std::string, VirtualHost>& virtualHosts,
                   const std::string& defaultVirtualHostName);
   ~ResponseBuilder();
   void buildBody();
+  void buildErrorPage(size_t errorCode);
+  void treatAPost();
+  void treatADelete();
+  void setStatusCode(size_t code);
+  void successPost();
+  size_t getStatusCode() const;
 };

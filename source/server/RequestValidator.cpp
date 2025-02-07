@@ -4,16 +4,9 @@
 
 bool RequestValidator::validateRequest(const Request& request) {
   if (request.getHostGood() && request.getMethodGood() &&
-      request.getUriGood() && request.getVersionGood() &&
-      request.getUserAgentGood() && request.getAcceptGood() &&
-      request.getAcceptLanguageGood() && request.getAcceptEncodingGood() &&
-      request.getConnectionGood()) {
-    // test
-    std::cout << "Request is valid" << std::endl;
+      request.getUriGood() && request.getVersionGood()) {
     return true;
   } else {
-    // test
-    std::cout << "Request is invalid" << std::endl;
     return false;
   }
 }

@@ -5,13 +5,14 @@
 #include <cstddef>
 #include <string>
 
+#include "Request.hpp"
 #include "Response.hpp"
 
 class Sender {
  public:
-  Sender(Response& response, int sockfd);
+  Sender(Response& response, int sockfd, Request& request);
   ~Sender();
-  void sendOnFd(Response& response, int sockfd);
+  void sendOnFd(Response& response, int sockfd, Request& request);
 
  private:
   Sender(const Sender& other);

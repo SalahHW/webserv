@@ -1,7 +1,10 @@
 #include "Request.hpp"
 
-Request::Request(const std::string& request)
-    : methodGood(false),
+#include "Cgi.hpp"
+
+Request::Request(const std::string& request, size_t fd)
+    : fd(fd),
+      methodGood(false),
       uriGood(false),
       versionGood(false),
       hostGood(false),
@@ -10,7 +13,10 @@ Request::Request(const std::string& request)
       acceptLanguageGood(false),
       acceptEncodingGood(false),
       connectionGood(false),
-      isRequestGood(false) {
+      isRequestGood(false),
+      isParsed(false),
+      isTreated(false),
+      isInTreatment(false) {
   RequestParser requestParser(request, *this);
   methodGood = RequestValidator::validateMethod(method);
   uriGood = RequestValidator::validateUri(uri);
@@ -22,7 +28,11 @@ Request::Request(const std::string& request)
   acceptEncodingGood = RequestValidator::validateAcceptEncoding(AcceptEncoding);
   connectionGood = RequestValidator::validateConnection(Connection);
   isRequestGood = RequestValidator::validateRequest(*this);
+  isParsed = true;
+  // displayRequest();
 }
+
+Request::Request() {}
 
 Request::~Request() {}
 
@@ -63,6 +73,13 @@ void Request::setHostName(const std::string& hostName) {
   this->hostName = hostName;
 }
 
+void Request::setResponse(
+    const std::map<std::string, VirtualHost>& virtualHosts,
+    const std::string& defaultVirtualHostName) {
+  this->response = new Response(this, virtualHosts, defaultVirtualHostName);
+  isInTreatment = true;
+}
+
 void Request::setMethodGood(bool methodGood) { this->methodGood = methodGood; }
 
 void Request::setUriGood(bool uriGood) { this->uriGood = uriGood; }
@@ -95,6 +112,38 @@ void Request::setIsRequestGood(bool isRequestGood) {
   this->isRequestGood = isRequestGood;
 }
 
+void Request::setIsTreated(bool isTreated) { this->isTreated = isTreated; }
+
+void Request::setIsInTreatment(bool isInProcess) {
+  this->isInTreatment = isInProcess;
+}
+
+void Request::setIsACgi(bool isACgi) { this->isACgi = isACgi; }
+
+void Request::setIsParsed(bool isParsed) { this->isParsed = isParsed; }
+
+void Request::setContentType(const std::string& type) { contentType = type; }
+
+void Request::setContentLength(const std::string& length) {
+  contentLength = length;
+}
+
+void Request::setBoundary(const std::string& boundary) {
+  this->boundary = boundary;
+}
+
+void Request::setFileName(const std::string& fileName) {
+  this->fileName = fileName;
+}
+
+void Request::setFileContent(const std::string& fileContent) {
+  this->fileContent = fileContent;
+}
+
+const std::string& Request::getContentType() const { return contentType; }
+
+const std::string& Request::getContentLength() const { return contentLength; }
+
 const std::string& Request::getMethod() const { return this->method; }
 
 const std::string& Request::getUri() const { return this->uri; }
@@ -119,7 +168,17 @@ const std::string& Request::getConnection() const { return this->Connection; }
 
 const std::string& Request::getBody() const { return this->body; }
 
+Response* Request::getResponse() const { return response; }
+
 const std::string& Request::getHostName() const { return this->hostName; }
+
+size_t Request::getFd() const { return this->fd; }
+
+const std::string& Request::getBoundary() const { return this->boundary; }
+
+const std::string& Request::getFileName() const { return this->fileName; }
+
+const std::string& Request::getFileContent() const { return this->fileContent; }
 
 bool Request::getMethodGood() const { return this->methodGood; }
 
@@ -141,6 +200,14 @@ bool Request::getConnectionGood() const { return this->connectionGood; }
 
 bool Request::getIsRequestGood() const { return isRequestGood; }
 
+bool Request::getIsTreated() const { return isTreated; }
+
+bool Request::getIsInTreatment() const { return isInTreatment; }
+
+bool Request::getIsParsed() const { return isParsed; }
+
+bool Request::getIsACgi() const { return isACgi; }
+
 void Request::displayRequest() const {
   std::cout << "Method: " << this->method << std::endl;
   std::cout << "URI: " << this->uri << std::endl;
@@ -153,4 +220,9 @@ void Request::displayRequest() const {
   std::cout << "Connection: " << this->Connection << std::endl;
   std::cout << "Body: " << this->body << std::endl;
   std::cout << "Host Name: " << this->hostName << std::endl;
+  std::cout << "Content Type: " << this->contentType << std::endl;
+  std::cout << "Content Length: " << this->contentLength << std::endl;
+  std::cout << "Boundary: " << this->boundary << std::endl;
+  std::cout << "File Name: " << this->fileName << std::endl;
+  std::cout << "File Content: " << this->fileContent << std::endl;
 }

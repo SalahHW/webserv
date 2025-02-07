@@ -8,10 +8,7 @@ VirtualHost::VirtualHost()
 {
 }
 
-VirtualHost::VirtualHost(const VirtualHost& other)
-{
-  *this = other;
-}
+VirtualHost::VirtualHost(const VirtualHost& other) { *this = other; }
 
 VirtualHost& VirtualHost::operator=(const VirtualHost& other)
 {
@@ -47,12 +44,14 @@ void VirtualHost::setClientTimeOut(int timeOut)
   this->clientTimeOut = timeOut;
 }
 
-void VirtualHost::setErrorPages(const std::map<size_t, std::string>& errorPages)
+void VirtualHost::setErrorPages(
+    const std::map<size_t, std::string>& errorPages)
 {
   this->errorPages = errorPages;
 }
 
-void VirtualHost::setLocations(const std::map<std::string, Location>& locations)
+void VirtualHost::setLocations(
+    const std::map<std::string, Location>& locations)
 {
   this->locations = locations;
 }

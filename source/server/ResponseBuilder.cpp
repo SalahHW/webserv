@@ -1,11 +1,13 @@
 #include "ResponseBuilder.hpp"
 
+#include "Cgi.hpp"
+#include "Request.hpp"
 #include "Response.hpp"
 
 ResponseBuilder::~ResponseBuilder() {}
 
 ResponseBuilder::ResponseBuilder(
-    const Request& request, Response& response,
+    Request* request, Response& response,
     const std::map<std::string, VirtualHost>& virtualHosts,
     const std::string& defaultVirtualHostName)
     : request(request),
@@ -13,11 +15,25 @@ ResponseBuilder::ResponseBuilder(
       statusCode(0),
       virtualHost(
           findMatchingVirtualHost(virtualHosts, defaultVirtualHostName)) {
+  if (request->getIsRequestGood() &&
+      request->getUri().find("cgi-bin") != std::string::npos) {
+    handleCgi();
+    return;
+  }
   try {
     checkRequest();
-    findMatchingLocation();
+    if (!findMatchingLocation()) {
+      setStatusCode(404);
+    }
+    if (request->getMethod() == "POST") {
+      treatAPost();
+      return;
+    }
+    if (request->getMethod() == "DELETE") {
+      treatADelete();
+      return;
+    }
     determinedPath = determinePath();
-    std::cout << "determinedPath: " << determinedPath << std::endl;
     determineStatusCode();
     buildStatusLine();
     buildContentType();
@@ -29,16 +45,14 @@ ResponseBuilder::ResponseBuilder(
     buildBytesSent();
     buildDate();
     buildFullHeader();
-    buildBody();
     buildBytesTotal();
-    buildFullResponse();
+    buildBody();
   } catch (const HttpException& e) {
     statusCode = e.getCode();
     buildErrorPage(statusCode);
     buildStatusLine();
     buildContentType();
     buildErrorContentLength();
-
     buildLocation();
     buildAllow();
     buildRetryAfter();
@@ -46,11 +60,113 @@ ResponseBuilder::ResponseBuilder(
     buildBytesSent();
     buildDate();
     buildFullHeader();
-    if (!determinedPath.empty()) {
+    buildBytesTotal();
+    std::ifstream file(determinedPath.c_str());
+    if (file.is_open()) {
       buildBody();
     }
-    buildBytesTotal();
-    buildFullResponse();
+  }
+}
+
+size_t ResponseBuilder::getStatusCode() const { return statusCode; }
+
+int stringToInt(const std::string& str) {
+  std::istringstream iss(str);
+  int value;
+  iss >> value;
+  return value;
+}
+
+void ResponseBuilder::treatADelete() {
+  determinedPath = matchingLocation.getRootDirectory() + request->getUri();
+  if (determinedPath[determinedPath.size() - 1] == '/') {
+    determinedPath = determinedPath.substr(0, determinedPath.size() - 1);
+  }
+  if (determinedPath.find("..") != std::string::npos ||
+      (determinedPath != "/var/www/html" + request->getUri() &&
+       !determinedPath.find("/var/www/html/upload/"))) {
+    determinedPath.clear();
+    setStatusCode(403);
+  } else {
+    struct stat info;
+    if (stat(determinedPath.c_str(), &info) != 0) {
+      determinedPath.clear();
+      setStatusCode(404);
+    } else {
+      if (remove(determinedPath.c_str()) == 0) {
+        request->setIsTreated(true);
+      }
+    }
+  }
+}
+
+void ResponseBuilder::successPost() {
+  determinedPath.clear();
+  setStatusCode(200);
+  buildCreatedPage();
+  buildStatusLine();
+  buildContentType();
+  buildContentLength();
+  buildLocation();
+  buildAllow();
+  buildRetryAfter();
+  buildConnection();
+  buildBytesSent();
+  buildDate();
+  buildFullHeader();
+  buildBytesTotal();
+  std::ifstream file(determinedPath.c_str());
+  if (file.is_open()) {
+    buildBody();
+  }
+}
+
+void ResponseBuilder::treatAPost() {
+  struct stat info;
+  determinedPath = matchingLocation.getRootDirectory() + request->getUri();
+  if (determinedPath[determinedPath.size() - 1] == '/') {
+    determinedPath = determinedPath.substr(0, determinedPath.size() - 1);
+  }
+  if (virtualHost.getClientMaxBodySize() <
+      stringToInt(request->getContentLength())) {
+    setStatusCode(413);
+  }
+  if (!request->getIsInTreatment()) {
+    if (matchingLocation.getPath().find("upload") == std::string::npos) {
+      setStatusCode(404);
+    } else if (!matchingLocation.getPostAccepted()) {
+      setStatusCode(405);
+    } else if (stat(matchingLocation.getRootDirectory().c_str(), &info) != 0) {
+      setStatusCode(404);
+    } else {
+      if (determinedPath.find("..") != std::string::npos) {
+        setStatusCode(403);
+      } else {
+        struct stat info;
+        if (stat(determinedPath.c_str(), &info) != 0) {
+          setStatusCode(409);
+        } else {
+          std::ofstream file(
+              (determinedPath + '/' + request->getFileName()).c_str(),
+              std::ios::binary | std::ios::trunc);
+          if (!file.is_open()) {
+            setStatusCode(403);
+          } else {
+            file.write(request->getFileContent().data(),
+                       request->getFileContent().size());
+            file.close();
+          }
+        }
+      }
+    }
+  } else {
+    std::ofstream file((determinedPath + '/' + request->getFileName()).c_str(),
+                       std::ios::binary | std::ios::app);
+    if (!file.is_open()) {
+    }
+    file.write(request->getFileContent().data(),
+               request->getFileContent().size());
+    file.close();
   }
 }
 
@@ -72,8 +188,8 @@ void ResponseBuilder::buildErrorContentLength() {
 }
 
 void ResponseBuilder::checkRequest() {
-  if (!request.getIsRequestGood()) {
-    if (!request.getMethodGood()) {
+  if (!request->getIsRequestGood()) {
+    if (!request->getMethodGood()) {
       setStatusCode(405);
     }
 
@@ -82,6 +198,7 @@ void ResponseBuilder::checkRequest() {
 }
 
 void ResponseBuilder::setStatusCode(size_t code) {
+  determinedPath = "";
   if (code >= 400) {
     statusCode = code;
     throw HttpException(code, getReasonPhraseForCode(code));
@@ -95,7 +212,7 @@ std::string ResponseBuilder::determinePath() {
   const std::string& indexFile = matchingLocation.getIndexFile();
   bool autoIndex = matchingLocation.getAutoIndex();
 
-  std::string uri = request.getUri();
+  std::string uri = request->getUri();
   std::string remainder;
   if (uri.find(locPath) == 0) {
     remainder = uri.substr(locPath.size());
@@ -153,15 +270,11 @@ std::string ResponseBuilder::determinePath() {
 const VirtualHost& ResponseBuilder::findMatchingVirtualHost(
     const std::map<std::string, VirtualHost>& virtualHosts,
     const std::string& defaultVirtualHostName) {
-  std::cout << "TO FIND HOST = " << request.getHostName() << std::endl;
   std::map<std::string, VirtualHost>::const_iterator it =
-      virtualHosts.find(request.getHostName());
+      virtualHosts.find(request->getHostName());
   if (it != virtualHosts.end()) {
     return it->second;
   } else {
-    std::cout << "Virtual host not found" << std::endl;
-    std::cout << "Default virtual host: " << defaultVirtualHostName
-              << std::endl;
     return virtualHosts.find(defaultVirtualHostName)->second;
   }
 }
@@ -179,9 +292,9 @@ void ResponseBuilder::determineStatusCode() {
 }
 
 bool ResponseBuilder::isRessourceAvailable() {
-  std::ifstream file(determinedPath.c_str());
-  if (file.is_open()) {
-    file.close();
+  std::ifstream fileToTest(determinedPath.c_str());
+  if (fileToTest.is_open()) {
+    fileToTest.close();
     return true;
   }
   return false;
@@ -204,9 +317,9 @@ bool ResponseBuilder::doesVhostExist() {
 }
 
 bool ResponseBuilder::isMethodAccepted() {
-  if ((request.getMethod() == "GET" && matchingLocation.getGetAccepted()) ||
-      (request.getMethod() == "POST" && matchingLocation.getPostAccepted()) ||
-      (request.getMethod() == "DELETE" &&
+  if ((request->getMethod() == "GET" && matchingLocation.getGetAccepted()) ||
+      (request->getMethod() == "POST" && matchingLocation.getPostAccepted()) ||
+      (request->getMethod() == "DELETE" &&
        matchingLocation.getDeleteAccepted())) {
     return true;
   } else {
@@ -222,7 +335,8 @@ bool ResponseBuilder::findMatchingLocation() {
   for (std::map<std::string, Location>::const_iterator it = locations.begin();
        it != locations.end(); ++it) {
     const std::string& locationPath = it->first;
-    if (request.getUri().compare(0, locationPath.length(), locationPath) == 0 &&
+    if (request->getUri().compare(0, locationPath.length(), locationPath) ==
+            0 &&
         locationPath.length() > longestMatch) {
       longestMatch = locationPath.length();
       matchingLocation = it->second;
@@ -230,8 +344,63 @@ bool ResponseBuilder::findMatchingLocation() {
     }
   }
 
-  std::cout << "matchingLocation: " << matchingLocation.getPath() << std::endl;
   return found;
+}
+
+void ResponseBuilder::buildCreatedPage() {
+  std::vector<char> headersChar;
+  std::vector<char> bodyChar;
+
+  std::map<size_t, std::string>::const_iterator it =
+      virtualHost.getErrorPages().find(statusCode);
+
+  if (it != virtualHost.getErrorPages().end()) {
+    const std::string& errorPagePath = it->second;
+    if (!errorPagePath.empty()) {
+      struct stat info;
+      if (stat(errorPagePath.c_str(), &info) == 0 && S_ISREG(info.st_mode)) {
+        determinedPath = errorPagePath;
+        return;
+      }
+    }
+  }
+  std::ostringstream oss;
+  oss << 201;
+  std::string codeStr = oss.str();
+
+  std::ostringstream bodyStream;
+  bodyStream << "<html>\r\n"
+             << "<head>\r\n"
+             << "    <title>201 " << getReasonPhraseForCode(201)
+             << "</title>\r\n"
+             << "</head>\r\n"
+             << "<body>\r\n"
+             << "    <h1>201 " << getReasonPhraseForCode(201) << "</h1>\r\n"
+             << "    <p>The resource has been successfully created.</p>\r\n"
+             << "</body>\r\n"
+             << "</html>\r\n";
+  std::string body = bodyStream.str();
+  bodyChar.insert(bodyChar.end(), body.begin(), body.end());
+
+  std::ostringstream contentLengthStream;
+  contentLengthStream << "Content-Length: " << body.size() << "\r\n";
+
+  std::ostringstream headersStream;
+  headersStream << "HTTP/1.1 " << codeStr << " " << getReasonPhraseForCode(201)
+                << "\r\n"
+                << "Content-Type: text/html\r\n"
+                << contentLengthStream.str();
+
+  headersStream << "\r\n";
+  std::string headers = headersStream.str();
+  headersChar.insert(headersChar.end(), headers.begin(), headers.end());
+
+  std::vector<char> responseChar;
+  responseChar.insert(responseChar.end(), bodyChar.begin(), bodyChar.end());
+
+  response.setBody(responseChar);
+  response.setFullHeader(headersChar);
+  request->setIsTreated(true);
 }
 
 void ResponseBuilder::buildErrorPage(size_t errorCode) {
@@ -245,35 +414,56 @@ void ResponseBuilder::buildErrorPage(size_t errorCode) {
         struct stat info;
         if (stat(errorPagePath.c_str(), &info) == 0 && S_ISREG(info.st_mode)) {
           determinedPath = errorPagePath;
+          return;
         }
       }
     }
 
+    std::vector<char> headersChar;
+    std::vector<char> bodyChar;
+
     std::ostringstream oss;
-    oss << "<html>\r\n"
-        << "<head>\r\n"
-        << "    <title>Error " << errorCode << "</title>\r\n"
-        << "</head>\r\n"
-        << "<body>\r\n"
-        << "    <h1>Error " << errorCode << "</h1>\r\n"
-        << "    <p>The requested page could not be found.</p>\r\n"
-        << "</body>\r\n"
-        << "</html>";
+    oss << errorCode;
+    std::string errorCodeStr = oss.str();
 
-    response.setBody(oss.str());
+    std::ostringstream bodyStream;
+    bodyStream << "<html>\r\n"
+               << "<head>\r\n"
+               << "    <title>Error " << errorCodeStr << "</title>\r\n"
+               << "</head>\r\n"
+               << "<body>\r\n"
+               << "    <h1>Error " << errorCodeStr << "</h1>\r\n"
+               << "    <p>The requested page could not be found.</p>\r\n"
+               << "</body>\r\n"
+               << "</html>\r\n";
+    std::string body = bodyStream.str();
+
+    bodyChar.insert(bodyChar.end(), body.begin(), body.end());
+
+    std::ostringstream contentLengthStream;
+    contentLengthStream << "Content-Length: " << body.size() << "\r\n";
+
+    std::ostringstream headersStream;
+    headersStream << "HTTP/1.1 " << errorCodeStr << " "
+                  << getReasonPhraseForCode(errorCode) << "\r\n"
+                  << "Content-Type: text/html\r\n"
+                  << contentLengthStream.str() << "\r\n";
+    std::string headers = headersStream.str();
+
+    headersChar.insert(headersChar.end(), headers.begin(), headers.end());
+
+    std::vector<char> responseChar;
+    responseChar.insert(responseChar.end(), bodyChar.begin(), bodyChar.end());
+
+    response.setBody(responseChar);
+    response.setFullHeader(headersChar);
+    request->setIsTreated(true);
   }
+}
 
-  std::ostringstream oss;
-  oss << "<html>\r\n"
-      << "<head>\r\n"
-      << "    <title>Error " << errorCode << "</title>\r\n"
-      << "</head>\r\n"
-      << "<body>\r\n"
-      << "    <h1>Error " << errorCode << "</h1>\r\n"
-      << "    <p>The requested page could not be found.</p>\r\n"
-      << "</body>\r\n"
-      << "</html>\r\n";
-  response.setBody(oss.str());
+void ResponseBuilder::appendToVector(std::vector<char>& vec,
+                                     const std::string& str) {
+  vec.insert(vec.end(), str.begin(), str.end());
 }
 
 const std::string& ResponseBuilder::getReasonPhraseForCode(size_t code) {
@@ -281,6 +471,10 @@ const std::string& ResponseBuilder::getReasonPhraseForCode(size_t code) {
     case 200: {
       static const std::string ok = "OK";
       return ok;
+    }
+    case 201: {
+      static const std::string cr = "Created";
+      return cr;
     }
     case 400: {
       static const std::string br = "Bad Request";
@@ -358,7 +552,7 @@ const std::string ResponseBuilder::findContentType(
     extension[i] = static_cast<char>(tolower(extension[i]));
   }
   if (extension == ".html" || extension == ".htm") {
-    return "text/html";
+    return "text/html; charset=UTF-8";
   } else if (extension == ".css") {
     return "text/css";
   } else if (extension == ".js") {
@@ -392,51 +586,49 @@ const std::string ResponseBuilder::findContentType(
 }
 
 void ResponseBuilder::buildBody() {
-  std::ifstream file(determinedPath.c_str(), std::ios::binary);
   if (!file.is_open()) {
-    throw HttpException(404, "File not found");
+    file.open(determinedPath.c_str(), std::ios::binary);
+    if (!file.is_open()) {
+      setStatusCode(404);
+      return;
+    }
   }
 
-  std::size_t offset = response.getBytesLoad();
-  if (offset > response.getFullHeader().size()) {
+  if (response.getBytesLoad() > response.getFullHeader().size()) {
     response.clearForChunked();
   }
-  file.seekg(offset, std::ios::beg);
-  size_t bufferSize = BUFFER - response.getFullHeader().size() - 4;
-  if ((!response.getTransferEncoding().empty()) || offset != 0) {
-    bufferSize -= 3;
-  }
+  size_t bufferSize = BUFFER - response.getFullHeader().size();
 
-  char buffer[bufferSize];
-  file.read(buffer, bufferSize);
+  std::vector<char> buffer(bufferSize);
+  file.read(buffer.data(), bufferSize);
   std::streamsize bytesRead = file.gcount();
+  if (bytesRead < 1024) {
+    buffer.resize(bytesRead);
+  }
   if (bytesRead <= 0) {
     if (file.eof()) {
       if (response.getContentLength().empty()) {
-        response.setBody("0\r\n\r\n");
+        std::vector<char> endChunkedBody;
+        endChunkedBody.push_back('0');
+        endChunkedBody.push_back('\r');
+        endChunkedBody.push_back('\n');
+        endChunkedBody.push_back('\r');
+        endChunkedBody.push_back('\n');
+        response.setBody(endChunkedBody);
         response.setBytesLoad(response.getBytesTotal());
-        response.setBytesSent(response.getBytesTotal() - 5);
+        request->setIsTreated(true);
       }
+      file.close();
     } else {
-      throw HttpException(500, "Error reading file");
+      file.close();
+      setStatusCode(500);
     }
     file.close();
-    response.setFullResponse(response.getBody());
     return;
   }
-  std::string content(buffer, static_cast<std::size_t>(bytesRead));
-  if (!response.getContentLength().empty()) {
-    response.setBody(content);
-  } else {
-    std::ostringstream oss;
-    oss << std::hex << bytesRead << "\r\n" << content << "\r\n";
-    response.setBody(oss.str());
-  }
-  response.setBytesLoad(response.getFullHeader().size() + offset + bytesRead);
-  file.close();
-  if (offset != 0) {
-    response.setFullResponse(response.getFullHeader() + response.getBody());
-  }
+  response.setBody(buffer);
+
+  response.setBytesLoad(response.getFullHeader().size() + bytesRead);
 }
 
 void ResponseBuilder::buildLocation() {}
@@ -461,28 +653,70 @@ void ResponseBuilder::buildBytesTotal() {
 }
 
 void ResponseBuilder::buildFullHeader() {
-  if (response.getContentLength().empty()) {
-    response.setFullHeader(response.getStatusLine() + "\r\n" +
-                           response.getContentType() + "\r\n" +
-                           response.getTransferEncoding() + response.getDate() +
-                           "\r\n" + response.getConnection() + "\r\n\r\n");
-  } else {
-    response.setFullHeader(response.getStatusLine() + "\r\n" +
-                           response.getContentType() + "\r\n" +
-                           response.getTransferEncoding() + response.getDate() +
-                           "\r\n" + response.getContentLength() + "\r\n" +
-                           response.getConnection() + "\r\n\r\n");
-  }
-}
+  std::vector<char> fullHeader;
 
-void ResponseBuilder::buildFullResponse() {
-  std::string fullResponse = response.getFullHeader() + response.getBody();
-  response.setFullResponse(fullResponse);
-  std::cout << "HEADERS = " << response.getFullHeader().size() << std::endl;
-  std::cout << "BODY = " << getFileSize(determinedPath) << std::endl;
-  std::cout << "BOTH = "
-            << response.getFullHeader().size() + getFileSize(determinedPath)
-            << std::endl;
+  if (response.getContentLength().empty()) {
+    const std::string& statusLine = response.getStatusLine();
+    fullHeader.insert(fullHeader.end(), statusLine.begin(), statusLine.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& contentType = response.getContentType();
+    fullHeader.insert(fullHeader.end(), contentType.begin(), contentType.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& transferEncoding = response.getTransferEncoding();
+    fullHeader.insert(fullHeader.end(), transferEncoding.begin(),
+                      transferEncoding.end());
+
+    const std::string& date = response.getDate();
+    fullHeader.insert(fullHeader.end(), date.begin(), date.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& connection = response.getConnection();
+    fullHeader.insert(fullHeader.end(), connection.begin(), connection.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+  } else {
+    const std::string& statusLine = response.getStatusLine();
+    fullHeader.insert(fullHeader.end(), statusLine.begin(), statusLine.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& contentType = response.getContentType();
+    fullHeader.insert(fullHeader.end(), contentType.begin(), contentType.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& transferEncoding = response.getTransferEncoding();
+    fullHeader.insert(fullHeader.end(), transferEncoding.begin(),
+                      transferEncoding.end());
+
+    const std::string& date = response.getDate();
+    fullHeader.insert(fullHeader.end(), date.begin(), date.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& contentLength = response.getContentLength();
+    fullHeader.insert(fullHeader.end(), contentLength.begin(),
+                      contentLength.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+
+    const std::string& connection = response.getConnection();
+    fullHeader.insert(fullHeader.end(), connection.begin(), connection.end());
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+    fullHeader.push_back('\r');
+    fullHeader.push_back('\n');
+  }
+
+  response.setFullHeader(fullHeader);
 }
 
 const std::string ResponseBuilder::to_string(size_t value) {
@@ -503,4 +737,9 @@ size_t ResponseBuilder::getFileSize(const std::string& filePath) {
   file.seekg(0, std::ios::end);
   size_t size = static_cast<std::size_t>(file.tellg());
   return size;
+}
+
+void ResponseBuilder::handleCgi() {
+  // if(request->)
+  CgiHandler CgiHandler(*request);
 }

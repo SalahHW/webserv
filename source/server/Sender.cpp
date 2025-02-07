@@ -2,63 +2,55 @@
 
 #include <fcntl.h>
 
-Sender::Sender(Response& response, int sockfd) { sendOnFd(response, sockfd); }
+Sender::Sender(Response& response, int sockfd, Request& request) {
+  sendOnFd(response, sockfd, request);
+}
 
 Sender::~Sender() {}
 
-// void Sender::sendOnFd(Response& response, int sockfd) {
-//   const std::string& fullResponse = response.getFullResponse();
-//   size_t offset = response.getBytesSent();
-//   size_t totalSize = response.getBytesTotal();
-//   if (offset >= totalSize) {
-//     return;
-//   }
-//   size_t remain = totalSize - offset;
-//   if (remain > 1024) {
-//     remain = 1024;
-//   }
-//   ssize_t ret = send(sockfd, fullResponse.c_str() + offset, remain, 0);
-//   if (ret > 0) {
-//     response.setBytesSent(offset + ret);
-//   } else if (ret < 0) {
-//     perror("send");
-//   }
-// }
-void Sender::sendOnFd(Response& response, int sockfd) {
-  std::cout << "Starting sendOnFd..." << std::endl;
+void Sender::sendOnFd(Response& response, int sockfd, Request& request) {
+  if (!response.getFullHeader().empty()) {
+    send(sockfd, response.getFullHeader().data(),
+         response.getFullHeader().size(), MSG_NOSIGNAL);
+  }
 
-  const std::string& Response = response.getFullResponse();
+  std::vector<char> Response = response.getBody();
   size_t responseSize = Response.size();
-  std::cout << "SIZE BEFORE SEND= " << responseSize << std::endl;
+  int ret = 0;
+  std::stringstream hex;
+  std::string hexStr;
 
   if (Response.empty()) {
-    std::cerr << "Response is empty, nothing to send." << std::endl;
+    //std::cerr << "Response is empty, nothing to send." << std::endl;
     return;
   }
+  if (!request.getIsTreated() && response.getContentLength().empty()) {
+    hex << std::hex << responseSize;
+    hexStr = hex.str() + "\r\n";
 
-  ssize_t ret = send(sockfd, Response.c_str(), responseSize, MSG_NOSIGNAL);
+    ret = send(sockfd, hexStr.c_str(), hexStr.size(), MSG_NOSIGNAL);
+  }
+  ret = send(sockfd, Response.data(), responseSize, MSG_NOSIGNAL);
+
   if (ret > 0) {
     response.setBytesSent(response.getBytesSent() + ret);
-    std::cout << "Successfully sent " << ret << " bytes." << std::endl;
-  } else if (ret < 0) {
-    perror("send error");
-    std::cerr << "Errno: " << errno << std::endl;
+  }  // else if (ret < 0) {
+  //   perror("send error");
+  //   std::cerr << "Errno: " << errno << std::endl;
 
-    // Détection des erreurs communes
-    if (errno == EPIPE) {
-      std::cerr << "Connection closed by peer (EPIPE)." << std::endl;
-    } else if (errno == ECONNRESET) {
-      std::cerr << "Connection reset by peer (ECONNRESET)." << std::endl;
-    } else if (errno == ENOTCONN) {
-      std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
-    }
+  //   if (errno == EPIPE) {
+  //     std::cerr << "Connection closed by peer (EPIPE)." << std::endl;
+  //   } else if (errno == ECONNRESET) {
+  //     std::cerr << "Connection reset by peer  (ECONNRESET)." << std::endl;
+  //   } else if (errno == ENOTCONN) {
+  //     std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
+  //   }
+  // }
+  if (response.getContentLength().empty() && !request.getIsTreated()) {
+    ret = send(sockfd, "\r\n", 2, MSG_NOSIGNAL);
   }
-  std::cout << "WHAT IS SEND = " << std::endl;
-  std::cout << Response << std::endl;
-  std::cout << "SIZE SEND = " << Response.size() << std::endl;
 
-  std::cout << "LOADED= " << response.getBytesLoad() << std::endl;
-  std::cout << "SENT= " << response.getBytesSent() << std::endl;
-  std::cout << "TOTAL= " << response.getBytesTotal() << std::endl;
-  std::cout << "Finished sendOnFd." << std::endl;
+  // std::cout << "What is sended: " << hexStr;
+  // std::cout.write(Response.data(), responseSize) << "\r\n" << std::endl;
+  // std::cout << "test" << std::endl;
 }
