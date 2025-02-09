@@ -209,4 +209,3 @@ Context:	location
 Specifies the HTTP methods that are allowed for a given location. If a client sends a request with a method that is not allowed, the server will respond with a `405 Method Not Allowed` status code.
 - If no `allow_methods` directive is specified, the default allowed methods are `GET`, `POST`, and `DELETE`.
 - If an `allow_methods` directive is present, only the specified methods will be allowed, and all others will be denied.
----
