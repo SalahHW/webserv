@@ -200,24 +200,13 @@ location /old-page {
 In this example, when a client requests `/old-page`, the server responds with a 301 status code and redirect the client to `/new-page`.
 
 ---
-##### deny (TO BE UPDATED)
+##### allow_methods
 ```
-Syntax:		deny all;
-Default:	None
-Context:	limit_except (within location)
+Syntax:		allow_methods <GET|POST|DELETE> [<GET|POST|DELETE> ...];
+Default:	GET POST DELETE
+Context:	location
 ```
-Specifies that access is denied for all clients.
-
-Example:
-```nginx
-location /secure {
-	limit_except GET POST {
-		deny all;
-	}
-}
-```
-In this example, the `/secure` location allows only the GET and POST methods. All other methods are denied access by the `deny all;` directive within the `limit_except` block.
-
+Specifies the HTTP methods that are allowed for a given location. If a client sends a request with a method that is not allowed, the server will respond with a `405 Method Not Allowed` status code.
+- If no `allow_methods` directive is specified, the default allowed methods are `GET`, `POST`, and `DELETE`.
+- If an `allow_methods` directive is present, only the specified methods will be allowed, and all others will be denied.
 ---
-##### allowed_methods (TO BE IMPLEMENTED)
-Aims to replace deny directive above, wich is too difficult to use.
