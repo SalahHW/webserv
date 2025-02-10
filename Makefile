@@ -20,11 +20,7 @@ SRCS					=	main.cpp											\
 							server/VirtualHost.cpp								\
 							server/Client.cpp									\
 							server/Request.cpp									\
-							server/RequestParser.cpp							\
-							server/RequestValidator.cpp							\
 							server/Response.cpp									\
-							server/ResponseBuilder.cpp							\
-							server/Sender.cpp									\
 							utils/utils.cpp										\
 							block/Block.cpp										\
 							block/BlockFactory.cpp								\
@@ -45,8 +41,6 @@ SRCS					=	main.cpp											\
 							directive/AutoIndexDirective.cpp					\
 							directive/ReturnDirective.cpp						\
 							directive/DefaultServerDirective.cpp				\
-							cgi/CgiEnvBuild.cpp									\
-							cgi/CgiHandler.cpp									\
 
 OBJS					=	$(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 OBJS					=	$(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))

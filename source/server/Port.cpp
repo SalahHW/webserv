@@ -90,9 +90,10 @@ void Port::startListening()
   }
 }
 
-void Port::processClientData(Client& client) {
-  std::cout << "FD = " << client.getConnectionFd() << std::endl;
-}
+// void Port::processClientData(Client& client) {
+//   // std::cout << "FD = " << client.getConnectionFd() << std::endl;
+
+// }
 
 void Port::addVirtualHost(const Server& server)
 {
