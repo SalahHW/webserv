@@ -19,6 +19,7 @@ Location::Location()
     , hasRootDirectory(false)
     , hasIndexFile(false)
     , hasRedirectionPath(false)
+    , hasClientBodyTempPath(false)
     , hasAutoIndex(false)
     , hasGetAccepted(false)
     , hasPostAccepted(false)
@@ -57,6 +58,7 @@ Location& Location::operator=(const Location& src)
     this->hasDeleteAccepted = src.hasDeleteAccepted;
     this->hasClientBodyTempPath = src.hasClientBodyTempPath;
     this->hasClientMaxBodySize = src.hasClientMaxBodySize;
+    this->hasClientTimeOut = src.hasClientTimeOut;
     this->hasReturnCode = src.hasReturnCode;
     this->hasPaths = src.hasPaths;
   }
