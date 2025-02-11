@@ -21,6 +21,11 @@ SRCS					=	main.cpp											\
 							server/Client.cpp									\
 							request/Request.cpp									\
 							request/RequestParser.cpp							\
+							request/RequestRouter.cpp							\
+							request/GetRequestHandler.cpp						\
+							request/PostRequestHandler.cpp						\
+							request/DeleteRequestHandler.cpp					\
+							request/ErrorRequestHandler.cpp						\
 							server/Response.cpp									\
 							utils/utils.cpp										\
 							block/Block.cpp										\

@@ -3,6 +3,7 @@
 #include "RequestParser.hpp"
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <string>
 
 class Request

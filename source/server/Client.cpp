@@ -64,14 +64,9 @@ bool Client::processInput()
 
   // Parsing the request
   Request request(buffer);
-  request.displayRequest();
+  // request.displayRequest();
+  std::string response = RequestRouter::route(request);
 
-  // Build and send a simple response
-  std::string response = "HTTP/1.1 200 OK\r\n"
-                         "Content-Type: text/plain\r\n"
-                         "Content-Length: 13\r\n"
-                         "\r\n"
-                         "Hello, World!";
   send(connectionFd, response.c_str(), response.size(), 0);
 
   clearBuffer();

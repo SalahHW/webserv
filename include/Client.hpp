@@ -2,6 +2,8 @@
 
 #include "Port.hpp"
 #include "Request.hpp"
+#include "RequestParser.hpp"
+#include "RequestRouter.hpp"
 #include "Response.hpp"
 #include "color_macros.hpp"
 #include <iostream>
