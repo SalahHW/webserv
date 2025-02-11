@@ -3,8 +3,10 @@
 #include <sys/stat.h>
 
 #include <ctime>
+#include <dirent.h>
 #include <fstream>
 #include <string>
+#include <sys/stat.h>
 
 #include "HttpException.hpp"
 #include "Location.hpp"
@@ -15,8 +17,9 @@
 class VirtualHost;
 class Response;
 
-class ResponseBuilder {
- private:
+class ResponseBuilder
+{
+  private:
   ResponseBuilder();
   ResponseBuilder(const ResponseBuilder& src);
 
@@ -41,6 +44,8 @@ class ResponseBuilder {
   bool doesUriExist();
   bool isRessourceAvailable();
   void appendToVector(std::vector<char>& vec, const std::string& str);
+  void generateAutoIndex(const std::string& directoryPath, const std::string& requestUri);
+  bool isDirectory(const std::string& path);
 
   void buildErrorContentLength();
   void buildStatusLine();
@@ -61,10 +66,10 @@ class ResponseBuilder {
   size_t getFileSize(const std::string& fileName);
   void handleCgi();
 
- public:
+  public:
   ResponseBuilder(Request* request, Response& response,
-                  const std::map<std::string, VirtualHost>& virtualHosts,
-                  const std::string& defaultVirtualHostName);
+      const std::map<std::string, VirtualHost>& virtualHosts,
+      const std::string& defaultVirtualHostName);
   ~ResponseBuilder();
   void buildBody();
   void buildErrorPage(size_t errorCode);

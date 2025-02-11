@@ -3,20 +3,21 @@
 #include "Cgi.hpp"
 
 Request::Request(const std::string& request, size_t fd)
-    : fd(fd),
-      methodGood(false),
-      uriGood(false),
-      versionGood(false),
-      hostGood(false),
-      userAgentGood(false),
-      acceptGood(false),
-      acceptLanguageGood(false),
-      acceptEncodingGood(false),
-      connectionGood(false),
-      isRequestGood(false),
-      isParsed(false),
-      isTreated(false),
-      isInTreatment(false) {
+    : fd(fd)
+    , methodGood(false)
+    , uriGood(false)
+    , versionGood(false)
+    , hostGood(false)
+    , userAgentGood(false)
+    , acceptGood(false)
+    , acceptLanguageGood(false)
+    , acceptEncodingGood(false)
+    , connectionGood(false)
+    , isRequestGood(false)
+    , isParsed(false)
+    , isTreated(false)
+    , isInTreatment(false)
+{
   RequestParser requestParser(request, *this);
   methodGood = RequestValidator::validateMethod(method);
   uriGood = RequestValidator::validateUri(uri);
@@ -32,89 +33,107 @@ Request::Request(const std::string& request, size_t fd)
   // displayRequest();
 }
 
-Request::Request() {}
+Request::Request() { }
 
-Request::~Request() {}
+Request::~Request() { }
 
 void Request::setMethod(const std::string& method) { this->method = method; }
 
 void Request::setUri(const std::string& uri) { this->uri = uri; }
 
-void Request::setVersion(const std::string& version) {
+void Request::setVersion(const std::string& version)
+{
   this->version = version;
 }
 
-void Request::setHost(const std::string& hostName) {
+void Request::setHost(const std::string& hostName)
+{
   this->Host = hostName;
   setHostName(hostName.substr(0, hostName.find(':')));
 }
 
-void Request::setUserAgent(const std::string& userAgent) {
+void Request::setUserAgent(const std::string& userAgent)
+{
   this->UserAgent = userAgent;
 }
 
 void Request::setAccept(const std::string& accept) { this->Accept = accept; }
 
-void Request::setAcceptLanguage(const std::string& acceptLanguage) {
+void Request::setAcceptLanguage(const std::string& acceptLanguage)
+{
   this->AcceptLanguage = acceptLanguage;
 }
 
-void Request::setAcceptEncoding(const std::string& acceptEncoding) {
+void Request::setAcceptEncoding(const std::string& acceptEncoding)
+{
   this->AcceptEncoding = acceptEncoding;
 }
 
-void Request::setConnection(const std::string& connection) {
+void Request::setConnection(const std::string& connection)
+{
   this->Connection = connection;
 }
 
 void Request::setBody(const std::string& body) { this->body = body; }
 
-void Request::setHostName(const std::string& hostName) {
+void Request::setHostName(const std::string& hostName)
+{
   this->hostName = hostName;
 }
 
 void Request::setResponse(
     const std::map<std::string, VirtualHost>& virtualHosts,
-    const std::string& defaultVirtualHostName) {
+    const std::string& defaultVirtualHostName)
+{
   this->response = new Response(this, virtualHosts, defaultVirtualHostName);
-  isInTreatment = true;
+  if (getMethod() != "POST")
+  {
+    isInTreatment = true;
+  }
 }
 
 void Request::setMethodGood(bool methodGood) { this->methodGood = methodGood; }
 
 void Request::setUriGood(bool uriGood) { this->uriGood = uriGood; }
 
-void Request::setVersionGood(bool versionGood) {
+void Request::setVersionGood(bool versionGood)
+{
   this->versionGood = versionGood;
 }
 
 void Request::setHostGood(bool hostGood) { this->hostGood = hostGood; }
 
-void Request::setUserAgentGood(bool userAgentGood) {
+void Request::setUserAgentGood(bool userAgentGood)
+{
   this->userAgentGood = userAgentGood;
 }
 
 void Request::setAcceptGood(bool acceptGood) { this->acceptGood = acceptGood; }
 
-void Request::setAcceptLanguageGood(bool acceptLanguageGood) {
+void Request::setAcceptLanguageGood(bool acceptLanguageGood)
+{
   this->acceptLanguageGood = acceptLanguageGood;
 }
 
-void Request::setAcceptEncodingGood(bool acceptEncodingGood) {
+void Request::setAcceptEncodingGood(bool acceptEncodingGood)
+{
   this->acceptEncodingGood = acceptEncodingGood;
 }
 
-void Request::setConnectionGood(bool connectionGood) {
+void Request::setConnectionGood(bool connectionGood)
+{
   this->connectionGood = connectionGood;
 }
 
-void Request::setIsRequestGood(bool isRequestGood) {
+void Request::setIsRequestGood(bool isRequestGood)
+{
   this->isRequestGood = isRequestGood;
 }
 
 void Request::setIsTreated(bool isTreated) { this->isTreated = isTreated; }
 
-void Request::setIsInTreatment(bool isInProcess) {
+void Request::setIsInTreatment(bool isInProcess)
+{
   this->isInTreatment = isInProcess;
 }
 
@@ -124,19 +143,23 @@ void Request::setIsParsed(bool isParsed) { this->isParsed = isParsed; }
 
 void Request::setContentType(const std::string& type) { contentType = type; }
 
-void Request::setContentLength(const std::string& length) {
+void Request::setContentLength(const std::string& length)
+{
   contentLength = length;
 }
 
-void Request::setBoundary(const std::string& boundary) {
+void Request::setBoundary(const std::string& boundary)
+{
   this->boundary = boundary;
 }
 
-void Request::setFileName(const std::string& fileName) {
+void Request::setFileName(const std::string& fileName)
+{
   this->fileName = fileName;
 }
 
-void Request::setFileContent(const std::string& fileContent) {
+void Request::setFileContent(const std::string& fileContent)
+{
   this->fileContent = fileContent;
 }
 
@@ -156,11 +179,13 @@ const std::string& Request::getUserAgent() const { return this->UserAgent; }
 
 const std::string& Request::getAccept() const { return this->Accept; }
 
-const std::string& Request::getAcceptLanguage() const {
+const std::string& Request::getAcceptLanguage() const
+{
   return this->AcceptLanguage;
 }
 
-const std::string& Request::getAcceptEncoding() const {
+const std::string& Request::getAcceptEncoding() const
+{
   return this->AcceptEncoding;
 }
 
@@ -208,7 +233,8 @@ bool Request::getIsParsed() const { return isParsed; }
 
 bool Request::getIsACgi() const { return isACgi; }
 
-void Request::displayRequest() const {
+void Request::displayRequest() const
+{
   std::cout << "Method: " << this->method << std::endl;
   std::cout << "URI: " << this->uri << std::endl;
   std::cout << "Version: " << this->version << std::endl;
