@@ -24,10 +24,8 @@ ResponseBuilder::ResponseBuilder(
   try
   {
     checkRequest();
-    std::cout << "URI : " << request->getUri() << std::endl;
     if (!findMatchingLocation())
     {
-      std::cout << "COUCOU" << std::endl;
       setStatusCode(404);
     }
     if (request->getMethod() == "POST")
@@ -49,6 +47,7 @@ ResponseBuilder::ResponseBuilder(
     if (isDirectory(determinedPath) && matchingLocation.getAutoIndex())
     {
       generateAutoIndex(determinedPath, request->getUri());
+      request->setIsTreated(true);
       return;
     }
     determineStatusCode();
