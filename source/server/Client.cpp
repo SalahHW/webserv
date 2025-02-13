@@ -57,11 +57,19 @@ int Client::readFromClient()
   {
     if (bytesRead < 0)
       std::cerr << "Read error on client fd " << connectionFd << std::endl;
-    closeConnection();
+    eventToErr();
     return bytesRead;
   }
   buffer[bytesRead] = '\0';
   appendToBuffer(buffer, bytesRead);
+  if (bytesRead > 0)
+  {
+    this->lastActivity = getCurrentTime();
+  }
+  else
+  {
+    eventToErr();
+  }
   return bytesRead;
 }
 
@@ -132,7 +140,6 @@ void Client::requestRoutine()
 {
   if (readFromClient() <= 0)
   {
-    this->lastActivity = getCurrentTime();
     return;
   }
   if (buffer.find("POST") != std::string::npos)
@@ -147,7 +154,6 @@ void Client::requestRoutine()
     requests.push_back(*request);
     clearBuffer();
   }
-  this->lastActivity = getCurrentTime();
 }
 
 std::string Client::removeFinalBoundary(const std::string& input)
@@ -248,8 +254,9 @@ void Client::responsesRoutine()
         if (it->getIsTreated())
         {
           Sender sender(*it->getResponse(), connectionFd, *it);
+          this->lastActivity = getCurrentTime();
+          eventToErr();
         }
-        this->lastActivity = getCurrentTime();
         return;
       }
       if (it->getMethod() == "DELETE")
@@ -261,9 +268,9 @@ void Client::responsesRoutine()
         {
           it->getResponse()->getResponseBuilder()->successPost();
           Sender sender(*it->getResponse(), connectionFd, *it);
+          this->lastActivity = getCurrentTime();
           eventToErr();
         }
-        this->lastActivity = getCurrentTime();
         return;
       }
       if (it->getIsParsed())
@@ -279,8 +286,8 @@ void Client::responsesRoutine()
               associatedPort->getDefaultVirtualHostName());
         }
         Sender sender(*it->getResponse(), connectionFd, *it);
+        this->lastActivity = getCurrentTime();
       }
     }
   }
-  this->lastActivity = getCurrentTime();
 }

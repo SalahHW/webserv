@@ -8,10 +8,11 @@
 #include "EventReporter.hpp"
 #include "Port.hpp"
 
-#define TIMEOUT 10000000
+#define TIMEOUT 3
 
-class ServerManager {
- public:
+class ServerManager
+{
+  public:
   ~ServerManager();
   ServerManager(std::map<int, Port*> ports);
   ServerManager(const ServerManager& other);
@@ -23,7 +24,7 @@ class ServerManager {
   void handleEvent(int fd, uint32_t events);
   bool isListeningSocket(int fd) const;
 
- private:
+  private:
   ServerManager();
 
   bool isValid;
