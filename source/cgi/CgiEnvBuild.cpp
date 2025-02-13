@@ -311,4 +311,16 @@ char **CgiHandler::allocateEnvArray(const std::vector<std::string> &env) {
   return (envArray);
 }
 
+void  CgiHandler::setCgiRetErrorCode(int code) {
+  if (error_code == 0){
+    this->error_code = code;
+    return ;
+  }
+  this->error_code = code;
+}
+
+int CgiHandler::getCgiRetErrorCode() {
+  return (this->error_code);
+}
+
 // TODO : adapt code with newly made request class

@@ -62,6 +62,8 @@ class CgiHandler {
   void buildEnv(const Request &requestForEnv);
   char **allocateEnvArray(const std::vector<std::string> &env);
   void cleanupEnvArray(const std::vector<std::string> &env, char **envArray);
+  void setCgiRetErrorCode(int error_code);
+  int  getCgiRetErrorCode();
   const std::vector<std::string> &getEnvVec() const;
   void printEnv(std::vector<std::string> &env);
   void setScriptPath(const std::string &originScriptPath);
@@ -71,6 +73,7 @@ class CgiHandler {
   // RequestParsed request;
   std::string scriptPath;
   std::vector<std::string> envVec;
+  int error_code;
 };
 
 #endif /*CGI_HPP*/
