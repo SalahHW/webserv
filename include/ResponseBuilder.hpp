@@ -65,6 +65,7 @@ class ResponseBuilder
   const std::string findContentType(const std::string& fileName);
   size_t getFileSize(const std::string& fileName);
   void handleCgi();
+  bool doesFileExist(const std::string& name);
 
   public:
   ResponseBuilder(Request* request, Response& response,

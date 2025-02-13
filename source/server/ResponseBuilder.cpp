@@ -45,11 +45,15 @@ ResponseBuilder::ResponseBuilder(
     }
     determinedPath = determinePath();
 
-    if (isDirectory(determinedPath) && matchingLocation.getAutoIndex())
+    if (isDirectory(determinedPath) && matchingLocation.getAutoIndex() && doesFileExist(matchingLocation.getRootDirectory() + "/" + matchingLocation.getIndexFile()))
     {
       generateAutoIndex(determinedPath, request->getUri());
       request->setIsTreated(true);
       return;
+    }
+    else if (isDirectory(determinedPath) && matchingLocation.isIndexFileDefined())
+    {
+      determinedPath = matchingLocation.getRootDirectory() + "/" + matchingLocation.getIndexFile();
     }
     determineStatusCode();
     buildStatusLine();
@@ -86,6 +90,12 @@ ResponseBuilder::ResponseBuilder(
       buildBody();
     }
   }
+}
+
+bool ResponseBuilder::doesFileExist(const std::string& name)
+{
+  struct stat buffer;
+  return (stat(name.c_str(), &buffer) == 0);
 }
 
 bool ResponseBuilder::isDirectory(const std::string& path)
