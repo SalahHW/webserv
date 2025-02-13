@@ -84,7 +84,7 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
             if (!request.getBody().empty())
             {
                 if (write(bodyPipefd[1], request.getBody().c_str(), request.getBody().size()) < 0) {
-                    error_code = 502;
+                    error_code = 500;
                     throw std::runtime_error("Failed to write request body to pipe");
                 }
             }
@@ -102,12 +102,12 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
             int ret = select(pipefd[0] + 1, &read_fds, NULL, NULL, &timeout);
             if (ret == -1)
             {
-                error_code = 502;
+                error_code = 500;
                 throw std::runtime_error("select() failed");
             }
             else if (ret == 0)
             {
-                error_code = 504;
+                error_code = 500;
                 kill(pid, SIGKILL);
                 waitpid(pid, &status, 0);
                 throw std::runtime_error("CGI script timeout");
@@ -143,7 +143,6 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
 
 void CgiHandler::printEnv(std::vector<std::string> &env)
 {
-    // FOR DEBUG, DELETE LATER
     std::vector<std::string>::iterator vec_it;
     for (vec_it = env.begin(); vec_it != env.end(); vec_it++)
         std::cout << "[DEBUG] : " << *vec_it << std::endl;

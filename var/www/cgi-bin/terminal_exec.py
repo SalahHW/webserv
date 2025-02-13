@@ -8,6 +8,7 @@ import shlex
 content_length = int(os.environ.get('CONTENT_LENGTH', 0))
 form_data = sys.stdin.read(content_length)
 
+time.sleep(1)
 command = ""
 for line in form_data.split('&'):
     if line.startswith('command='):
@@ -15,7 +16,6 @@ for line in form_data.split('&'):
         command = unquote(command)
         command = command.replace('+', ' ')
         break
-
 # Tokenize the command safely
 try:
     tokens = shlex.split(command)
