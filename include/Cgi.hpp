@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <cerrno>
 #include <string>
 #include <utility>
 #include <vector>

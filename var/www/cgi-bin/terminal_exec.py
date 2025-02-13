@@ -2,8 +2,8 @@ import os
 import sys
 import subprocess
 from urllib.parse import unquote
-
 import time
+import shlex
 
 content_length = int(os.environ.get('CONTENT_LENGTH', 0))
 form_data = sys.stdin.read(content_length)
@@ -11,16 +11,26 @@ form_data = sys.stdin.read(content_length)
 command = ""
 for line in form_data.split('&'):
     if line.startswith('command='):
-        command = line.split('=', 1)[1]  # Split on the first '=' only
-        command = unquote(command)  # Decode URL-encoded characters
-        command = command.replace('+', ' ')  # Replace '+' with spaces
+        command = line.split('=', 1)[1]
+        command = unquote(command)
+        command = command.replace('+', ' ')
         break
 
+# Tokenize the command safely
 try:
-    result = subprocess.run(command, shell=True, capture_output=True, text=True)
-    output = result.stdout if result.returncode == 0 else result.stderr
+    tokens = shlex.split(command)
 except Exception as e:
-    output = f"Error executing command: {str(e)}"
+    tokens = []
+    output = f"Error parsing command: {str(e)}"
+
+if not tokens or tokens[0] != 'ls':
+    output = "Error: Only the 'ls' command is allowed."
+else:
+    try:
+        result = subprocess.run(tokens, capture_output=True, text=True)
+        output = result.stdout if result.returncode == 0 else result.stderr
+    except Exception as e:
+        output = f"Error executing command: {str(e)}"
 
 output = output.replace('\n', '<br>')
 
@@ -138,14 +148,11 @@ html_body = f"""
 </html>
 """
 
-# Construct the full HTTP response
 response = (
     "HTTP/1.1 200 OK\r\n"
     "Content-Type: text/html\r\n"
     f"Content-Length: {len(html_body)}\r\n"
-    "\r\n"  # End of headers
+    "\r\n"
     f"{html_body}"
 )
-
-# Print the entire response to stdout
 print(response)
