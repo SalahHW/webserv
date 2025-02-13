@@ -75,7 +75,7 @@ void ServerManager::runRoutine()
         if (clients[fd]->getCurrentTime() - clients[fd]->lastActivity > TIMEOUT)
         {
           closeConnection(fd);
-          continue;
+          // continue;
         }
       }
       handleEvent(fd, eventFlags);
@@ -128,17 +128,35 @@ void ServerManager::addPortsToEventReporter()
 
 void ServerManager::handleEvent(int fd, uint32_t events)
 {
-  if (events & EPOLLIN)
+  if (clients.find(fd) != clients.end())
   {
-    handleEpollIn(fd);
+    if (clients[fd]->getEvent() == EPOLLIN)
+    {
+      handleEpollIn(fd);
+    }
+    if (clients[fd]->getEvent() == EPOLLOUT)
+    {
+      handleEpollOut(fd);
+    }
+    if (clients[fd]->getEvent() == EPOLLERR || events == EPOLLHUP || events == EPOLLRDHUP)
+    {
+      handleEpollErr(fd);
+    }
   }
-  if (events & EPOLLOUT)
+  else
   {
-    handleEpollOut(fd);
-  }
-  if (events & EPOLLERR || events & EPOLLHUP || events & EPOLLRDHUP)
-  {
-    handleEpollErr(fd);
+    if (events & EPOLLIN)
+    {
+      handleEpollIn(fd);
+    }
+    if (events & EPOLLOUT)
+    {
+      handleEpollOut(fd);
+    }
+    if (events & EPOLLERR || events & EPOLLHUP || events & EPOLLRDHUP)
+    {
+      handleEpollErr(fd);
+    }
   }
 }
 
@@ -163,7 +181,6 @@ void ServerManager::handleEpollOut(int listenFd)
 void ServerManager::handleEpollErr(int listenFd)
 {
   closeConnection(clients.find(listenFd)->second->getConnectionFd());
-  std::cout << "Socket " << listenFd << ": Closed" << std::endl;
 }
 
 bool ServerManager::isListeningSocket(int fd) const

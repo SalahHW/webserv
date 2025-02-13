@@ -2,15 +2,17 @@
 
 #include <fcntl.h>
 
-Sender::Sender(Response& response, int sockfd, Request& request)
+Sender::Sender(Response& response, int sockfd, Request& request, Client* client)
 {
-  sendOnFd(response, sockfd, request);
+  sendOnFd(response, sockfd, request, client);
 }
 
 Sender::~Sender() { }
 
-void Sender::sendOnFd(Response& response, int sockfd, Request& request)
+void Sender::sendOnFd(Response& response, int sockfd, Request& request, Client* client)
 {
+  std::cout << response.getFullHeader().data() << std::endl;
+  std::cout << response.getBody().data() << std::endl;
   if (!response.getFullHeader().empty())
   {
     send(sockfd, response.getFullHeader().data(),
@@ -26,6 +28,7 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request)
   if (Response.empty())
   {
     std::cerr << "Response is empty, nothing to send." << std::endl;
+    client->eventToErr();
     return;
   }
   if (!request.getIsTreated() && response.getContentLength().empty())

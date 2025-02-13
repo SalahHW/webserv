@@ -44,6 +44,7 @@ ResponseBuilder::ResponseBuilder(
       return;
     }
     determinedPath = determinePath();
+
     if (isDirectory(determinedPath) && matchingLocation.getAutoIndex())
     {
       generateAutoIndex(determinedPath, request->getUri());
@@ -902,7 +903,13 @@ void ResponseBuilder::buildBody()
   response.setBytesLoad(response.getFullHeader().size() + bytesRead);
 }
 
-void ResponseBuilder::buildLocation() { }
+void ResponseBuilder::buildLocation()
+{
+  if (statusCode == 301)
+  {
+    response.setLocation("Location: " + matchingLocation.getRedirectionPath() + "\r\n");
+  }
+}
 
 void ResponseBuilder::buildAllow() { }
 
@@ -910,7 +917,6 @@ void ResponseBuilder::buildRetryAfter() { }
 
 void ResponseBuilder::buildConnection()
 {
-  // still dont know when it becomes "close"
   response.setConnection("Connection: keep-alive");
 }
 
@@ -969,6 +975,9 @@ void ResponseBuilder::buildFullHeader()
     fullHeader.insert(fullHeader.end(), contentType.begin(), contentType.end());
     fullHeader.push_back('\r');
     fullHeader.push_back('\n');
+
+    const std::string& location = response.getLocation();
+    fullHeader.insert(fullHeader.end(), location.begin(), location.end());
 
     const std::string& transferEncoding = response.getTransferEncoding();
     fullHeader.insert(fullHeader.end(), transferEncoding.begin(),

@@ -15,8 +15,9 @@
 
 class Port;
 
-class Client {
- public:
+class Client
+{
+  public:
   ~Client();
   Client(int listenFd, int connectionFd, Port* port);
 
@@ -39,11 +40,16 @@ class Client {
   void treatAPost();
   size_t parseContentLength(const std::string& headers);
   std::string removeFinalBoundary(const std::string& input);
+  void handleGet(std::deque<Request>::iterator it);
+  void handlePost(std::deque<Request>::iterator it);
+  void handleDelete(std::deque<Request>::iterator it);
+  void handleCgi(std::deque<Request>::iterator it);
+  int getEvent() const;
 
   int epollFd;
   double lastActivity;
 
- private:
+  private:
   struct epoll_event ev;
   int listenFd;
   int connectionFd;

@@ -8,7 +8,7 @@
 #include "EventReporter.hpp"
 #include "Port.hpp"
 
-#define TIMEOUT 3
+#define TIMEOUT 10000
 
 class ServerManager
 {

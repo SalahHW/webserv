@@ -9,19 +9,20 @@
 
 class ResponseBuilder;
 
-class Response {
- private:
+class Response
+{
+  private:
   // Request& request;
   std::string statusLine;
   std::string date;
   std::string contentLength;
-  std::string transferEncoding;  // content-length or chunked this field can be
-                                 // empty if we use contentlength
+  std::string transferEncoding; // content-length or chunked this field can be
+                                // empty if we use contentlength
   std::string contentType;
   std::vector<char> body;
-  std::string location;    // for code 3xx and 201
-  std::string allow;       // for code 405
-  std::string retryAfter;  // for code 429 and 503
+  std::string location; // for code 3xx and 201
+  std::string allow; // for code 405
+  std::string retryAfter; // for code 429 and 503
   std::string connection;
   size_t bytesSent;
   size_t bytesLoad;
@@ -29,11 +30,11 @@ class Response {
   std::vector<char> fullHeader;
   ResponseBuilder* builder;
 
- public:
+  public:
   Response();
   Response(Request* request,
-           const std::map<std::string, VirtualHost>& virtualHosts,
-           const std::string& defaultVirtualHostName);
+      const std::map<std::string, VirtualHost>& virtualHosts,
+      const std::string& defaultVirtualHostName);
   ~Response();
 
   bool isResponseFullySend() const;
@@ -68,7 +69,6 @@ class Response {
   size_t getBytesLoad() const;
   size_t getBytesTotal() const;
   const std::vector<char> getFullHeader() const;
-  const std::vector<char> getFullResponse() const;
   ResponseBuilder* getResponseBuilder() const;
 
   void printResponseAttributes() const;
