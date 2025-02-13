@@ -75,7 +75,6 @@ void ServerManager::runRoutine()
         if (clients[fd]->getCurrentTime() - clients[fd]->lastActivity > TIMEOUT)
         {
           closeConnection(fd);
-          // continue;
         }
       }
       handleEvent(fd, eventFlags);
@@ -174,7 +173,7 @@ void ServerManager::handleEpollIn(int listenFd)
 
 void ServerManager::handleEpollOut(int listenFd)
 {
-  // std::cout << "Socket " << listenFd << ": Ready to write" << std::endl;
+  std::cout << "Socket " << listenFd << ": Ready to write" << std::endl;
   clients.find(listenFd)->second->responsesRoutine();
 }
 

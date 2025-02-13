@@ -11,8 +11,6 @@ Sender::~Sender() { }
 
 void Sender::sendOnFd(Response& response, int sockfd, Request& request, Client* client)
 {
-  std::cout << response.getFullHeader().data() << std::endl;
-  std::cout << response.getBody().data() << std::endl;
   if (!response.getFullHeader().empty())
   {
     send(sockfd, response.getFullHeader().data(),
@@ -43,24 +41,9 @@ void Sender::sendOnFd(Response& response, int sockfd, Request& request, Client* 
   if (ret > 0)
   {
     response.setBytesSent(response.getBytesSent() + ret);
-  } // else if (ret < 0) {
-  //   perror("send error");
-  //   std::cerr << "Errno: " << errno << std::endl;
-
-  //   if (errno == EPIPE) {
-  //     std::cerr << "Connection closed by peer (EPIPE)." << std::endl;
-  //   } else if (errno == ECONNRESET) {
-  //     std::cerr << "Connection reset by peer  (ECONNRESET)." << std::endl;
-  //   } else if (errno == ENOTCONN) {
-  //     std::cerr << "Socket is not connected (ENOTCONN)." << std::endl;
-  //   }
-  // }
+  }
   if (response.getContentLength().empty() && !request.getIsTreated())
   {
     ret = send(sockfd, "\r\n", 2, MSG_NOSIGNAL);
   }
-
-  // std::cout << "What is sended: " << hexStr;
-  // std::cout.write(Response.data(), responseSize) << "\r\n" << std::endl;
-  // std::cout << "test" << std::endl;
 }

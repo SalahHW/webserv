@@ -30,7 +30,7 @@ Request::Request(const std::string& request, size_t fd)
   connectionGood = RequestValidator::validateConnection(Connection);
   isRequestGood = RequestValidator::validateRequest(*this);
   isParsed = true;
-  displayRequest();
+  // displayRequest();
 }
 
 Request::Request() { }
