@@ -40,7 +40,7 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
     int status;
     int pipefd[2];
     int bodyPipefd[2];
-    int error_code = 0;
+    size_t error_code = 0;
 
     try
     {

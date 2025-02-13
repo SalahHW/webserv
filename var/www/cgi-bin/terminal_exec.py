@@ -8,7 +8,7 @@ import shlex
 content_length = int(os.environ.get('CONTENT_LENGTH', 0))
 form_data = sys.stdin.read(content_length)
 
-time.sleep(1)
+time.sleep(5)
 command = ""
 for line in form_data.split('&'):
     if line.startswith('command='):

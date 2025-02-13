@@ -260,7 +260,6 @@ const std::string CgiHandler::genPathInfo(const std::string &input) {
 
 void CgiHandler::buildEnv(const Request &request) {
   // envVec.push_back(this->genRequestMethod());// IN R
-  // envVec.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
   ////envVec.push_back(this->genContentLenght());
   // envVec.push_back(this->genServerProtocol());// IN R ?
   // envVec.push_back(this->genQueryString());
@@ -311,7 +310,7 @@ char **CgiHandler::allocateEnvArray(const std::vector<std::string> &env) {
   return (envArray);
 }
 
-void  CgiHandler::setCgiRetErrorCode(int code) {
+void  CgiHandler::setCgiRetErrorCode(size_t code) {
   if (error_code == 0){
     this->error_code = code;
     return ;
@@ -319,7 +318,7 @@ void  CgiHandler::setCgiRetErrorCode(int code) {
   this->error_code = code;
 }
 
-int CgiHandler::getCgiRetErrorCode() {
+size_t CgiHandler::getCgiRetErrorCode() {
   return (this->error_code);
 }
 

@@ -585,6 +585,6 @@ void ResponseBuilder::handleCgi() {
   if (cgi.getCgiRetErrorCode() > 0)
   {
     std::cout << "[DEBUG] = STATUS CODE = " << cgi.getCgiRetErrorCode() << std::endl;
-    this->setStatusCode((size_t)cgi.getCgiRetErrorCode());
+    this->setStatusCode(cgi.getCgiRetErrorCode());
   }
 }

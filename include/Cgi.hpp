@@ -63,8 +63,8 @@ class CgiHandler {
   void buildEnv(const Request &requestForEnv);
   char **allocateEnvArray(const std::vector<std::string> &env);
   void cleanupEnvArray(const std::vector<std::string> &env, char **envArray);
-  void setCgiRetErrorCode(int error_code);
-  int  getCgiRetErrorCode();
+  void setCgiRetErrorCode(size_t error_code);
+  size_t  getCgiRetErrorCode();
   const std::vector<std::string> &getEnvVec() const;
   void printEnv(std::vector<std::string> &env);
   void setScriptPath(const std::string &originScriptPath);
