@@ -37,6 +37,9 @@ int Client::getConnectionFd() const { return this->connectionFd; }
 
 void Client::closeConnection()
 {
+  delete request->getResponse()->getResponseBuilder();
+  delete request->getResponse();
+  delete request;
   close(connectionFd);
   clearBuffer();
 }
@@ -97,8 +100,7 @@ double Client::getCurrentTime(void)
 
 void Client::treatAPost()
 {
-  Request* request = new Request(getBuffer(), connectionFd);
-  requests.push_back(*request);
+  request = new Request(getBuffer(), connectionFd);
   clearBuffer();
 }
 
@@ -148,8 +150,7 @@ void Client::requestRoutine()
   else if (buffer.find("\r\n\r\n") != std::string::npos)
   {
     eventToOut();
-    Request* request = new Request(getBuffer(), connectionFd);
-    requests.push_back(*request);
+    request = new Request(getBuffer(), connectionFd);
     clearBuffer();
   }
 }
@@ -170,7 +171,7 @@ std::string Client::removeFinalBoundary(const std::string& input)
   {
     return input;
   }
-  requests.begin()->setIsTreated(true);
+  request->setIsTreated(true);
   std::string::size_type pos = input.size() - endPattern.size();
   while (pos > 0 && std::isdigit(static_cast<unsigned char>(input[pos - 1])))
   {
@@ -189,60 +190,60 @@ std::string Client::removeFinalBoundary(const std::string& input)
   return input;
 }
 
-void Client::handleGet(std::deque<Request>::iterator it)
+void Client::handleGet()
 {
-  if (it->getIsTreated())
+  if (request->getIsTreated())
   {
     eventToErr();
     return;
   }
-  if (it->getIsParsed())
+  if (request->getIsParsed())
   {
-    if (it->getIsInTreatment())
+    if (request->getIsInTreatment())
     {
-      it->getResponse()->getResponseBuilder()->buildBody();
+      request->getResponse()->getResponseBuilder()->buildBody();
     }
     else
     {
-      it->setIsInTreatment(true);
-      it->setResponse(associatedPort->getVirtualHosts(),
+      request->setIsInTreatment(true);
+      request->setResponse(associatedPort->getVirtualHosts(),
           associatedPort->getDefaultVirtualHostName());
     }
-    Sender sender(*it->getResponse(), connectionFd, *it, this);
+    Sender sender(*request->getResponse(), connectionFd, *request, this);
     this->lastActivity = getCurrentTime();
   }
 }
 
-void Client::handlePost(std::deque<Request>::iterator it)
+void Client::handlePost()
 {
-  if (it->getIsParsed())
+  if (request->getIsParsed())
   {
-    if (it->getIsInTreatment())
+    if (request->getIsInTreatment())
     {
-      if (!it->getIsTreated() && readFromClient() > 0)
+      if (!request->getIsTreated() && readFromClient() > 0)
       {
         buffer = removeFinalBoundary(buffer);
-        it->setFileContent(getBuffer());
-        it->getResponse()->getResponseBuilder()->treatAPost();
+        request->setFileContent(getBuffer());
+        request->getResponse()->getResponseBuilder()->treatAPost();
         clearBuffer();
       }
-      if (it->getIsTreated())
+      if (request->getIsTreated())
       {
-        it->getResponse()->getResponseBuilder()->successPost();
+        request->getResponse()->getResponseBuilder()->successPost();
         eventToErr();
       }
     }
     else
     {
-      it->setIsInTreatment(false);
-      it->setResponse(associatedPort->getVirtualHosts(),
+      request->setIsInTreatment(false);
+      request->setResponse(associatedPort->getVirtualHosts(),
           associatedPort->getDefaultVirtualHostName());
-      it->setIsInTreatment(true);
+      request->setIsInTreatment(true);
     }
   }
-  if (it->getIsTreated())
+  if (request->getIsTreated())
   {
-    Sender sender(*it->getResponse(), connectionFd, *it, this);
+    Sender sender(*request->getResponse(), connectionFd, *request, this);
     this->lastActivity = getCurrentTime();
     eventToErr();
   }
@@ -250,32 +251,32 @@ void Client::handlePost(std::deque<Request>::iterator it)
   return;
 }
 
-void Client::handleDelete(std::deque<Request>::iterator it)
+void Client::handleDelete()
 {
-  it->setIsInTreatment(true);
-  it->setResponse(associatedPort->getVirtualHosts(),
+  request->setIsInTreatment(true);
+  request->setResponse(associatedPort->getVirtualHosts(),
       associatedPort->getDefaultVirtualHostName());
-  if (it->getIsTreated())
+  if (request->getIsTreated())
   {
-    it->getResponse()->getResponseBuilder()->successPost();
-    Sender sender(*it->getResponse(), connectionFd, *it, this);
+    request->getResponse()->getResponseBuilder()->successPost();
+    Sender sender(*request->getResponse(), connectionFd, *request, this);
     eventToErr();
   }
   this->lastActivity = getCurrentTime();
   return;
 }
 
-void Client::handleCgi(std::deque<Request>::iterator it)
+void Client::handleCgi()
 {
-  it->setIsACgi(true);
-  if (it->getIsInTreatment())
+  request->setIsACgi(true);
+  if (request->getIsInTreatment())
   {
-    it->getResponse()->getResponseBuilder()->buildBody();
+    request->getResponse()->getResponseBuilder()->buildBody();
   }
   else
   {
-    it->setIsInTreatment(true);
-    it->setResponse(associatedPort->getVirtualHosts(),
+    request->setIsInTreatment(true);
+    request->setResponse(associatedPort->getVirtualHosts(),
         associatedPort->getDefaultVirtualHostName());
   }
   this->lastActivity = getCurrentTime();
@@ -284,46 +285,41 @@ void Client::handleCgi(std::deque<Request>::iterator it)
 
 void Client::responsesRoutine()
 {
-  if (!requests.empty())
-  {
-    for (std::deque<Request>::iterator it = requests.begin();
-        it != requests.end(); ++it)
-    {
-      if (it->getIsTreated())
-      {
-        eventToErr();
-        return;
-      }
-      else if (it->getUri().find("cgi-bin") != std::string::npos)
-      {
-        handleCgi(it);
-        if (!it->getResponse()->getBody().empty())
-        {
-          Sender sender(*it->getResponse(), connectionFd, *it, this);
-        }
-        else
-        {
 
-          it->setIsTreated(true);
-        }
-        return;
-      }
-      else if (it->getMethod() == "POST")
-      {
-        handlePost(it);
-        return;
-      }
-      else if (it->getMethod() == "DELETE")
-      {
-        handleDelete(it);
-        return;
-      }
-      handleGet(it);
-      if (it->getIsTreated())
-      {
-        eventToErr();
-        return;
-      }
+  if (request->getIsTreated())
+  {
+    eventToErr();
+    return;
+  }
+  else if (request->getUri().find("cgi-bin") != std::string::npos)
+  {
+    handleCgi();
+    if (!request->getResponse()->getBody().empty())
+    {
+      Sender sender(*request->getResponse(), connectionFd, *request, this);
     }
+    else
+    {
+
+      request->setIsTreated(true);
+    }
+    return;
+  }
+  else if (request->getMethod() == "POST")
+  {
+    handlePost();
+    return;
+  }
+  else if (request->getMethod() == "DELETE")
+  {
+    handleDelete();
+    eventToErr();
+    return;
+  }
+  handleGet();
+  if (request->getIsTreated())
+  {
+    eventToErr();
+    return;
   }
 }

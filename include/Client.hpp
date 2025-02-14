@@ -40,10 +40,10 @@ class Client
   void treatAPost();
   size_t parseContentLength(const std::string& headers);
   std::string removeFinalBoundary(const std::string& input);
-  void handleGet(std::deque<Request>::iterator it);
-  void handlePost(std::deque<Request>::iterator it);
-  void handleDelete(std::deque<Request>::iterator it);
-  void handleCgi(std::deque<Request>::iterator it);
+  void handleGet();
+  void handlePost();
+  void handleDelete();
+  void handleCgi();
   int getEvent() const;
 
   int epollFd;
@@ -55,8 +55,7 @@ class Client
   int connectionFd;
   Port* associatedPort;
   std::string buffer;
-  std::deque<Response> responses;
-  std::deque<Request> requests;
+  Request* request;
 
   Client();
   Client(const Client& other);
