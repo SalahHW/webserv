@@ -1,5 +1,16 @@
 #include "ServerManager.hpp"
 
+ServerManager* ServerManager::instance = NULL;
+
+void signalHandler(int sigNum)
+{
+  (void)sigNum;
+  if (ServerManager::instance != NULL)
+  {
+    ServerManager::instance->setIsRunning(false);
+  }
+}
+
 ServerManager::~ServerManager()
 {
   std::map<int, Client*>::iterator itClients;
@@ -9,13 +20,22 @@ ServerManager::~ServerManager()
   }
 }
 
-ServerManager::ServerManager() { }
+ServerManager::ServerManager()
+{
+  ServerManager::instance = this;
+  signal(SIGINT, signalHandler);
+}
+
+void ServerManager::setIsRunning(bool isRunning) { this->isRunning = isRunning; }
 
 ServerManager::ServerManager(std::map<int, Port*> ports)
     : isValid(true)
     , ports(ports)
     , isRunning(false)
 {
+  ServerManager::instance = this;
+  signal(SIGINT, signalHandler);
+
   if (ports.empty())
   {
     std::cerr << "Error: No ports provided for server manager." << std::endl;
@@ -46,7 +66,18 @@ void ServerManager::start()
 {
   addPortsToEventReporter();
   isRunning = true;
+  std::cout << "-----Server Started-----" << std::endl;
   runRoutine();
+}
+
+void ServerManager::stop()
+{
+  std::map<int, Client*>::iterator itClients = clients.begin();
+  for (; itClients != clients.end(); ++itClients)
+  {
+    itClients->second->closeConnection();
+  }
+  std::cout << "-----Server Stopped-----" << std::endl;
 }
 
 void ServerManager::runRoutine()
@@ -81,7 +112,7 @@ void ServerManager::runRoutine()
     }
   }
 
-  std::cout << "Server stopped." << std::endl;
+  stop();
 }
 
 bool ServerManager::initializePorts()
@@ -163,8 +194,8 @@ void ServerManager::handleEpollIn(int listenFd)
 {
   if (isListeningSocket(listenFd))
   {
-    std::cout << "Socket " << listenFd << ": Ready to accept connection"
-              << std::endl;
+    //   std::cout << "Socket " << listenFd << ": Ready to accept connection"
+    //             << std::endl;
     acceptConnection(listenFd);
     return;
   }
@@ -173,7 +204,7 @@ void ServerManager::handleEpollIn(int listenFd)
 
 void ServerManager::handleEpollOut(int listenFd)
 {
-  std::cout << "Socket " << listenFd << ": Ready to write" << std::endl;
+  // std::cout << "Socket " << listenFd << ": Ready to write" << std::endl;
   clients.find(listenFd)->second->responsesRoutine();
 }
 

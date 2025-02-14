@@ -1,5 +1,6 @@
 #pragma once
 
+#include <csignal>
 #include <iostream>
 #include <map>
 #include <set>
@@ -20,9 +21,13 @@ class ServerManager
 
   bool good() const;
   void start();
+  void stop();
   void runRoutine();
   void handleEvent(int fd, uint32_t events);
+  void setIsRunning(bool running);
   bool isListeningSocket(int fd) const;
+
+  static ServerManager* instance;
 
   private:
   ServerManager();
