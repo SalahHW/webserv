@@ -1,8 +1,12 @@
 #include "Cgi.hpp"
 
-CgiHandler::CgiHandler() { }
+CgiHandler::CgiHandler()
+    : error_code(0)
+{
+}
 
 CgiHandler::CgiHandler(const Request& request)
+    : error_code(0)
 {
   this->cgiExecution(request, request.getFd());
 }
