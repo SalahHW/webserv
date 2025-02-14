@@ -6,7 +6,7 @@
 /*   By: rvan-den <rvan-den@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 17:00:31 by rvan-den          #+#    #+#             */
-/*   Updated: 2025/02/14 11:15:01 by rvan-den         ###   ########.fr       */
+/*   Updated: 2025/02/14 12:57:39 by rvan-den         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
     std::vector<std::string> env = this->getEnvVec();
     this->setCgiRetErrorCode(0);
 
-    const std::string scriptDirAss = "./var/www/rgi-bin";
+    const std::string scriptDirAss = "./var/www/cgi-bin";
     const char *scriptDir = scriptDirAss.c_str();
     const char *scriptName = this->extractScriptName(request.getUri());
     char *const args[] = {const_cast<char *>(PY_INTERP),
