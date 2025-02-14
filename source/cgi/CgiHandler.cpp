@@ -148,7 +148,7 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
     std::vector<std::string> env = this->getEnvVec();
     this->setCgiRetErrorCode(0);
 
-    const std::string scriptDirAss = "./var/www/rgi-bin";
+    const std::string scriptDirAss = "./var/www/cgi-bin";
     const char *scriptDir = scriptDirAss.c_str();
     const char *scriptName = this->extractScriptName(request.getUri());
     char *const args[] = {const_cast<char *>(PY_INTERP),
