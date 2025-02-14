@@ -140,15 +140,6 @@ Context:	server, location
 Specifies the maximum duration (in seconds) the server will wait for a client to send data. If the client fails to send data within the specified time frame, the connection is terminated.
 
 ---
-##### client_body_temp_path
-```
-Syntax:		client_body_temp_path <path>;
-Default:	/client_temp
-Context:	server, location
-```
-Specifies the directoriy where the server will store temporary files for client request bodies
-
----
 ##### root
 ```
 Syntax:		root <directory>;
