@@ -7,7 +7,7 @@ CgiHandler::CgiHandler(const Request& request)
   this->cgiExecution(request, request.getFd());
 }
 
-CgiHandler::~CgiHandler() { std::cout << "DESTRUCTION OF CGI" << std::endl; }
+CgiHandler::~CgiHandler() { }
 
 CgiHandler::CgiHandler(const CgiHandler& other) { (void)other; }
 

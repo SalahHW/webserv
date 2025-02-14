@@ -209,6 +209,7 @@ void ResponseBuilder::treatADelete()
   if (determinedPath.find("..") != std::string::npos || (determinedPath != "/var/www/html" + request->getUri() && !determinedPath.find("/var/www/html/upload/")))
   {
     determinedPath.clear();
+    request->setIsTreated(true);
     setStatusCode(403);
   }
   else
@@ -217,6 +218,7 @@ void ResponseBuilder::treatADelete()
     if (stat(determinedPath.c_str(), &info) != 0)
     {
       determinedPath.clear();
+      request->setIsTreated(true);
       setStatusCode(404);
     }
     else
@@ -723,6 +725,11 @@ const std::string& ResponseBuilder::getReasonPhraseForCode(size_t code)
   {
     static const std::string ma = "Method Not Allowed";
     return ma;
+  }
+  case 413:
+  {
+    static const std::string pl = "Payload Too Large";
+    return pl;
   }
   case 500:
   {
