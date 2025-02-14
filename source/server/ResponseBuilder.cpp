@@ -16,13 +16,13 @@ ResponseBuilder::ResponseBuilder(
     , virtualHost(
           findMatchingVirtualHost(virtualHosts, defaultVirtualHostName))
 {
-  if (request->getIsRequestGood() && request->getUri().find("cgi-bin") != std::string::npos)
-  {
-    handleCgi();
-    return;
-  }
   try
   {
+    if (request->getIsRequestGood() && request->getUri().find("cgi-bin") != std::string::npos)
+    {
+      handleCgi();
+      return;
+    }
     checkRequest();
     if (!findMatchingLocation())
     {
