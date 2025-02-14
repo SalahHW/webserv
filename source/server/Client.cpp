@@ -270,7 +270,7 @@ void Client::handleCgi(std::deque<Request>::iterator it)
   it->setIsACgi(true);
   if (it->getIsInTreatment())
   {
-    it->getResponse()->getResponseBuilder();
+    it->getResponse()->getResponseBuilder()->buildBody();
   }
   else
   {
@@ -278,6 +278,7 @@ void Client::handleCgi(std::deque<Request>::iterator it)
     it->setResponse(associatedPort->getVirtualHosts(),
         associatedPort->getDefaultVirtualHostName());
   }
+  Sender sender(*it->getResponse(), connectionFd, *it, this);
   this->lastActivity = getCurrentTime();
   return;
 }

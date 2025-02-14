@@ -1041,5 +1041,10 @@ size_t ResponseBuilder::getFileSize(const std::string& filePath)
 
 void ResponseBuilder::handleCgi()
 {
-  CgiHandler CgiHandler(*request);
+  CgiHandler cgi(*request);
+  if (cgi.getCgiRetErrorCode() > 0)
+  {
+    std::cout << "[DEBUG] = STATUS CODE = " << cgi.getCgiRetErrorCode() << std::endl;
+    this->setStatusCode(cgi.getCgiRetErrorCode());
+  }
 }

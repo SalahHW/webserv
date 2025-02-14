@@ -12,20 +12,23 @@
 ///* **************************************************************************
 ///*/
 //
+
 #include "Cgi.hpp"
 
-const std::string CgiHandler::convertSizetToString(size_t value) {
+const std::string CgiHandler::convertSizetToString(size_t value)
+{
   std::ostringstream oss;
   oss << value;
   return oss.str();
 }
 
-const char *CgiHandler::extractScriptName(const std::string &path) {
+const char* CgiHandler::extractScriptName(const std::string& path)
+{
   std::size_t pos = path.find_last_of('/');
   if (pos == std::string::npos)
-    return ("");  // If no '/' is found, return the whole string
+    return (""); // If no '/' is found, return the whole string
 
-  return (path.c_str() + pos + 1);  // Return pointer to filename
+  return (path.c_str() + pos + 1); // Return pointer to filename
 }
 
 // const std::string CgiHandler::genQueryString(const std::string &queryString)
@@ -216,15 +219,17 @@ const char *CgiHandler::extractScriptName(const std::string &path) {
 //     return ("HTTP_PRIORITY=");
 // }
 
-const std::string CgiHandler::genPathInfo(const std::string &input) {
+const std::string CgiHandler::genPathInfo(const std::string& input)
+{
   const std::string marker = "cgi-bin/";
   std::string pathInfo;
 
   std::string::size_type markerPos = input.find(marker);
-  if (markerPos != std::string::npos) {
-    std::string::size_type nextSlashPos =
-        input.find('/', markerPos + marker.length());
-    if (nextSlashPos != std::string::npos) {
+  if (markerPos != std::string::npos)
+  {
+    std::string::size_type nextSlashPos = input.find('/', markerPos + marker.length());
+    if (nextSlashPos != std::string::npos)
+    {
       pathInfo = input.substr(nextSlashPos + 1);
       return ("PATH_INFO=" + pathInfo);
     }
@@ -258,9 +263,9 @@ const std::string CgiHandler::genPathInfo(const std::string &input) {
 //     return (0);
 // }
 
-void CgiHandler::buildEnv(const Request &request) {
+void CgiHandler::buildEnv(const Request& request)
+{
   // envVec.push_back(this->genRequestMethod());// IN R
-  // envVec.push_back(this->genPathInfo("http://serveur.org/cgi-bin/monscript.cgi/marecherche"));
   ////envVec.push_back(this->genContentLenght());
   // envVec.push_back(this->genServerProtocol());// IN R ?
   // envVec.push_back(this->genQueryString());
@@ -283,30 +288,53 @@ void CgiHandler::buildEnv(const Request &request) {
   envVec.push_back(request.getAcceptLanguage());
   envVec.push_back(request.getAcceptEncoding());
   envVec.push_back(request.getConnection());
+  envVec.push_back("BODY=" + request.getBody());
+  envVec.push_back("CONTENT_LENGTH=" + request.getContentLength());
 }
 
-const std::vector<std::string> &CgiHandler::getEnvVec() const {
+const std::vector<std::string>& CgiHandler::getEnvVec() const
+{
   return (envVec);
 }
 
-void CgiHandler::cleanupEnvArray(const std::vector<std::string> &env,
-                                 char **envArray) {
-  if (!envArray) {
+void CgiHandler::cleanupEnvArray(const std::vector<std::string>& env,
+    char** envArray)
+{
+  if (!envArray)
+  {
     std::cerr << ENVARRAY_MALLOC_FAIL << std::endl;
     return;
   }
-  for (size_t i = 0; i < env.size(); ++i) delete[] envArray[i];
+  for (size_t i = 0; i < env.size(); ++i)
+    delete[] envArray[i];
   delete[] envArray;
 }
 
-char **CgiHandler::allocateEnvArray(const std::vector<std::string> &env) {
-  char **envArray = new char *[env.size() + 1];
+char** CgiHandler::allocateEnvArray(const std::vector<std::string>& env)
+{
+  char** envArray = new char*[env.size() + 1];
   envArray[env.size()] = NULL;
-  for (size_t i = 0; i < env.size(); ++i) {
+  for (size_t i = 0; i < env.size(); ++i)
+  {
     envArray[i] = new char[env[i].size() + 1];
     std::strcpy(envArray[i], env[i].c_str());
   }
   return (envArray);
+}
+
+void CgiHandler::setCgiRetErrorCode(size_t code)
+{
+  if (error_code == 0)
+  {
+    this->error_code = code;
+    return;
+  }
+  this->error_code = code;
+}
+
+size_t CgiHandler::getCgiRetErrorCode()
+{
+  return (this->error_code);
 }
 
 // TODO : adapt code with newly made request class
