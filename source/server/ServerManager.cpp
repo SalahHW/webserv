@@ -258,30 +258,3 @@ void ServerManager::closeConnection(int clientFd)
     clients.erase(clientFd);
   }
 }
-
-void ServerManager::readFromClient(int connectionFd)
-{
-  if (clients.find(connectionFd) == clients.end())
-  {
-    std::cerr << "Warning: Attempt to read from a non-existing client fd "
-              << connectionFd << std::endl;
-    return;
-  }
-
-  Client* client = clients[connectionFd];
-  char buffer[1024];
-
-  ssize_t bytesRead = recv(connectionFd, buffer, sizeof(buffer) - 1, 0);
-  if (bytesRead <= 0)
-  {
-    if (bytesRead < 0)
-      std::cerr << "Read error on client fd " << connectionFd << std::endl;
-    closeConnection(connectionFd);
-    return;
-  }
-  buffer[bytesRead] = '\0';
-  client->appendToBuffer(buffer, bytesRead);
-
-  int listenFd = client->getListenFd();
-  ports[listenFd]->processClientData(*client);
-}
