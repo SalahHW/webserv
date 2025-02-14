@@ -4,7 +4,6 @@ CgiHandler::CgiHandler() { }
 
 CgiHandler::CgiHandler(const Request& request)
 {
-  std::cout << "Content Length: " << request.getContentLength() << std::endl;
   this->cgiExecution(request, request.getFd());
 }
 
@@ -137,7 +136,7 @@ void CgiHandler::cgiExecution(const Request& request, int outputFd)
   std::vector<std::string> env = this->getEnvVec();
   this->setCgiRetErrorCode(0);
 
-  const std::string scriptDirAss = "./var/www/cgi-bin/";
+  const std::string scriptDirAss = "./var/www/cgi-bin";
   const char* scriptDir = scriptDirAss.c_str();
   const char* scriptName = this->extractScriptName(request.getUri());
   char* const args[] = { const_cast<char*>(PY_INTERP),
@@ -251,13 +250,10 @@ void CgiHandler::cgiExecution(const Request& request, int outputFd)
         ssize_t bytesRead;
         while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer))) > 0)
         {
-          if (error_code > 0)
+          if (send(outputFd, buffer, bytesRead, MSG_NOSIGNAL) < 0)
           {
-            if (send(outputFd, buffer, bytesRead, MSG_NOSIGNAL) < 0)
-            {
-              close(pipefd[0]);
-              throw std::runtime_error("Failed to send data to outputFd");
-            }
+            close(pipefd[0]);
+            throw std::runtime_error("Failed to send data to outputFd");
           }
         }
         close(pipefd[0]);

@@ -115,6 +115,10 @@ void RequestParser::parseHeaders(std::string::size_type& bodyStartPos)
       {
         parseConnection(value);
       }
+      else if (lowerKey == "content-length")
+      {
+        parseContentLength(value);
+      }
       if (value.find("multipart/form-data") != std::string::npos)
       {
         size_t bPos = value.find("boundary=");
@@ -128,6 +132,11 @@ void RequestParser::parseHeaders(std::string::size_type& bodyStartPos)
 
     pos = lineEnd + 2;
   }
+}
+
+void RequestParser::parseContentLength(const std::string& value)
+{
+  requestToFill.setContentLength(value);
 }
 
 void RequestParser::parseBody(std::string::size_type bodyStartPos)

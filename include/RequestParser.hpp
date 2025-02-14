@@ -9,8 +9,9 @@
 
 class Request;
 
-class RequestParser {
- private:
+class RequestParser
+{
+  private:
   std::string request;
   Request& requestToFill;
 
@@ -25,9 +26,10 @@ class RequestParser {
   void parseConnection(const std::string& value);
   void parseMultipartBody(const std::string& bodyData);
   void parseSinglePart(const std::string& part);
+  void parseContentLength(const std::string& value);
   std::string trim(const std::string& str) const;
 
- public:
+  public:
   RequestParser(const std::string& request, Request& requestToFill);
   ~RequestParser();
   RequestParser(const RequestParser& src);

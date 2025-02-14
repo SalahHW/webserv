@@ -278,7 +278,6 @@ void Client::handleCgi(std::deque<Request>::iterator it)
     it->setResponse(associatedPort->getVirtualHosts(),
         associatedPort->getDefaultVirtualHostName());
   }
-  Sender sender(*it->getResponse(), connectionFd, *it, this);
   this->lastActivity = getCurrentTime();
   return;
 }
@@ -298,6 +297,15 @@ void Client::responsesRoutine()
       else if (it->getUri().find("cgi-bin") != std::string::npos)
       {
         handleCgi(it);
+        if (!it->getResponse()->getBody().empty())
+        {
+          Sender sender(*it->getResponse(), connectionFd, *it, this);
+        }
+        else
+        {
+
+          it->setIsTreated(true);
+        }
         return;
       }
       else if (it->getMethod() == "POST")

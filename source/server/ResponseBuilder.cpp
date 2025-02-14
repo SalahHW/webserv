@@ -363,6 +363,8 @@ void ResponseBuilder::checkRequest()
 void ResponseBuilder::setStatusCode(size_t code)
 {
   determinedPath = "";
+  std::cout << "Setting status code to " << code << std::endl;
+  std::cout << "URI:" << request->getUri() << std::endl;
   if (code >= 301)
   {
     statusCode = code;
