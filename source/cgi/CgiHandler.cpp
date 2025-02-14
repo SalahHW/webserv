@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joakoeni <joakoeni@student.42mulhouse.f    +#+  +:+       +#+        */
+/*   By: rvan-den <rvan-den@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 17:00:31 by rvan-den          #+#    #+#             */
-/*   Updated: 2025/01/29 14:25:44 by joakoeni         ###   ########.fr       */
+/*   Updated: 2025/02/14 12:57:39 by rvan-den         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,10 +208,10 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
             }
 
             if (execve(PY_INTERP, args, envArray) < 0) {
-                _exit(1); // Exit with error code
+                _exit(1); 
             }
         }
-        else // Parent process
+        else
         {
             close(bodyPipefd[0]); 
             if (!request.getBody().empty())
@@ -281,19 +281,13 @@ void CgiHandler::cgiExecution(const Request &request, int outputFd)
             this->setCgiRetErrorCode(error_code);
         }
         std::cerr << "Error: " << e.what() << std::endl;
-
-        // Clean up file descriptors in case of an error
         close(pipefd[0]);
         close(pipefd[1]);
         close(bodyPipefd[0]);
         close(bodyPipefd[1]);
-
-        // Clean up environment array
         this->cleanupEnvArray(env, envArray);
         return;
     }
-
-    // Clean up environment array
     this->cleanupEnvArray(env, envArray);
 }
 
