@@ -1,6 +1,12 @@
 #include "Response.hpp"
 
-Response::~Response() { }
+Response::~Response()
+{
+  if (builder)
+  {
+    delete builder;
+  }
+}
 
 Response::Response(Request* request,
     const std::map<std::string, VirtualHost>& virtualHosts,
@@ -19,6 +25,7 @@ Response::Response(Request* request,
     , bytesLoad(0)
     , bytesTotal(0)
     , fullHeader(std::vector<char>())
+    , builder(NULL)
 {
   this->builder = new ResponseBuilder(request, *this, virtualHosts, defaultVirtualHostName);
 }

@@ -10,12 +10,17 @@ Client::~Client()
 {
   std::cout << RED << "Client fd " << connectionFd << " connection closed"
             << RESET << std::endl;
+  if (request)
+  {
+    delete request;
+  }
 }
 
 Client::Client(int listenFd, int connectionFd, Port* port)
     : listenFd(listenFd)
     , connectionFd(connectionFd)
     , associatedPort(port)
+    , request(NULL)
 {
   initEv();
   lastActivity = getCurrentTime();
@@ -37,9 +42,6 @@ int Client::getConnectionFd() const { return this->connectionFd; }
 
 void Client::closeConnection()
 {
-  delete request->getResponse()->getResponseBuilder();
-  delete request->getResponse();
-  delete request;
   close(connectionFd);
   clearBuffer();
 }

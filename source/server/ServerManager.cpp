@@ -210,7 +210,7 @@ void ServerManager::handleEpollOut(int listenFd)
 
 void ServerManager::handleEpollErr(int listenFd)
 {
-  closeConnection(clients.find(listenFd)->second->getConnectionFd());
+  closeConnection(listenFd);
 }
 
 bool ServerManager::isListeningSocket(int fd) const

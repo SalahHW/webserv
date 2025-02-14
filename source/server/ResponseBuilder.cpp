@@ -365,8 +365,6 @@ void ResponseBuilder::checkRequest()
 void ResponseBuilder::setStatusCode(size_t code)
 {
   determinedPath = "";
-  std::cout << "Setting status code to " << code << std::endl;
-  std::cout << "URI:" << request->getUri() << std::endl;
   if (code >= 301)
   {
     statusCode = code;
@@ -1036,7 +1034,6 @@ size_t ResponseBuilder::getFileSize(const std::string& filePath)
   std::ifstream file(filePath.c_str(), std::ios::binary | std::ios::ate);
   if (!file.is_open())
   {
-    std::cout << "File not found" << std::endl;
     if (response.getBody().size() != 0)
     {
       return response.getBody().size();

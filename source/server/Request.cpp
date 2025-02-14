@@ -17,6 +17,7 @@ Request::Request(const std::string& request, size_t fd)
     , isParsed(false)
     , isTreated(false)
     , isInTreatment(false)
+    , response(NULL)
 {
   RequestParser requestParser(request, *this);
   methodGood = RequestValidator::validateMethod(method);
@@ -35,7 +36,13 @@ Request::Request(const std::string& request, size_t fd)
 
 Request::Request() { }
 
-Request::~Request() { }
+Request::~Request()
+{
+  if (response)
+  {
+    delete response;
+  }
+}
 
 void Request::setMethod(const std::string& method) { this->method = method; }
 
