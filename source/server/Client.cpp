@@ -63,7 +63,13 @@ int Client::readFromClient()
   if (bytesRead <= 0)
   {
     if (bytesRead < 0)
+    {
       std::cerr << "Read error on client fd " << connectionFd << std::endl;
+    }
+    if (request)
+    {
+      request->setIsTreated(true);
+    }
     return bytesRead;
   }
   buffer[bytesRead] = '\0';
